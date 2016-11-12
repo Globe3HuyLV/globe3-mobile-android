@@ -85,8 +85,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     PermissionUtility.requestLocationServices(dashboardActivity, false);
-                }else{
-                    gpsInstantiate();
                 }
             }
         }
@@ -145,8 +143,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 PermissionUtility.requestLocationServices(dashboardActivity, false);
             }
 
-            gpsInstantiate();
-
             loadCompanies();
             showLastSync();
 
@@ -172,16 +168,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             }
         };
         handler.postDelayed(runnable, 3000);
-    }
-
-    public void gpsInstantiate(){
-        dashboardActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mGPSUtility = new GPSUtility(dashboardActivity);
-                mGPSLocation = mGPSUtility.getGPSLocation();
-            }
-        });
     }
 
     public void loadCompanies(){
