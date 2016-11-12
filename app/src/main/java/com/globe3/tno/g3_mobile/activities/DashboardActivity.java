@@ -185,7 +185,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void loadCompanies(){
-        tv_company_name.setText(COMPANY_NAME);
+        //tv_company_name.setText(COMPANY_NAME);
     }
 
     public void showLastSync(){
