@@ -1,0 +1,7 @@
+#Mon Nov 07 21:29:49 SGT 2016
+base.0=/Users/aaronarloambrosio/Google Drive/G3_TMS/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_a33bc5c5ecbebc6be1a2ebd5afdfacfc6e2c510f
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/Users/aaronarloambrosio/Google Drive/G3_TMS/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_24bde12fd4c108dee964130770f94cbd80752808/classes.dex
+base.1=/Users/aaronarloambrosio/Google Drive/G3_TMS/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_24bde12fd4c108dee964130770f94cbd80752808
+file.0=/Users/aaronarloambrosio/Google Drive/G3_TMS/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_a33bc5c5ecbebc6be1a2ebd5afdfacfc6e2c510f/classes.dex

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_base_loader"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible">
+    <ImageView
+        android:id="@+id/image_loader"
+        android:src="@drawable/progress_indeterminate"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:contentDescription="@string/image_rotate_loader"/>
+</RelativeLayout>

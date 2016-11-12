@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\lib\universal-image-loader-1.6.1-with-src.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="fcefe15e2d56ea4abdaac9932d2a192d809ea1cf">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\2\universal-image-loader-1.6.1-with-src_b7f607bdedf21dcef4fe2c5835a7d5c9b3995b99\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="7a8c1fbadbef7b6cd216fee003ab72557a047c05">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_e8a4d763a77a8628bd3719e8383eca74401f2e18\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\libs\internal_impl-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.4.0_2d2dba9dda93c489ba30a2205702f5226e13f07e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.4.0_38967ed8666fb6c81ecfce578d97331f4fbe391d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-cardview-v7-23.4.0_e33a62fbca5a911b87886f3a9efedd27b2286e49\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-23.4.0_ed50758b1da9812d5723fb325efaec98264ef5b3\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="ec75036c3c52e451d0cde50a5aedaf5fd32354a0">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.4.0_394a68fd718cab6105b17d4332a86cca2bdf6f6a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.github.clans\fab\1.6.4\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="1c3b9743fe8bb166a90a7e98b9b9f1f8021d80cd">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.github.clans-fab-1.6.4_79af22fbe93b98dcc5e26f7f0606b1697a26dc71\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="7f7736ba19530ae49cc1052684e281161ea7d0be">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_aade705f9d8e29b15d3859bc155150abc6d1d51f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.4.0\support-annotations-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.4.0_d7a4b6d34dac4117299e916fe84b190302dffb85\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.4.0_f265e2d28abbe282ef3aca4a9e4f6cbbcdc2a5fc\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\design\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="5326d9a850d491714fef8cbfaa9ea3416f0bf0d2">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.4.0_0ac8377c33c0d89c1dbca6e75bc31e79ce36bdc3\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.2"
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-23.4.0_569c5d4d592cce5d2ae28032e4dd4f305af9618b\classes.dex" />
+    </item>
+
+</items>

@@ -1,0 +1,133 @@
+<resources>
+    <string name="app_name">Globe3 TMS</string>
+
+    <string name="activity_login">Login</string>
+    <string name="activity_dashboard">Dashboard</string>
+    <string name="activity_timesheet">Timesheet</string>
+    <string name="activity_finger_registration">Finger Registration</string>
+    <string name="activity_photos">Photos</string>
+    <string name="activity_project_photos">Project Photos</string>
+    <string name="activity_project_photo_items">Project Photo Items</string>
+
+    <string name="label_staff">Staff</string>
+    <string name="label_project">Project</string>
+    <string name="label_finger_data">Finger Data</string>
+    <string name="label_face_data">Face Data</string>
+    <string name="label_fingerprint_loaded">Fingerprint Loaded</string>
+    <string name="label_server_connection">Server Connection</string>
+    <string name="label_sync_data">Sync Data</string>
+    <string name="label_sync_down">Sync Down</string>
+    <string name="label_last_sync">Last Sync</string>
+    <string name="label_sync_up">Sync Up</string>
+    <string name="label_pending_sync">Pending Sync</string>
+    <string name="label_login">Login</string>
+    <string name="label_enquiry">Enquiry</string>
+    <string name="label_staff_list">Staff List</string>
+    <string name="label_daily_timesheet">Daily Timesheet</string>
+    <string name="label_staff_timesheet">Staff Timesheet</string>
+    <string name="label_timesheet">Timsheet</string>
+    <string name="label_register_finger">Register Finger</string>
+    <string name="label_registration">Registration</string>
+    <string name="label_log_time">Log Time</string>
+    <string name="label_log_time_auto">Log Time Auto</string>
+    <string name="label_log_time_project">Log Time Project</string>
+    <string name="label_log_time_staff">Log Time Staff</string>
+    <string name="label_log_time_summary">Log Time Summary</string>
+    <string name="label_add_project_photo">Add Project Photo</string>
+    <string name="label_register_face">Register Face</string>
+    <string name="label_locaiton_check">Location Check</string>
+    <string name="label_photos">Photos</string>
+    <string name="label_tasks_update">Tasks Update</string>
+    <string name="label_logout">Logout</string>
+    <string name="label_finish">Finish</string>
+    <string name="label_refresh_scanner">Refresh Scanner</string>
+    <string name="label_next_scan">Next Scan</string>
+    <string name="label_select_photos">Select Photos</string>
+    <string name="label_auto_screening">Auto Screening</string>
+    <string name="label_skip_project">Skip Project</string>
+    <string name="label_time_in">Time In</string>
+    <string name="label_time_out">Time Out</string>
+    <string name="label_date">Date</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_done">Done</string>
+    <string name="label_exit">Exit</string>
+    <string name="label_request">Request</string>
+    <string name="label_storage_permission">Storage permission</string>
+    <string name="label_retry">Retry</string>
+    <string name="label_update">Update</string>
+    <string name="label_ignore">Ignore</string>
+
+    <string name="msg_data_is_latest">Data is latest</string>
+    <string name="msg_connected">Connected</string>
+    <string name="msg_nothing_to_sync">Nothing to sync</string>
+    <string name="msg_count_over">%1$d/%2$d</string>
+    <string name="msg_an_error_has_occured">An error has occurred</string>
+    <string name="msg_fingerprint_data_loaded">Fingerprint data loaded</string>
+    <string name="msg_face_data_loaded">Face data loaded</string>
+    <string name="msg_sync_up_complete">Sync up complete</string>
+    <string name="msg_sync_down_complete">Sync down complete</string>
+    <string name="msg_sync_failed">Sync failed</string>
+    <string name="msg_loggin_in">Logging in</string>
+    <string name="msg_authentication_failed">Authentication failed</string>
+    <string name="msg_extract_fingerprint">Extract Fingerprint</string>
+    <string name="msg_verify_fingerprint">Verify Fingerprint</string>
+    <string name="msg_connecting_to_scanner">Connecting to scanner</string>
+    <string name="msg_processing_registration">Processing registration</string>
+    <string name="msg_scan_your_fingerprint">Scan your fingerprint</string>
+    <string name="msg_extraction_failed">Extraction Failed</string>
+    <string name="msg_scanner_disconnected">Scanner Disconnected</string>
+    <string name="msg_refresh_scanner">Refresh Scanner</string>
+    <string name="msg_registration">Registration</string>
+    <string name="msg_place_finger_scanner">Place finger on to scanner</string>
+    <string name="msg_lift_finger_scan_again">Lift finger and scan again</string>
+    <string name="msg_registration_success">Registration Success</string>
+    <string name="msg_app_requires_storage_permission">App requires storage permission</string>
+    <string name="msg_storage_permission_not_granted">Storage permission not granted</string>
+    <string name="msg_failed_to_load_configuration">Failed to load configurations</string>
+    <string name="msg_failed_to_grant_storage_permission">Failed to grant storage permission</string>
+    <string name="msg_failed_to_grant_gps_permission">Failed to grant GPS permission</string>
+    <string name="msg_update_available">Update available. Download?</string>
+    <string name="msg_downloading_updates">Downloading updates</string>
+    <string name="msg_cannot_connect_to_server">Cannot connect to server</string>
+    <string name="msg_server_connection">Server Connection</string>
+    <string name="msg_server">Server</string>
+    <string name="msg_gps_services">GPS Services</string>
+    <string name="msg_pending_sync">Pending Sync</string>
+    <string name="msg_last_sync">Last Sync</string>
+    <string name="msg_online">Online</string>
+    <string name="msg_offline">Offline</string>
+    <string name="msg_on">On</string>
+    <string name="msg_off">Off</string>
+    <string name="msg_denied">Denied</string>
+    <string name="msg_recent_activity">Recent Activty</string>
+    <string name="msg_sync_in_progress">Sync in progress</string>
+    <string name="msg_never">Never</string>
+    <plurals name="msg_item">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+
+    <string name="hint_company">company</string>
+    <string name="hint_userid">user id</string>
+    <string name="hint_password">password</string>
+    <string name="hint_reference_number">reference number</string>
+    <string name="hint_remarks">remarks</string>
+    <string name="hint_search_project_code">search entproject code</string>
+    <string name="hint_search_staff_code">search staff code</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="image_launcher">launcher</string>
+    <string name="image_globe3_logo">globe3_logo</string>
+    <string name="image_rotate_loader">rotate_loader</string>
+
+    <!-- Numbers -->
+    <string name="num_1">1</string>
+    <string name="num_2">2</string>
+
+    <string name="char_space">&#160;</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
