@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -48,7 +50,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     NavigationView dashboardNavigationView;
     FloatingActionMenu menuApps;
 
-    TextView tv_company_name;
     TextView tv_server_connect;
     TextView tv_last_sync;
     TextView tv_gps;
@@ -90,6 +91,21 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_dashboard_actionbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_entities) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onActivityLoading(){
         try {
             dashboardActivity = this;
@@ -101,7 +117,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             dashboardNavigationView = (NavigationView) findViewById(R.id.nav_view);
             menuApps = (FloatingActionMenu) findViewById(R.id.fam_apps);
 
-            tv_company_name = (TextView) findViewById(R.id.tv_company_name);
             tv_server_connect = (TextView) findViewById(R.id.tv_server_connect);
             tv_last_sync = (TextView) findViewById(R.id.tv_last_sync);
             tv_gps = (TextView) findViewById(R.id.tv_gps);
@@ -158,6 +173,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             public void run() {
                 try{
                     new DashboardRefresh().execute();
+                    mGPSUtility = new GPSUtility(dashboardActivity);
+                    mGPSLocation = mGPSUtility.getGPSLocation();
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -171,7 +188,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void loadCompanies(){
-        //tv_company_name.setText(COMPANY_NAME);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setTitle(COMPANY_NAME);
+        }
     }
 
     public void showLastSync(){

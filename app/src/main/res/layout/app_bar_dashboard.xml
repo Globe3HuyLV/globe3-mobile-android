@@ -17,42 +17,8 @@
             android:id="@+id/dashboardToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp">
-            <TextView
-                android:id="@+id/tv_company_name"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:padding="8dp"
-                android:layout_gravity="center_vertical|start"
-                android:textSize="16sp"
-                android:textColor="@color/colorBlack"
-                android:textAllCaps="true"/>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:tint="@color/colorBlack"
-                        android:src="@drawable/ic_more_vert_black_24dp"/>
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
+            android:background="?attr/colorPrimary"
+            app:titleTextAppearance="@style/Toolbar.DashboardTitleText"/>
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_dashboard" />
