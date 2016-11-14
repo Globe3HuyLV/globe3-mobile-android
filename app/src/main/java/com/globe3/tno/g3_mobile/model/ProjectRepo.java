@@ -70,8 +70,8 @@ public class ProjectRepo {
         values.put(Globe3Db.COLUMN_PROJECT_CODE, entproject.project_code);
         values.put(Globe3Db.COLUMN_PROJECT_NAME, entproject.project_name);
         values.put(Globe3Db.COLUMN_PROJECT_UNIQUE, entproject.project_unique);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_PROJECT, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_PROJECT, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_PROJECT, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_PROJECT, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         entproject new_entproject = cursorToObject(cursor);
         cursor.close();
@@ -81,11 +81,11 @@ public class ProjectRepo {
 
     public void delete_project(entproject entproject) {
         long id = entproject.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_PROJECT, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_PROJECT, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_project_all() {
-        database.delete(Globe3Db.TABLE_BIOM_PROJECT, null, null);
+        database.delete(Globe3Db.TABLE_PROJECT, null, null);
     }
 
     public void update_project(entproject entproject) {
@@ -107,7 +107,7 @@ public class ProjectRepo {
         values.put(Globe3Db.COLUMN_PROJECT_UNIQUE, entproject.project_unique);
 
 
-        database.update(Globe3Db.TABLE_BIOM_PROJECT, values, Globe3Db.COLUMN_IDCODE + " = " + entproject.idcode, null);
+        database.update(Globe3Db.TABLE_PROJECT, values, Globe3Db.COLUMN_IDCODE + " = " + entproject.idcode, null);
     }
 
 
@@ -115,7 +115,7 @@ public class ProjectRepo {
         ArrayList<entproject> entprojects = new ArrayList<entproject>();
 
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_PROJECT, allColumns, "companyfn = '" + Globals.COMPANYFN + "' AND active_yn = 'y'", null, null, null, "project_code DESC");
+        Cursor cursor = database.query(Globe3Db.TABLE_PROJECT, allColumns, "companyfn = '" + Globals.COMPANYFN + "' AND active_yn = 'y'", null, null, null, "project_code DESC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -133,7 +133,7 @@ public class ProjectRepo {
 
     public entproject get_project(String pUniquenum){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_PROJECT, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_PROJECT, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);

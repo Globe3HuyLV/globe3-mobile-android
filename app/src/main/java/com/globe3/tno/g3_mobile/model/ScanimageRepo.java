@@ -106,8 +106,8 @@ public class ScanimageRepo {
         values.put(Globe3Db.COLUMN_DATE02, DateUtility.getDateString(scanimage.date02));
         values.put(Globe3Db.COLUMN_NUM01, scanimage.num01);
         values.put(Globe3Db.COLUMN_NUM02, scanimage.num02);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_SCANIMAGE, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_SCANIMAGE, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_SCANIMAGE, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_SCANIMAGE, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         scanimage new_scanimage = cursorToObject(cursor);
         cursor.close();
@@ -117,11 +117,11 @@ public class ScanimageRepo {
 
     public void delete_scanimage(scanimage scanimage) {
         long id = scanimage.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_SCANIMAGE, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_SCANIMAGE, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_scanimage_all() {
-        database.delete(Globe3Db.TABLE_BIOM_SCANIMAGE, null, null);
+        database.delete(Globe3Db.TABLE_SCANIMAGE, null, null);
     }
 
     public void update_scanimage(scanimage scanimage) {
@@ -163,14 +163,14 @@ public class ScanimageRepo {
         values.put(Globe3Db.COLUMN_NUM01, scanimage.num01);
         values.put(Globe3Db.COLUMN_NUM02, scanimage.num02);
 
-        database.update(Globe3Db.TABLE_BIOM_SCANIMAGE, values, Globe3Db.COLUMN_IDCODE + " = " + scanimage.idcode, null);
+        database.update(Globe3Db.TABLE_SCANIMAGE, values, Globe3Db.COLUMN_IDCODE + " = " + scanimage.idcode, null);
     }
 
 
     public ArrayList<scanimage> get_active_scanimages() {
         ArrayList<scanimage> scanimages = new ArrayList<scanimage>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_SCANIMAGE, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_SCANIMAGE, allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -186,7 +186,7 @@ public class ScanimageRepo {
     }
 
     public scanimage get_scanimage_staff_reg(String pUniquenum){
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_SCANIMAGE, allColumns, "staff_unique=?", new String[]{pUniquenum}, null, null, "date_register DESC", "1");
+        Cursor cursor = database.query(Globe3Db.TABLE_SCANIMAGE, allColumns, "staff_unique=?", new String[]{pUniquenum}, null, null, "date_register DESC", "1");
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -200,7 +200,7 @@ public class ScanimageRepo {
 
     public scanimage get_scanimage(String pUniquenum){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_SCANIMAGE, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_SCANIMAGE, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);

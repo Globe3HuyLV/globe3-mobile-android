@@ -92,8 +92,8 @@ public class TabledataRepo {
         values.put(Globe3Db.COLUMN_DATE02, DateUtility.getDateString(tabledata.date02));
         values.put(Globe3Db.COLUMN_NUM01, tabledata.num01);
         values.put(Globe3Db.COLUMN_NUM02, tabledata.num02);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_TABLE1, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_TABLE1, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_TABLEDATA, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         tabledata new_tabledata = cursorToObject(cursor);
         cursor.close();
@@ -103,11 +103,15 @@ public class TabledataRepo {
 
     public void delete_tabledata(tabledata tabledata) {
         long id = tabledata.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_TABLE1, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_TABLEDATA, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_tabledata_all() {
-        database.delete(Globe3Db.TABLE_BIOM_TABLE1, null, null);
+        database.delete(Globe3Db.TABLE_TABLEDATA, null, null);
+    }
+
+    public void delete_tabledata_all(String tagTableUsage) {
+        database.delete(Globe3Db.TABLE_TABLEDATA, Globe3Db.COLUMN_TAG_TABLE_USAGE + " = '" + tagTableUsage + "'", null);
     }
 
     public void update_tabledata(tabledata tabledata) {
@@ -141,7 +145,7 @@ public class TabledataRepo {
         values.put(Globe3Db.COLUMN_NUM02, tabledata.num02);
 
 
-        database.update(Globe3Db.TABLE_BIOM_TABLE1, values, Globe3Db.COLUMN_IDCODE + " = " + tabledata.idcode, null);
+        database.update(Globe3Db.TABLE_TABLEDATA, values, Globe3Db.COLUMN_IDCODE + " = " + tabledata.idcode, null);
     }
 
 
@@ -149,7 +153,7 @@ public class TabledataRepo {
         ArrayList<tabledata> tabledatas = new ArrayList<tabledata>();
 
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_TABLE1, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, null, null, null, null, null);
 
 
         cursor.moveToFirst();
@@ -168,7 +172,7 @@ public class TabledataRepo {
     public ArrayList<tabledata> get_tabledatas(String param) {
         ArrayList<tabledata> tabledatas = new ArrayList<tabledata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_TABLE1, allColumns, param, null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, param, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -185,7 +189,7 @@ public class TabledataRepo {
     public tabledata get_tabledata(String pUniquenum){
 
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_TABLE1, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         tabledata tabledata = cursorToObject(cursor);
 
@@ -197,7 +201,7 @@ public class TabledataRepo {
     public tabledata get_tabledata_user_co_list(String pUniquenum){
 
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_TABLE1, allColumns, "uniquenum_sec = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, "uniquenum_sec = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
 

@@ -82,8 +82,8 @@ public class UseraccessRepo {
         values.put(Globe3Db.COLUMN_STAFF_DESC, useraccess.staff_desc);
         values.put(Globe3Db.COLUMN_STAFF_UNIQUE, useraccess.staff_unique);
         values.put(Globe3Db.COLUMN_DEVICE_ID, useraccess.device_id);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_USERACCESS, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_USERACCESS, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_USERACCESS, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         useraccess new_useraccess = cursorToObject(cursor);
         cursor.close();
@@ -93,11 +93,11 @@ public class UseraccessRepo {
 
     public void delete_useraccess(useraccess useraccess) {
         long id = useraccess.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_USERACCESS, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_USERACCESS, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_useraccess_all() {
-        database.delete(Globe3Db.TABLE_BIOM_USERACCESS, null, null);
+        database.delete(Globe3Db.TABLE_USERACCESS, null, null);
     }
 
     public void update_useraccess(useraccess useraccess) {
@@ -126,14 +126,14 @@ public class UseraccessRepo {
         values.put(Globe3Db.COLUMN_DEVICE_ID, useraccess.device_id);
 
 
-        database.update(Globe3Db.TABLE_BIOM_USERACCESS, values, Globe3Db.COLUMN_IDCODE + " = " + useraccess.idcode, null);
+        database.update(Globe3Db.TABLE_USERACCESS, values, Globe3Db.COLUMN_IDCODE + " = " + useraccess.idcode, null);
     }
 
 
     public ArrayList<useraccess> get_active_useraccess() {
         ArrayList<useraccess> useraccesss = new ArrayList<useraccess>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_USERACCESS, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             useraccess useraccess = cursorToObject(cursor);
@@ -151,7 +151,7 @@ public class UseraccessRepo {
 
     public useraccess get_useraccess(String pUniquenum){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_USERACCESS, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);
@@ -159,20 +159,20 @@ public class UseraccessRepo {
 
     public useraccess get_useraccess_by_name(String pUserLoginId){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_USERACCESS, allColumns, "userid = '"+pUserLoginId+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, "userid = '"+pUserLoginId+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);
     }
 
     public boolean useraccess_authenticate(String pCompany, String pUserId, String pPassword){
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_USERACCESS, allColumns, "companyid='"+ pCompany +"' AND userid='"+ pUserId +"' AND password='"+ pPassword +"' AND (DATE() BETWEEN date_valid_from AND date_valid_to OR userid='m8')", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, "companyid='"+ pCompany +"' AND userid='"+ pUserId +"' AND password='"+ pPassword +"' AND (DATE() BETWEEN date_valid_from AND date_valid_to OR userid='m8')", null, null, null, null);
 
         return cursor.getCount() > 0;
     }
 
     public useraccess useraccess_get_by_login(String pCompany, String pUserId, String pPassword){
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_USERACCESS, allColumns, "companyid='"+ pCompany +"' AND userid='"+ pUserId +"' AND password='"+ pPassword +"' AND (DATE() BETWEEN date_valid_from AND date_valid_to OR userid='m8')", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, "companyid='"+ pCompany +"' AND userid='"+ pUserId +"' AND password='"+ pPassword +"' AND (DATE() BETWEEN date_valid_from AND date_valid_to OR userid='m8')", null, null, null, null);
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();

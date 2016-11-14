@@ -132,8 +132,8 @@ public class StaffdataRepo {
         values.put(Globe3Db.COLUMN_PROJECT_CODE, staffdata.project_code);
         values.put(Globe3Db.COLUMN_PROJECT_NAME, staffdata.project_name);
         values.put(Globe3Db.COLUMN_PROJECT_UNIQUE, staffdata.project_unique);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_WDATA, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_WDATA, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         staffdata new_staffdata = cursorToObject(cursor);
         cursor.close();
@@ -142,11 +142,11 @@ public class StaffdataRepo {
 
     public void delete_staffdata(staffdata staffdata) {
         long id = staffdata.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_WDATA, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_WDATA, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_staffdata_all() {
-        database.delete(Globe3Db.TABLE_BIOM_WDATA, null, null);
+        database.delete(Globe3Db.TABLE_WDATA, null, null);
     }
 
     public void update_staffdata(staffdata staffdata) {
@@ -200,14 +200,14 @@ public class StaffdataRepo {
         values.put(Globe3Db.COLUMN_PROJECT_NAME, staffdata.project_name);
         values.put(Globe3Db.COLUMN_PROJECT_UNIQUE, staffdata.project_unique);
 
-        database.update(Globe3Db.TABLE_BIOM_WDATA, values, Globe3Db.COLUMN_IDCODE + " = " + staffdata.idcode, null);
+        database.update(Globe3Db.TABLE_WDATA, values, Globe3Db.COLUMN_IDCODE + " = " + staffdata.idcode, null);
     }
 
 
     public ArrayList<staffdata> get_active_staffdatas() {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'", null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -225,7 +225,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> get_updated_staffdatas() {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND typeof(date_sync) = 'null'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND typeof(date_sync) = 'null'", null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -243,7 +243,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> search_staffdatas(String pSearch) {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (staff_fullname LIKE '%" + pSearch + "%' OR staff_id LIKE '%" + pSearch + "%')", null, null, null, "staff_fullname ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (staff_fullname LIKE '%" + pSearch + "%' OR staff_id LIKE '%" + pSearch + "%')", null, null, null, "staff_fullname ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -261,7 +261,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> get_active_staffdatas(String pSortBy) {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'", null, null, null, pSortBy + " ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'", null, null, null, pSortBy + " ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -279,7 +279,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> get_report_staffdatas(String pDatePost, String pUniquenum, String pSortBy) {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'" + (!pUniquenum.equals("") ? " AND uniquenum_pri ='" + pUniquenum +   "' " : "") + (!pDatePost.equals("") ? " AND date_post <= '" + pDatePost +   "' " : ""), null, null, null, pSortBy + " ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'" + (!pUniquenum.equals("") ? " AND uniquenum_pri ='" + pUniquenum +   "' " : "") + (!pDatePost.equals("") ? " AND date_post <= '" + pDatePost +   "' " : ""), null, null, null, pSortBy + " ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -297,7 +297,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> get_registered_staffdatas() {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (LENGTH(fingerprint_image1)>0 OR LENGTH(fingerprint_image2)>0)", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (LENGTH(fingerprint_image1)>0 OR LENGTH(fingerprint_image2)>0)", null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -314,7 +314,7 @@ public class StaffdataRepo {
 
     public staffdata get_staffdata(String pUniquenum){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_WDATA, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);

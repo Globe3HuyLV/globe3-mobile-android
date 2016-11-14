@@ -56,6 +56,7 @@
     <string name="label_retry">Retry</string>
     <string name="label_update">Update</string>
     <string name="label_ignore">Ignore</string>
+    <string name="label_select_entity">Select entity</string>
 
     <string name="msg_data_is_latest">Data is latest</string>
     <string name="msg_connected">Connected</string>

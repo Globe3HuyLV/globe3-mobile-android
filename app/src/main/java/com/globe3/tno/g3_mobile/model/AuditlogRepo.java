@@ -91,8 +91,8 @@ public class AuditlogRepo {
         values.put(Globe3Db.COLUMN_DATE02, DateUtility.getDateString(auditlog.date02));
         values.put(Globe3Db.COLUMN_NUM01, auditlog.num01);
         values.put(Globe3Db.COLUMN_NUM02, auditlog.num02);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_AUDITLOG, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_AUDITLOG, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_AUDITLOG, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         auditlog new_auditlog = cursorToObject(cursor);
         cursor.close();
@@ -101,11 +101,11 @@ public class AuditlogRepo {
 
     public void delete_auditlog(auditlog auditlog) {
         long id = auditlog.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_AUDITLOG, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_AUDITLOG, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_auditlog_all() {
-        database.delete(Globe3Db.TABLE_BIOM_AUDITLOG, null, null);
+        database.delete(Globe3Db.TABLE_AUDITLOG, null, null);
     }
 
     public void update_auditlog(auditlog auditlog) {
@@ -139,14 +139,14 @@ public class AuditlogRepo {
         values.put(Globe3Db.COLUMN_NUM01, auditlog.num01);
         values.put(Globe3Db.COLUMN_NUM02, auditlog.num02);
 
-        database.update(Globe3Db.TABLE_BIOM_AUDITLOG, values, Globe3Db.COLUMN_IDCODE + " = " + auditlog.idcode, null);
+        database.update(Globe3Db.TABLE_AUDITLOG, values, Globe3Db.COLUMN_IDCODE + " = " + auditlog.idcode, null);
     }
 
 
     public ArrayList<auditlog> get_active_auditlogs() {
         ArrayList<auditlog> auditlogs = new ArrayList<auditlog>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_AUDITLOG, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -162,8 +162,8 @@ public class AuditlogRepo {
     }
 
     public auditlog get_auditlog_latest_sync(String pUsage){
-        //Cursor cursor = database.query(Globe3Db.TABLE_BIOM_SCANIMAGE, allColumns, "staff_unique=?", new String[]{pUniquenum}, null, null, "date_register DESC", "1");
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_AUDITLOG, allColumns, "tag_table_usage=?", new String[]{pUsage}, null, null, "date_post DESC", "1");
+        //Cursor cursor = database.query(Globe3Db.TABLE_SCANIMAGE, allColumns, "staff_unique=?", new String[]{pUniquenum}, null, null, "date_register DESC", "1");
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "tag_table_usage=?", new String[]{pUsage}, null, null, "date_post DESC", "1");
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -175,21 +175,21 @@ public class AuditlogRepo {
 
     public auditlog get_auditlog(String pUniquenum){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_AUDITLOG, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);
     }
 
     public void database_truncate(){
-        //database.delete(Globe3Db.TABLE_BIOM_AUDITLOG, null, null);
-        //database.delete(Globe3Db.TABLE_BIOM_DAILYTIME, null, null);
-        database.delete(Globe3Db.TABLE_BIOM_ENTITY, null, null);
-        database.delete(Globe3Db.TABLE_BIOM_PROJECT, null, null);
-        database.delete(Globe3Db.TABLE_BIOM_SCANIMAGE, null, null);
-        database.delete(Globe3Db.TABLE_BIOM_TABLE1, null, null);
-        database.delete(Globe3Db.TABLE_BIOM_USERACCESS, null, null);
-        database.delete(Globe3Db.TABLE_BIOM_WDATA, null, null);
+        //database.delete(Globe3Db.TABLE_AUDITLOG, null, null);
+        //database.delete(Globe3Db.TABLE_DAILYTIME, null, null);
+        database.delete(Globe3Db.TABLE_ENTITY, null, null);
+        database.delete(Globe3Db.TABLE_PROJECT, null, null);
+        database.delete(Globe3Db.TABLE_SCANIMAGE, null, null);
+        database.delete(Globe3Db.TABLE_TABLEDATA, null, null);
+        database.delete(Globe3Db.TABLE_USERACCESS, null, null);
+        database.delete(Globe3Db.TABLE_WDATA, null, null);
     }
 
     private auditlog cursorToObject(Cursor cursor) {

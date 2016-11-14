@@ -111,6 +111,12 @@ public class SyncDownFragment extends DialogFragment {
                 if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
                     syncTotal = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
 
+                    userFactory.deleteAll();
+                    companyFactory.deleteAll();
+                    projectFactory.deleteAll();
+                    staffFactory.deleteAll();
+                    staffFactory.deleteStaffProject();
+
                     for(int i=0;i<users.length();i++)
                     {
                         JSONObject userJson = users.getJSONObject(i);

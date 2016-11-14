@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
+import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
@@ -101,7 +102,7 @@ public class StaffFactory {
             staff_project.companyfn = staffJson.getString("companyfn");
             staff_project.uniquenum_pri = staffJson.getString("uniquenum");
 
-            staff_project.tag_table_usage = TagTableUsage.WORKER_PROJECT;
+            staff_project.tag_table_usage = STAFF_PROJECT;
 
             staff_project.nvar25_01 = staffJson.getString("staff_code");
             staff_project.nvar25_02 = staffJson.getString("staff_unique");
@@ -139,6 +140,12 @@ public class StaffFactory {
         staffdata_repo.open();
         staffdata_repo.delete_staffdata_all();
         staffdata_repo.close();
+    }
+
+    public void deleteStaffProject(){
+        tabledata_repo.open();
+        tabledata_repo.delete_tabledata_all(STAFF_PROJECT);
+        tabledata_repo.close();
     }
 
     public void updateStaff(Staff staff) {

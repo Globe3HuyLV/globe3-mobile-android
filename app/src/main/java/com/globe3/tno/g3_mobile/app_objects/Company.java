@@ -1,6 +1,8 @@
 package com.globe3.tno.g3_mobile.app_objects;
 
-public class Company {
+import java.io.Serializable;
+
+public class Company implements Serializable{
     private long idcode;
     private String uniquenum;
     private String name;

@@ -65,8 +65,8 @@ public class EntityRepo {
         values.put(Globe3Db.COLUMN_COMPANYFN, entity.companyfn);
         values.put(Globe3Db.COLUMN_CO_CODE, entity.co_code);
         values.put(Globe3Db.COLUMN_CO_NAME, entity.co_name);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_ENTITY, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_ENTITY, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_ENTITY, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_ENTITY, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         entity new_entity = cursorToObject(cursor);
         cursor.close();
@@ -77,11 +77,11 @@ public class EntityRepo {
 
     public void delete_entity(entity entity) {
         long id = entity.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_ENTITY, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_ENTITY, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_entity_all() {
-        database.delete(Globe3Db.TABLE_BIOM_ENTITY, null, null);
+        database.delete(Globe3Db.TABLE_ENTITY, null, null);
     }
 
     public void update_entity(entity entity) {
@@ -101,14 +101,14 @@ public class EntityRepo {
         values.put(Globe3Db.COLUMN_CO_NAME, entity.co_name);
 
 
-        database.update(Globe3Db.TABLE_BIOM_ENTITY, values, Globe3Db.COLUMN_IDCODE + " = " + entity.idcode, null);
+        database.update(Globe3Db.TABLE_ENTITY, values, Globe3Db.COLUMN_IDCODE + " = " + entity.idcode, null);
     }
 
 
     public ArrayList<entity> get_active_entitys() {
         ArrayList<entity> entitys = new ArrayList<entity>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_ENTITY, allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_ENTITY, allColumns, null, null, null, null, null);
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -130,7 +130,7 @@ public class EntityRepo {
     public ArrayList<entity> get_user_entitys(String userCompanys) {
         ArrayList<entity> entitys = new ArrayList<entity>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_ENTITY, allColumns, "uniquenum_pri IN ("+userCompanys+")", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_ENTITY, allColumns, "uniquenum_pri IN ("+userCompanys+")", null, null, null, null);
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -150,7 +150,7 @@ public class EntityRepo {
     }
 
     public entity get_entity(String pUniquenum){
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_ENTITY, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_ENTITY, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();

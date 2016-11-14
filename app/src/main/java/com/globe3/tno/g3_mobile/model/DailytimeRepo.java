@@ -123,8 +123,8 @@ public class DailytimeRepo {
         values.put(Globe3Db.COLUMN_DATE02, DateUtility.getDateString(dailytime.date02));
         values.put(Globe3Db.COLUMN_NUM01, dailytime.num01);
         values.put(Globe3Db.COLUMN_NUM02, dailytime.num02);
-        long insertId = database.insert(Globe3Db.TABLE_BIOM_DAILYTIME, null, values);
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
+        long insertId = database.insert(Globe3Db.TABLE_DAILYTIME, null, values);
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         dailytime new_dailytime = cursorToObject(cursor);
         cursor.close();
@@ -134,11 +134,11 @@ public class DailytimeRepo {
 
     public void delete_dailytime(dailytime dailytime) {
         long id = dailytime.idcode;
-        database.delete(Globe3Db.TABLE_BIOM_DAILYTIME, Globe3Db.COLUMN_IDCODE + " = " + id, null);
+        database.delete(Globe3Db.TABLE_DAILYTIME, Globe3Db.COLUMN_IDCODE + " = " + id, null);
     }
 
     public void delete_dailytime_all(dailytime dailytime_all) {
-        database.delete(Globe3Db.TABLE_BIOM_DAILYTIME, null, null);
+        database.delete(Globe3Db.TABLE_DAILYTIME, null, null);
     }
 
     public void update_dailytime(dailytime dailytime) {
@@ -186,13 +186,13 @@ public class DailytimeRepo {
         values.put(Globe3Db.COLUMN_NUM01, dailytime.num01);
         values.put(Globe3Db.COLUMN_NUM02, dailytime.num02);
 
-        database.update(Globe3Db.TABLE_BIOM_DAILYTIME, values, Globe3Db.COLUMN_UNIQUENUM_PRI + " = '" + dailytime.uniquenum_pri + "'", null);
+        database.update(Globe3Db.TABLE_DAILYTIME, values, Globe3Db.COLUMN_UNIQUENUM_PRI + " = '" + dailytime.uniquenum_pri + "'", null);
     }
 
     public ArrayList<dailytime> get_active_dailytimes() {
         ArrayList<dailytime> dailytimes = new ArrayList<dailytime>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n'", null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -209,7 +209,7 @@ public class DailytimeRepo {
     public ArrayList<dailytime> get_staff_dailytimes(String pUniquenum, String pType, boolean pGetUnsync) {
         ArrayList<dailytime> dailytimes = new ArrayList<dailytime>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n'" + (!pUniquenum.equals("") ? " AND staff_unique ='" + pUniquenum +   "' " : "") + (!pType.equals("") ? " AND type_in_out ='" + pType +   "' " : "") + (pGetUnsync ? " AND typeof(date_sync) = 'null'" : ""), null, null, null, "date_post ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n'" + (!pUniquenum.equals("") ? " AND staff_unique ='" + pUniquenum +   "' " : "") + (!pType.equals("") ? " AND type_in_out ='" + pType +   "' " : "") + (pGetUnsync ? " AND typeof(date_sync) = 'null'" : ""), null, null, null, "date_post ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -230,7 +230,7 @@ public class DailytimeRepo {
         cal.add(Calendar.DATE, -1);
         Date dateBuffer = cal.getTime();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND type_in_out='in' AND staff_unique ='" + pUniquenum + "' AND typeof(date_time_in) != 'null' AND date_time_in BETWEEN '" + DateUtility.getDateString(dateBuffer, "yyyy-MM-dd HH:mm:ss") + "' AND '" + DateUtility.getDateString(new Date(), "yyyy-MM-dd HH:mm:ss") + "'", null, null, null, "date_time_in DESC", "1");
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND type_in_out='in' AND staff_unique ='" + pUniquenum + "' AND typeof(date_time_in) != 'null' AND date_time_in BETWEEN '" + DateUtility.getDateString(dateBuffer, "yyyy-MM-dd HH:mm:ss") + "' AND '" + DateUtility.getDateString(new Date(), "yyyy-MM-dd HH:mm:ss") + "'", null, null, null, "date_time_in DESC", "1");
 
         cursor.moveToFirst();
 
@@ -246,7 +246,7 @@ public class DailytimeRepo {
     public ArrayList<dailytime> get_report_dailytimes(String pDatePost, String pUniquenum, String pSortBy) {
         ArrayList<dailytime> dailytimes = new ArrayList<dailytime>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n'" + (!pUniquenum.equals("") ? " AND staff_unique ='" + pUniquenum + "' " : "") + (!pDatePost.equals("") ? " AND date_post <= '" + pDatePost + " 23:59' " : ""), null, null, null, pSortBy + " ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n'" + (!pUniquenum.equals("") ? " AND staff_unique ='" + pUniquenum + "' " : "") + (!pDatePost.equals("") ? " AND date_post <= '" + pDatePost + " 23:59' " : ""), null, null, null, pSortBy + " ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -263,11 +263,11 @@ public class DailytimeRepo {
     public dailytime get_previous_time_in(String staffUnique, String logType){
         Cursor cursor = null;
         if(logType.equals(TagTableUsage.TIMELOG_IN)){
-            cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique ='" + staffUnique + "' AND typeof(date_time_in) != 'null'", null, null, null, "date_time_in DESC", "2");
+            cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique ='" + staffUnique + "' AND typeof(date_time_in) != 'null'", null, null, null, "date_time_in DESC", "2");
         }else if(logType.equals(TagTableUsage.TIMELOG_OUT)){
-            cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique ='" + staffUnique + "' AND typeof(date_time_out) != 'null'", null, null, null, "date_time_out DESC", "2");
+            cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique ='" + staffUnique + "' AND typeof(date_time_out) != 'null'", null, null, null, "date_time_out DESC", "2");
         }else{
-            cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND type_in_out='loc_chk' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique ='" + staffUnique + "' AND typeof(date_time_in) != 'null'", null, null, null, "date_time_in DESC", "2");
+            cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND type_in_out='loc_chk' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique ='" + staffUnique + "' AND typeof(date_time_in) != 'null'", null, null, null, "date_time_in DESC", "2");
         }
 
         if(cursor != null && cursor.getCount() == 2){
@@ -284,7 +284,7 @@ public class DailytimeRepo {
         String fromDate = DateUtility.getDateString(reportDate, "yyyy-MM-dd") + " 00:00:00";
         String toDate = DateUtility.getDateString(reportDate, "yyyy-MM-dd") + " 23:59:59";
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND (date_time_in BETWEEN '" + fromDate + "' AND '" + toDate + "' OR date_time_out BETWEEN '" + fromDate + "' AND '" + toDate + "')", null, null, null, "staff_fullname ASC, date_post ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '" + COMPANYFN + "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND (date_time_in BETWEEN '" + fromDate + "' AND '" + toDate + "' OR date_time_out BETWEEN '" + fromDate + "' AND '" + toDate + "')", null, null, null, "staff_fullname ASC, date_post ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -309,7 +309,7 @@ public class DailytimeRepo {
         String fromDate = DateUtility.getDateString(reportDate, "yyyy-MM-dd") + " 00:00:00";
         String toDate = DateUtility.getDateString(cal.getTime(), "yyyy-MM-dd") + " 23:59:59";
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique='" + staffUnique + "' AND (date_time_in BETWEEN '" + fromDate + "' AND '" + toDate + "' OR date_time_out BETWEEN '" + fromDate + "' AND '" + toDate + "')" , null, null, null, "date_post ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND staff_unique='" + staffUnique + "' AND (date_time_in BETWEEN '" + fromDate + "' AND '" + toDate + "' OR date_time_out BETWEEN '" + fromDate + "' AND '" + toDate + "')" , null, null, null, "date_post ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -334,7 +334,7 @@ public class DailytimeRepo {
         String fromDate = DateUtility.getDateString(reportDate, "yyyy-MM-dd") + " 00:00:00";
         String toDate = DateUtility.getDateString(cal.getTime(), "yyyy-MM-dd") + " 23:59:59";
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND tag_table_usage='loc_chk' AND staff_unique='" + staffUnique + "' AND (date_time_in BETWEEN '" + fromDate + "' AND '" + toDate + "')" , null, null, null, "date_post ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND tag_table_usage='loc_chk' AND staff_unique='" + staffUnique + "' AND (date_time_in BETWEEN '" + fromDate + "' AND '" + toDate + "')" , null, null, null, "date_post ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -351,7 +351,7 @@ public class DailytimeRepo {
     public ArrayList<dailytime> get_new_dailytimes() {
         ArrayList<dailytime> dailytimes = new ArrayList<dailytime>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND (typeof(date_sync) = 'null' OR (typeof(date_sync) != 'null' AND date_lastupdate > date_sync))" , null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND tag_void_yn='n' AND tag_deleted_yn='n' AND (typeof(date_sync) = 'null' OR (typeof(date_sync) != 'null' AND date_lastupdate > date_sync))" , null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -367,7 +367,7 @@ public class DailytimeRepo {
 
     public dailytime get_dailytime(String pUniquenum){
 
-        Cursor cursor = database.query(Globe3Db.TABLE_BIOM_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, "companyfn = '"+ COMPANYFN+ "' AND uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
         cursor.moveToFirst();
         return cursorToObject(cursor);

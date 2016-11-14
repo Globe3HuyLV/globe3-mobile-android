@@ -10,14 +10,16 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,18 +27,25 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.app_objects.Company;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
+import com.globe3.tno.g3_mobile.fragments.CompanySelectFragment;
 import com.globe3.tno.g3_mobile.fragments.SyncDownFragment;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.GPSUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.util.PermissionUtility;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
+import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 import static com.globe3.tno.g3_mobile.globals.Globals.mGPSLocation;
 import static com.globe3.tno.g3_mobile.globals.Globals.mGPSUtility;
 
@@ -44,6 +53,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     DashboardActivity dashboardActivity;
 
     AuditFactory auditFactory;
+    UserFactory userFactory;
+    CompanyFactory companyFactory;
 
     Toolbar dashboardToolbar;
     DrawerLayout dashboardDrawer;
@@ -54,6 +65,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     TextView tv_last_sync;
     TextView tv_gps;
     TextView tv_pending_sync;
+
+    ArrayList<Company> companyList;
 
     LocationManager locationManager;
 
@@ -91,7 +104,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_dashboard_actionbar, menu);
         return true;
@@ -100,17 +113,26 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_entities) {
+        if (id == R.id.action_company_select) {
+            FragmentManager fragmentManager = getFragmentManager();
+            CompanySelectFragment companySelectFragment = new CompanySelectFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("company_list", companyList);
+            companySelectFragment.setArguments(args);
+            companySelectFragment.setCancelable(true);
+            companySelectFragment.show(fragmentManager, getString(R.string.label_select_entity));
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     public void onActivityLoading(){
         try {
             dashboardActivity = this;
 
             auditFactory = new AuditFactory(dashboardActivity);
+            userFactory = new UserFactory(dashboardActivity);
+            companyFactory = new CompanyFactory(dashboardActivity);
 
             dashboardToolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
             dashboardDrawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
@@ -189,9 +211,35 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     public void loadCompanies(){
         if(getSupportActionBar() != null){
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setTitle(COMPANY_NAME);
+
+            ActionBar mActionBar = getSupportActionBar();
+            mActionBar.setDisplayShowHomeEnabled(false);
+            mActionBar.setDisplayShowTitleEnabled(false);
+            LayoutInflater mInflater = LayoutInflater.from(this);
+
+            View mCustomView = mInflater.inflate(R.layout.actionbar_dashboard, null);
+            TextView mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
+            mTitleTextView.setText(COMPANY_NAME);
+
+            mActionBar.setCustomView(mCustomView, new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
+            mActionBar.setDisplayShowCustomEnabled(true);
+
+            companyList = companyFactory.getUserCompanys(userFactory.getUser(USERLOGINUNIQ).getCompanies());
         }
+    }
+
+    public void selectCompany(View view){
+        FragmentManager fragmentManager = getFragmentManager();
+        CompanySelectFragment companySelectFragment = new CompanySelectFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("company_list", companyList);
+        companySelectFragment.setArguments(args);
+        companySelectFragment.setCancelable(true);
+        companySelectFragment.show(fragmentManager, getString(R.string.label_select_entity));
+    }
+
+    public void resetCompanyName(){
+        ((TextView) getSupportActionBar().getCustomView().findViewById(R.id.title_text)).setText(COMPANY_NAME);
     }
 
     public void showLastSync(){

@@ -11,14 +11,14 @@ public class Globe3Db extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "globe3.db";
     private static final int DATABASE_VERSION = 1;
 
-    public static final String TABLE_BIOM_USERACCESS = "useraccess";
-    public static final String TABLE_BIOM_ENTITY = "entity";
-    public static final String TABLE_BIOM_PROJECT = "entproject";
-    public static final String TABLE_BIOM_WDATA = "staffdata";
-    public static final String TABLE_BIOM_AUDITLOG = "auditlog";
-    public static final String TABLE_BIOM_SCANIMAGE = "scanimage";
-    public static final String TABLE_BIOM_DAILYTIME = "dailytime";
-    public static final String TABLE_BIOM_TABLE1 = "tabledata";
+    public static final String TABLE_USERACCESS = "useraccess";
+    public static final String TABLE_ENTITY = "entity";
+    public static final String TABLE_PROJECT = "entproject";
+    public static final String TABLE_WDATA = "staffdata";
+    public static final String TABLE_AUDITLOG = "auditlog";
+    public static final String TABLE_SCANIMAGE = "scanimage";
+    public static final String TABLE_DAILYTIME = "dailytime";
+    public static final String TABLE_TABLEDATA = "tabledata";
 
     public static final String COLUMN_IDCODE = "idcode";
     public static final String COLUMN_TAG_TABLE_USAGE = "tag_table_usage";
