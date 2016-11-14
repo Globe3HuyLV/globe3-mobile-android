@@ -786,6 +786,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_location_on_white_24dp"
+            android:onClick="goToLocationCheck"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccentDark"
             fab:fab_colorRipple="@color/colorAccentLight"

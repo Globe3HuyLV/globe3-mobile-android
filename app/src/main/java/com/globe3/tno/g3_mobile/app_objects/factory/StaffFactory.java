@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
@@ -27,6 +28,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
@@ -83,6 +85,7 @@ public class StaffFactory {
 
             staff.fingerprint_image1 = FileUtility.getImage(staffJson.getString("fingerprint_image1"));
             staff.fingerprint_image2 = FileUtility.getImage(staffJson.getString("fingerprint_image2"));
+
             staff.photo1 = FileUtility.getImage(staffJson.getString("photo1"));
 
         } catch (JSONException e) {

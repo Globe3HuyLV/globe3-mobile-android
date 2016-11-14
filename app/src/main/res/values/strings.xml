@@ -5,6 +5,7 @@
     <string name="activity_dashboard">Dashboard</string>
     <string name="activity_timesheet">Timesheet</string>
     <string name="activity_finger_registration">Finger Registration</string>
+    <string name="activity_location_check">Location Check</string>
     <string name="activity_photos">Photos</string>
     <string name="activity_project_photos">Project Photos</string>
     <string name="activity_project_photo_items">Project Photo Items</string>

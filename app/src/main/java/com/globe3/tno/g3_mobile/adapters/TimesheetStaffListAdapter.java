@@ -1,6 +1,8 @@
 package com.globe3.tno.g3_mobile.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
@@ -61,6 +64,11 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         RowStaff rowStaff = staffList.get(position);
         viewHolder.rl_row_staff.setOnClickListener(rowStaff.getOnClickListener());
+        if(rowStaff.getStaffPhoto()!=null){
+            viewHolder.iv_staff_photo.setImageBitmap(rowStaff.getStaffPhoto());
+        }else{
+            viewHolder.iv_staff_photo.setImageResource(R.drawable.ic_person_black_48dp);
+        }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
 

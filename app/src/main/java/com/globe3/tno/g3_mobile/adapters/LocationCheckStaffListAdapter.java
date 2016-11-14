@@ -1,6 +1,8 @@
 package com.globe3.tno.g3_mobile.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,17 +11,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.constants.App;
+import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
 
-public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffListAdapter.ViewHolder> {
+public class LocationCheckStaffListAdapter extends RecyclerView.Adapter<LocationCheckStaffListAdapter.ViewHolder> {
     Context parentContext;
 
     private ArrayList<RowStaff> staffList;
 
-    public PhotosStaffListAdapter(ArrayList<RowStaff> staffList, Context parentContext) {
+    public LocationCheckStaffListAdapter(ArrayList<RowStaff> staffList, Context parentContext) {
         this.parentContext = parentContext;
         this.staffList = staffList;
     }
@@ -51,8 +54,8 @@ public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffList
     }
 
     @Override
-    public PhotosStaffListAdapter.ViewHolder onCreateViewHolder(ViewGroup parentView, int viewType) {
-        View rowView = LayoutInflater.from(parentView.getContext()).inflate(R.layout.row_photos_staff, parentView, false);
+    public LocationCheckStaffListAdapter.ViewHolder onCreateViewHolder(ViewGroup parentView, int viewType) {
+        View rowView = LayoutInflater.from(parentView.getContext()).inflate(R.layout.row_location_check_staff, parentView, false);
         ViewHolder viewHolder = new ViewHolder(rowView);
         return viewHolder;
     }
@@ -68,7 +71,6 @@ public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffList
         }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
-
     }
 
     @Override

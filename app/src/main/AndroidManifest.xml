@@ -63,6 +63,14 @@
                 android:value="com.globe3.tno.g3_mobile.activities.DashboardActivity" />
         </activity>
         <activity
+            android:name="com.globe3.tno.g3_mobile.activities.LocationCheckActivity"
+            android:label="@string/activity_location_check"
+            android:theme="@style/AppThemeActionBarElevated">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.globe3.tno.g3_mobile.activities.DashboardActivity" />
+        </activity>
+        <activity
             android:name="com.globe3.tno.g3_mobile.activities.ProjectPhotoActivity"
             android:label="@string/activity_project_photos"
             android:theme="@style/AppThemeActionBarElevated">

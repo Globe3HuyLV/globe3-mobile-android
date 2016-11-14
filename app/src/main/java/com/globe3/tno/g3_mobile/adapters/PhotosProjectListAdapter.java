@@ -13,12 +13,12 @@ import com.globe3.tno.g3_mobile.R;
 
 import java.util.ArrayList;
 
-public class PhotoProjectListAdapter extends RecyclerView.Adapter<PhotoProjectListAdapter.ViewHolder> {
+public class PhotosProjectListAdapter extends RecyclerView.Adapter<PhotosProjectListAdapter.ViewHolder> {
     Context parentContext;
 
     private ArrayList<RowProject> projectList;
 
-    public PhotoProjectListAdapter(ArrayList<RowProject> projectList, Context parentContext) {
+    public PhotosProjectListAdapter(ArrayList<RowProject> projectList, Context parentContext) {
         this.parentContext = parentContext;
         this.projectList = projectList;
     }
@@ -50,7 +50,7 @@ public class PhotoProjectListAdapter extends RecyclerView.Adapter<PhotoProjectLi
     }
 
     @Override
-    public PhotoProjectListAdapter.ViewHolder onCreateViewHolder(ViewGroup parentView, int viewType) {
+    public PhotosProjectListAdapter.ViewHolder onCreateViewHolder(ViewGroup parentView, int viewType) {
         View rowView = LayoutInflater.from(parentView.getContext()).inflate(R.layout.row_photo_project, parentView, false);
         ViewHolder viewHolder = new ViewHolder(rowView);
         return viewHolder;

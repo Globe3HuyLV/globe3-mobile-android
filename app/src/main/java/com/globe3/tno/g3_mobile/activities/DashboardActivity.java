@@ -211,7 +211,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     public void loadCompanies(){
         if(getSupportActionBar() != null){
-
             ActionBar mActionBar = getSupportActionBar();
             mActionBar.setDisplayShowHomeEnabled(false);
             mActionBar.setDisplayShowTitleEnabled(false);
@@ -224,7 +223,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             mActionBar.setCustomView(mCustomView, new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
             mActionBar.setDisplayShowCustomEnabled(true);
 
-            companyList = companyFactory.getUserCompanys(userFactory.getUser(USERLOGINUNIQ).getCompanies());
+            if(userFactory.getActiveUsers().size() > 0){
+                companyList = companyFactory.getUserCompanys(userFactory.getUser(USERLOGINUNIQ).getCompanies());
+            }else{
+                companyList = new ArrayList<Company>();
+            }
         }
     }
 
@@ -288,6 +291,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     public void goToRegisterFinger(View view){
         goToActivity(RegsiterFingerActivity.class);
+    }
+
+    public void goToLocationCheck(View view){
+        goToActivity(LocationCheckActivity.class);
     }
 
     private class DashboardRefresh extends AsyncTask<Void, Void, Boolean>

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
+import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
 import com.globe3.tno.g3_mobile.view_objects.RowProject;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
@@ -17,15 +18,20 @@ import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
 import java.util.ArrayList;
 
 public class TimesheetProjectFragment extends Fragment {
+    ProjectFactory projectFactory;
+
     RecyclerView recycler_project_list;
     RecyclerView.Adapter recyclerViewAdapter;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
 
     LogTimeStaffFragment logTimeStaffFragment;
 
+    ArrayList<RowProject> project_list;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        projectFactory = new ProjectFactory(getActivity());
     }
 
     @Override
@@ -34,16 +40,15 @@ public class TimesheetProjectFragment extends Fragment {
 
         recycler_project_list = (RecyclerView) projectFragment.findViewById(R.id.recycler_project_list);
 
-        ArrayList<RowProject> project_list = new ArrayList<>();
-        for(int i=1001;i<=1027;i++){
-            final int n = i;
+        project_list = new ArrayList<>();
+        for(Project project : projectFactory.getActiveProjects()){
             RowProject rowProject = new RowProject();
-            rowProject.setProjectCode("PRJ"+String.valueOf(i));
-            rowProject.setProjectName("Project Desc");
+            rowProject.setProjectCode(project.getCode());
+            rowProject.setProjectName(project.getDesc());
             rowProject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FragmentManager fragmentManager = getActivity().getFragmentManager();
+                    /*FragmentManager fragmentManager = getActivity().getFragmentManager();
                     Bundle projectBundle = new Bundle();
 
                     Project project = new Project();
@@ -55,7 +60,7 @@ public class TimesheetProjectFragment extends Fragment {
                     logTimeStaffFragment = new LogTimeStaffFragment();
                     logTimeStaffFragment.setCancelable(false);
                     logTimeStaffFragment.setArguments(projectBundle);
-                    logTimeStaffFragment.show(fragmentManager, getString(R.string.label_log_time_staff));
+                    logTimeStaffFragment.show(fragmentManager, getString(R.string.label_log_time_staff));*/
                 }
             });
             project_list.add(rowProject);

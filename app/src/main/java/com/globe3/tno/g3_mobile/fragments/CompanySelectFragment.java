@@ -2,12 +2,10 @@ package com.globe3.tno.g3_mobile.fragments;
 
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,26 +14,14 @@ import android.widget.RelativeLayout;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.activities.DashboardActivity;
-import com.globe3.tno.g3_mobile.activities.ProjectPhotoActivity;
 import com.globe3.tno.g3_mobile.adapters.CompanyListAdapter;
-import com.globe3.tno.g3_mobile.adapters.PhotoProjectListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Company;
-import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
-import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
-import com.globe3.tno.g3_mobile.constants.App;
-import com.globe3.tno.g3_mobile.model.EntityRepo;
-import com.globe3.tno.g3_mobile.model.TabledataRepo;
-import com.globe3.tno.g3_mobile.model.UseraccessRepo;
 import com.globe3.tno.g3_mobile.view_objects.RowCompany;
-import com.globe3.tno.g3_mobile.view_objects.RowProject;
 
 import java.util.ArrayList;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
-import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
-import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 
 public class CompanySelectFragment extends DialogFragment {
     Context parentContext;
