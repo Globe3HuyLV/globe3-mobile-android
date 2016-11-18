@@ -130,6 +130,25 @@ public class ProjectRepo {
         return entprojects;
     }
 
+    public ArrayList<entproject> search_project(String pSearch) {
+        ArrayList<entproject> entprojects = new ArrayList<entproject>();
+
+
+        Cursor cursor = database.query(Globe3Db.TABLE_PROJECT, allColumns, "companyfn = '" + Globals.COMPANYFN + "' AND active_yn = 'y' AND project_code LIKE '%" + pSearch.trim() + "%'", null, null, null, "project_code DESC");
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            entproject entproject = cursorToObject(cursor);
+            if(entproject.active_yn.equals("y")){
+                entprojects.add(entproject);
+            }
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return entprojects;
+    }
+
 
     public entproject get_project(String pUniquenum){
 

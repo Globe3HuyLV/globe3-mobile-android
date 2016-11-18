@@ -13,7 +13,7 @@ import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.PhotosTabAdapter;
 
 public class PhotosActivity extends BaseActivity {
-    Activity photosActivity;
+    PhotosActivity photosActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +63,5 @@ public class PhotosActivity extends BaseActivity {
     }
 
     public void onActivityReady(){
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 }

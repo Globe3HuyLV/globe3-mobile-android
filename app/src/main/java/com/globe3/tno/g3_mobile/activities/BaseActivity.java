@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import com.globe3.tno.g3_mobile.R;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    public Activity baseActivity;
+    public BaseActivity baseActivity;
 
     public RelativeLayout layout_base_loader;
     public ImageView image_loader;

@@ -58,6 +58,7 @@
     <string name="label_update">Update</string>
     <string name="label_ignore">Ignore</string>
     <string name="label_select_entity">Select entity</string>
+    <string name="label_search">Search</string>
 
     <string name="msg_data_is_latest">Data is latest</string>
     <string name="msg_connected">Connected</string>
@@ -104,6 +105,7 @@
     <string name="msg_recent_activity">Recent Activty</string>
     <string name="msg_sync_in_progress">Sync in progress</string>
     <string name="msg_never">Never</string>
+    <string name="msg_no_record_found">No record found</string>
     <plurals name="msg_item">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
@@ -115,7 +117,9 @@
     <string name="hint_reference_number">reference number</string>
     <string name="hint_remarks">remarks</string>
     <string name="hint_search_project_code">search entproject code</string>
-    <string name="hint_search_staff_code">search staff code</string>
+    <string name="hint_search">search</string>
+    <string name="hint_project_code">project code</string>
+    <string name="hint_search_staff_num">search staff num</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

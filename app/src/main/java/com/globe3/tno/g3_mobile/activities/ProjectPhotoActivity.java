@@ -22,7 +22,7 @@ import com.globe3.tno.g3_mobile.R;
 import java.util.ArrayList;
 
 public class ProjectPhotoActivity extends BaseActivity {
-    Activity projectPhotoActivity;
+    ProjectPhotoActivity projectPhotoActivity;
     ArrayList<GridItemProjectPhoto> projectPhotoList;
 
     ProjectPhotoAddFragment projectPhotoAddFragment;

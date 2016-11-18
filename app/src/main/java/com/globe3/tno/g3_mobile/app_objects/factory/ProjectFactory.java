@@ -93,6 +93,16 @@ public class ProjectFactory {
         return projects;
     }
 
+    public ArrayList<Project> searchProject(String searchTerm) {
+        ArrayList<Project> projects = new ArrayList<Project>();
+        project_repo.open();
+        for(entproject entproject : project_repo.search_project(searchTerm)){
+            projects.add(convertEntity(entproject));
+        }
+        project_repo.close();
+        return projects;
+    }
+
     public ArrayList<Project> getStaffProjects(String staffUnique) {
         ArrayList<Project> projects = new ArrayList<Project>();
         tabledata_repo.open();

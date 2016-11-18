@@ -17,7 +17,7 @@ import com.globe3.tno.g3_mobile.view_objects.GridItemProjectPhotoItem;
 import java.util.ArrayList;
 
 public class ProjectPhotoItemViewActivity extends BaseActivity {
-    Activity projectPhotoItemViewActivity;
+    ProjectPhotoItemViewActivity projectPhotoItemViewActivity;
     ArrayList<GridItemProjectPhotoItem> projectPhotoItemList;
 
     Drawable upArrow;

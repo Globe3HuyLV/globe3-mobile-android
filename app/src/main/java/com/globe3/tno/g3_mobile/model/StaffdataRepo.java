@@ -207,7 +207,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> get_active_staffdatas() {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"'", null, null, null, "staff_fullname ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -243,7 +243,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> search_staffdatas(String pSearch) {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (staff_fullname LIKE '%" + pSearch + "%' OR staff_id LIKE '%" + pSearch + "%')", null, null, null, "staff_fullname ASC");
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (staff_fullname LIKE '%" + pSearch.trim() + "%' OR staff_id LIKE '%" + pSearch.trim() + "%')", null, null, null, "staff_fullname ASC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

@@ -8,6 +8,8 @@
 
         <item name="actionBarStyle">@style/ActionBarDefault</item>
         <item name="android:windowContentOverlay">@null</item>
+
+        <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back_black_24dp</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
