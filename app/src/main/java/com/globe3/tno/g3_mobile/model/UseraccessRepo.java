@@ -153,17 +153,24 @@ public class UseraccessRepo {
 
         Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
-        cursor.moveToFirst();
-
-        return cursorToObject(cursor);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            return cursorToObject(cursor);
+        }else{
+            return null;
+        }
     }
 
     public useraccess get_useraccess_by_name(String pUserLoginId){
 
         Cursor cursor = database.query(Globe3Db.TABLE_USERACCESS, allColumns, "userid = '"+pUserLoginId+"'", null, null, null, null);
 
-        cursor.moveToFirst();
-        return cursorToObject(cursor);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            return cursorToObject(cursor);
+        }else{
+            return null;
+        }
     }
 
     public boolean useraccess_authenticate(String pCompany, String pUserId, String pPassword){

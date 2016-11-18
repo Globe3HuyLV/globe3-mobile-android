@@ -23,8 +23,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Company;
@@ -45,6 +47,8 @@ import java.util.Date;
 import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
+import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
+import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 import static com.globe3.tno.g3_mobile.globals.Globals.mGPSLocation;
 import static com.globe3.tno.g3_mobile.globals.Globals.mGPSUtility;
@@ -59,12 +63,19 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     Toolbar dashboardToolbar;
     DrawerLayout dashboardDrawer;
     NavigationView dashboardNavigationView;
+    NavigationView navigation_drawer;
     FloatingActionMenu menuApps;
 
     TextView tv_server_connect;
     TextView tv_last_sync;
     TextView tv_gps;
     TextView tv_pending_sync;
+
+    FloatingActionButton fab_timesheet;
+    FloatingActionButton fab_register_finger;
+    FloatingActionButton fab_location_check;
+    FloatingActionButton fab_photos;
+    FloatingActionButton fab_task_update;
 
     ArrayList<Company> companyList;
 
@@ -104,28 +115,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_dashboard_actionbar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_company_select) {
-            FragmentManager fragmentManager = getFragmentManager();
-            CompanySelectFragment companySelectFragment = new CompanySelectFragment();
-            Bundle args = new Bundle();
-            args.putSerializable("company_list", companyList);
-            companySelectFragment.setArguments(args);
-            companySelectFragment.setCancelable(true);
-            companySelectFragment.show(fragmentManager, getString(R.string.label_select_entity));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
-
     public void onActivityLoading(){
         try {
             dashboardActivity = this;
@@ -137,12 +126,19 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             dashboardToolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
             dashboardDrawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
             dashboardNavigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigation_drawer = (NavigationView) findViewById(R.id.navigation_drawer);
             menuApps = (FloatingActionMenu) findViewById(R.id.fam_apps);
 
             tv_server_connect = (TextView) findViewById(R.id.tv_server_connect);
             tv_last_sync = (TextView) findViewById(R.id.tv_last_sync);
             tv_gps = (TextView) findViewById(R.id.tv_gps);
             tv_pending_sync = (TextView) findViewById(R.id.tv_pending_sync);
+
+            fab_timesheet = (FloatingActionButton) findViewById(R.id.fab_timesheet);
+            fab_register_finger = (FloatingActionButton) findViewById(R.id.fab_register_finger);
+            fab_location_check = (FloatingActionButton) findViewById(R.id.fab_location_check);
+            fab_photos = (FloatingActionButton) findViewById(R.id.fab_photos);
+            fab_task_update = (FloatingActionButton) findViewById(R.id.fab_task_update);
 
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -176,8 +172,22 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 }
             });
 
+            if(!USERLOGINID.equals("m8")){
+                fab_timesheet.setVisibility(MAC.substring(0,1).equals("n")?View.GONE:View.VISIBLE);
+                if(MAC.substring(1,2).equals("n")){
+                    navigation_drawer.getMenu().clear();
+                }else{
+                    navigation_drawer.inflateMenu(R.menu.activity_dashboard_drawer);
+                }
+                fab_register_finger.setVisibility(MAC.substring(2,3).equals("n")?View.GONE:View.VISIBLE);
+                fab_location_check.setVisibility(MAC.substring(3,4).equals("n")?View.GONE:View.VISIBLE);
+                fab_photos.setVisibility(MAC.substring(4,5).equals("n")?View.GONE:View.VISIBLE);
+                fab_task_update.setVisibility(MAC.substring(5,6).equals("n")?View.GONE:View.VISIBLE);
+            }
+
             if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
-                PermissionUtility.requestLocationServices(dashboardActivity, false);
+                mGPSUtility = new GPSUtility(dashboardActivity);
+                mGPSLocation = mGPSUtility.getGPSLocation();
             }
 
             loadCompanies();
@@ -195,8 +205,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             public void run() {
                 try{
                     new DashboardRefresh().execute();
-                    mGPSUtility = new GPSUtility(dashboardActivity);
-                    mGPSLocation = mGPSUtility.getGPSLocation();
                 }
                 catch (Exception e) {
                     e.printStackTrace();

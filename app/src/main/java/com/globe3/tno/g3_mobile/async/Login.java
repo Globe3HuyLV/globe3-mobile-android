@@ -2,11 +2,13 @@ package com.globe3.tno.g3_mobile.async;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.activities.DashboardActivity;
 import com.globe3.tno.g3_mobile.activities.LoginActivity;
 import com.globe3.tno.g3_mobile.app_objects.User;
 import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
+import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.constants.ConnectionStatus;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.app_objects.LoginDetails;
@@ -14,6 +16,7 @@ import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 
 import org.json.JSONObject;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.CFSQLFILENAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
@@ -29,7 +32,10 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
 
     private LoginActivity loginActivity;
     private LoginDetails loginDetails;
+
     private int server_status = ConnectionStatus.SERVER_CONNECTED;
+
+    int activeUsers;
 
     public Login(LoginActivity loginActivity, LoginDetails loginDetails){
         userFactory = new UserFactory(loginActivity);
@@ -42,7 +48,8 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
     protected Boolean doInBackground(Void... params) {
 
         try {
-            if(userFactory.getActiveUsers().size() == 0){
+            activeUsers = userFactory.getActiveUsers().size();
+            if(activeUsers == 0){
                 JSONObject loginResultJSON = HttpUtility.requestJSON("login", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&company="+loginDetails.getCompany()+"&userloginid="+loginDetails.getUserid()+"&password="+loginDetails.getPassword());
 
                 server_status = ConnectionStatus.SERVER_CONNECTED;
@@ -85,7 +92,11 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
     @Override
     protected void onPostExecute(Boolean loginSuccess) {
         if(loginSuccess){
-            loginActivity.startActivity(new Intent(loginActivity, DashboardActivity.class));
+            if(activeUsers > 0){
+                new MacUpdate(loginActivity, userFactory).execute();
+            }else{
+                loginActivity.startActivity(new Intent(loginActivity, DashboardActivity.class));
+            }
         }else{
             loginActivity.onLoginFailed(server_status);
         }

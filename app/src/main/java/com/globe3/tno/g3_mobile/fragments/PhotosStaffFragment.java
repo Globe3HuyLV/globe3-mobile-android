@@ -59,6 +59,7 @@ public class PhotosStaffFragment extends Fragment {
             rowStaff.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                 }
             });
             staff_list.add(rowStaff);
