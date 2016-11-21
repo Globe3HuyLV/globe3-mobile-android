@@ -25,11 +25,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Company;
+import com.globe3.tno.g3_mobile.app_objects.GPSLocation;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
@@ -117,6 +119,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     PermissionUtility.requestLocationServices(dashboardActivity, false);
+                }else{
+                    mGPSUtility = new GPSUtility(dashboardActivity);
+                    mGPSLocation = mGPSUtility.getGPSLocation();
                 }
             }
         }
@@ -146,11 +151,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        mGPSLocation = new GPSLocation();
+
         actionBar = getSupportActionBar();
-
-        toggle = new ActionBarDrawerToggle(dashboardActivity, dashboardDrawer, dashboardToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
-        dashboardNavigationView.setNavigationItemSelectedListener(dashboardActivity);
     }
 
     public void onActivityReady(){
@@ -159,11 +162,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, dashboardDrawer, dashboardToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         dashboardDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        dashboardNavigationView.setNavigationItemSelectedListener(this);
+
         menuApps.setClosedOnTouchOutside(true);
-        menuAppsIcons = new Drawable[2];
+        Drawable menuAppsIcons[] = new Drawable[2];
         menuAppsIcons[0] = getDrawable(R.drawable.ic_apps_white_24dp);
         menuAppsIcons[1] = getDrawable(R.drawable.ic_add_white_24dp);
 
@@ -186,6 +192,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             if(MAC.substring(1,2).equals("n")){
                 navigation_drawer.getMenu().clear();
             }else{
+                navigation_drawer.getMenu().clear();
                 navigation_drawer.inflateMenu(R.menu.activity_dashboard_drawer);
             }
             fab_register_finger.setVisibility(MAC.substring(2,3).equals("n")?View.GONE:View.VISIBLE);
@@ -195,6 +202,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
 
         if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
+            PermissionUtility.requestLocationServices(dashboardActivity, false);
+        }else{
             mGPSUtility = new GPSUtility(dashboardActivity);
             mGPSLocation = mGPSUtility.getGPSLocation();
         }
@@ -279,6 +288,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     public void requestGPS(View view){
         if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
             PermissionUtility.requestLocationServices(dashboardActivity, false);
+        }else{
+            mGPSUtility = new GPSUtility(dashboardActivity);
+            mGPSLocation = mGPSUtility.getGPSLocation();
         }
     }
 

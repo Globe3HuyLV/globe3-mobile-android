@@ -10,6 +10,17 @@ public class GPSLocation {
     public String PostalCode;
     public String KnownName;
 
+    public GPSLocation(){
+        Latitude = 0;
+        Longitude = 0;
+        Address = "";
+        City = "";
+        State = "";
+        Country = "";
+        PostalCode = "";
+        KnownName = "";
+    }
+
     public String getFullAddress(){
         String fullAddress = "";
 

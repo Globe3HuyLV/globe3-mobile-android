@@ -27,6 +27,11 @@ public class ConfigUtility {
         try {
             File fileConf = new File(Environment.getExternalStorageDirectory(), GLOBE3_DIR_NAME+"/globe3_conf.json");
 
+            if(!fileConf.exists()){
+                prompFailed(activity);
+                return true;
+            }
+
             StringBuilder textConf = new StringBuilder();
 
             BufferedReader br = new BufferedReader(new FileReader(fileConf));
@@ -53,26 +58,30 @@ public class ConfigUtility {
 
             return true;
         } catch (Exception e) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    android.app.AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity)
-                            .setCancelable(false)
-                            .setMessage(activity.getString(R.string.msg_failed_to_load_configuration))
-                            .setPositiveButton(activity.getString(R.string.label_exit), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    activity.finish();
-                                }
-                            });
-
-                    android.app.AlertDialog configAlert = alertBuilder.create();
-                    configAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-                    configAlert.show();
-                }
-            });
+            prompFailed(activity);
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static void prompFailed(final Activity activity){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                android.app.AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity)
+                        .setCancelable(false)
+                        .setMessage(activity.getString(R.string.msg_failed_to_load_configuration))
+                        .setPositiveButton(activity.getString(R.string.label_exit), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                activity.finish();
+                            }
+                        });
+
+                android.app.AlertDialog configAlert = alertBuilder.create();
+                configAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                configAlert.show();
+            }
+        });
     }
 }

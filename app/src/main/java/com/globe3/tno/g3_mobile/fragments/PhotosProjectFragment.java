@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.globe3.tno.g3_mobile.activities.ProjectPhotoActivity;
+import com.globe3.tno.g3_mobile.activities.ProjectPhotoSelectActivity;
 import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
@@ -63,6 +64,7 @@ public class PhotosProjectFragment extends Fragment {
             rowProject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    getActivity().startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
                     /*startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));*/
                 }
             });
@@ -113,6 +115,7 @@ public class PhotosProjectFragment extends Fragment {
                 rowProject.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        getActivity().startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
                     /*FragmentManager fragmentManager = getActivity().getFragmentManager();
                     Bundle projectBundle = new Bundle();
 

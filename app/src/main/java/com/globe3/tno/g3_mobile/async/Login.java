@@ -76,7 +76,13 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
                         user.setMAC(macResultJSON.getString("items"));
                         userFactory.updateUser(user);
                     }
-                    COMPANY_NAME = companyFactory.getCompany(COMPANYFN).getName();
+
+                    if(companyFactory.getCompany(COMPANYFN) != null){
+                        COMPANY_NAME = companyFactory.getCompany(COMPANYFN).getName();
+                    }else{
+                        COMPANY_NAME = "";
+                    }
+
                     return true;
                 }else{
                     return false;

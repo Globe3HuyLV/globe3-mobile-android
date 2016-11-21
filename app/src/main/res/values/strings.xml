@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Globe3 TMS</string>
+    <string name="app_name">Globe3 Mobile</string>
 
     <string name="activity_login">Login</string>
     <string name="activity_dashboard">Dashboard</string>
@@ -59,6 +59,8 @@
     <string name="label_ignore">Ignore</string>
     <string name="label_select_entity">Select entity</string>
     <string name="label_search">Search</string>
+    <string name="label_okay">Okay</string>
+    <string name="label_return">Return</string>
 
     <string name="msg_data_is_latest">Data is latest</string>
     <string name="msg_connected">Connected</string>
@@ -106,6 +108,7 @@
     <string name="msg_sync_in_progress">Sync in progress</string>
     <string name="msg_never">Never</string>
     <string name="msg_no_record_found">No record found</string>
+    <string name="msg_selection_limit_photos_reached">Selection Limit of %1$s Photos Reached</string>
     <plurals name="msg_item">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>

@@ -94,6 +94,7 @@ public class TimesheetActivity extends BaseActivity {
             actionBar.setHomeAsUpIndicator(upArrow);
         }
 
+        tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_staff)));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_project)));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);

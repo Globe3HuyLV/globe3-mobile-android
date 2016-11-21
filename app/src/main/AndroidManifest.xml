@@ -14,9 +14,12 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +28,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -35,11 +38,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.DashboardActivity"
+            android:name=".activities.DashboardActivity"
             android:label="@string/activity_dashboard"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.TimesheetActivity"
+            android:name=".activities.TimesheetActivity"
             android:label="@string/activity_timesheet"
             android:theme="@style/AppTheme">
             <meta-data
@@ -47,7 +50,7 @@
                 android:value="com.globe3.tno.g3_mobile.activities.DashboardActivity" />
         </activity>
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.PhotosActivity"
+            android:name=".activities.PhotosActivity"
             android:label="@string/activity_photos"
             android:theme="@style/AppTheme">
             <meta-data
@@ -55,7 +58,7 @@
                 android:value="com.globe3.tno.g3_mobile.activities.DashboardActivity" />
         </activity>
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.RegsiterFingerActivity"
+            android:name=".activities.RegsiterFingerActivity"
             android:label="@string/activity_finger_registration"
             android:theme="@style/AppThemeActionBarElevated">
             <meta-data
@@ -63,7 +66,7 @@
                 android:value="com.globe3.tno.g3_mobile.activities.DashboardActivity" />
         </activity>
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.LocationCheckActivity"
+            android:name=".activities.LocationCheckActivity"
             android:label="@string/activity_location_check"
             android:theme="@style/AppThemeActionBarElevated">
             <meta-data
@@ -71,20 +74,22 @@
                 android:value="com.globe3.tno.g3_mobile.activities.DashboardActivity" />
         </activity>
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.ProjectPhotoActivity"
+            android:name=".activities.ProjectPhotoActivity"
             android:label="@string/activity_project_photos"
             android:theme="@style/AppThemeActionBarElevated">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.globe3.tno.g3_mobile.activities.PhotosActivity" />
         </activity>
-        <activity android:name="com.globe3.tno.g3_mobile.activities.ProjectPhotoItemViewActivity"
+        <activity
+            android:name=".activities.ProjectPhotoItemViewActivity"
             android:label="@string/activity_project_photo_items"
             android:theme="@style/AppThemeActionBarElevated">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.globe3.tno.g3_mobile.activities.PhotosActivity" />
         </activity>
+        <activity android:name=".activities.ProjectPhotoSelectActivity"></activity>
     </application>
 
 </manifest>

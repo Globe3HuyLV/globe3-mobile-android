@@ -39,6 +39,8 @@
     <color name="colorProgressCenter">#E0E0E0</color>
     <color name="colorProgressEnd">#BDBDBD</color>
 
+    <color name="colorBlueTransparent">#663875D6</color>
+
     <color name="colorDashboardGreen">#66BB6A</color>
     <color name="colorDashboardGreenLight">#A5D6A7</color>
     <color name="colorDashboardBlue">#42A5F5</color>

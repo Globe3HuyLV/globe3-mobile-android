@@ -93,6 +93,7 @@ public class PhotosActivity extends BaseActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(upArrow);
 
+        tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_project)));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_staff)));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
