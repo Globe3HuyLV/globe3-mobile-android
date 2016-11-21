@@ -10,10 +10,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.ImageView;
 
@@ -22,11 +22,13 @@ import com.globe3.tno.g3_mobile.adapters.TimesheetTabAdapter;
 import com.globe3.tno.g3_mobile.fragments.TimesheetProjectFragment;
 import com.globe3.tno.g3_mobile.fragments.TimesheetStaffFragment;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-
 public class TimesheetActivity extends BaseActivity {
     TimesheetActivity timsheetActivity;
 
+    ActionBar actionBar;
+    Drawable upArrow;
+
+    TabLayout tabLayout;
     ViewPager viewPager;
     TimesheetTabAdapter tabAdapter;
 
@@ -38,12 +40,14 @@ public class TimesheetActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_timesheet);
         super.onCreate(savedInstanceState);
+
+        timsheetActivity = this;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_registerfinger, menu);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_staff));
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
@@ -74,45 +78,46 @@ public class TimesheetActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
-        try {
-            timsheetActivity = this;
+        actionBar = getSupportActionBar();
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+
+        viewPager = (ViewPager) findViewById(R.id.tab_layout_pager);
+        tabAdapter = new TimesheetTabAdapter(getSupportFragmentManager());
+    }
+
+    public void onActivityReady(){
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            upArrow = ContextCompat.getDrawable(timsheetActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             upArrow.setColorFilter(ContextCompat.getColor(timsheetActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-            tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_staff)));
-            tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_project)));
-            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-            viewPager = (ViewPager) findViewById(R.id.tab_layout_pager);
-            tabAdapter = new TimesheetTabAdapter(getSupportFragmentManager());
-            viewPager.setAdapter(tabAdapter);
-            viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    search_box.setHint(getString(search_box_hint[tab.getPosition()]));
-                    viewPager.setCurrentItem(tab.getPosition());
-                    doSearch(search_box.getText().toString());
-                }
-
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-
-                }
-
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            actionBar.setHomeAsUpIndicator(upArrow);
         }
+
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_staff)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_project)));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        viewPager.setAdapter(tabAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                search_box.setHint(getString(search_box_hint[tab.getPosition()]));
+                viewPager.setCurrentItem(tab.getPosition());
+                doSearch(search_box.getText().toString());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     public void doSearch(String searchTerm){
@@ -125,8 +130,5 @@ public class TimesheetActivity extends BaseActivity {
         if (viewPager.getCurrentItem() == 1 && selectedFragment != null) {
             ((TimesheetProjectFragment)selectedFragment).searchProject(searchTerm.toString());
         }
-    }
-
-    public void onActivityReady(){
     }
 }

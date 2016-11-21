@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -40,6 +41,8 @@ public class TimesheetProjectFragment extends Fragment {
 
     ArrayList<RowProject> project_list;
 
+    SearchProject searchProject;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,8 @@ public class TimesheetProjectFragment extends Fragment {
         rl_search_loader = (RelativeLayout) projectFragment.findViewById(R.id.rl_search_loader);
         iv_search_loader = (ImageView) projectFragment.findViewById(R.id.iv_search_loader);
         rl_no_record = (RelativeLayout) projectFragment.findViewById(R.id.rl_no_record);
+
+        iv_search_loader.setAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animate_rotate_clockwise));
 
         project_list = new ArrayList<>();
         for(Project project : projectFactory.getActiveProjects()){
@@ -92,8 +97,12 @@ public class TimesheetProjectFragment extends Fragment {
         return projectFragment;
     }
 
-    public void searchProject(String searchTerm){
-        new SearchProject(searchTerm).execute();
+    public void searchProject(String searchTerm) {
+        if(searchProject != null){
+            searchProject.cancel(true);
+        }
+        searchProject = new SearchProject(searchTerm);
+        searchProject.execute();
     }
 
     public class SearchProject extends AsyncTask<Void, Void, Void>
@@ -110,6 +119,7 @@ public class TimesheetProjectFragment extends Fragment {
         {
             recycler_project_list.setVisibility(View.GONE);
             rl_search_loader.setVisibility(View.VISIBLE);
+            rl_no_record.setVisibility(View.GONE);
         }
 
         @Override

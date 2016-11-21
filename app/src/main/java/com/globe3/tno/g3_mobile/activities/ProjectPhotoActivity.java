@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
@@ -27,7 +28,9 @@ public class ProjectPhotoActivity extends BaseActivity {
 
     ProjectPhotoAddFragment projectPhotoAddFragment;
 
+    ActionBar actionBar;
     Drawable upArrow;
+
     GridView gv_project_photos;
     FloatingActionButton fab_project_photo_add;
 
@@ -35,82 +38,71 @@ public class ProjectPhotoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_project_photo);
         super.onCreate(savedInstanceState);
+
+        projectPhotoActivity = this;
     }
 
     public void onActivityLoading(){
-        Thread thread = new Thread();
-        try {
-            projectPhotoActivity = this;
+        gv_project_photos = (GridView) findViewById(R.id.gv_project_photos);
+        fab_project_photo_add = (FloatingActionButton) findViewById(R.id.fab_project_photo_add);
 
-            gv_project_photos = (GridView) findViewById(R.id.gv_project_photos);
-            fab_project_photo_add = (FloatingActionButton) findViewById(R.id.fab_project_photo_add);
+        actionBar = getSupportActionBar();
 
-            if(getSupportActionBar() != null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
-                    upArrow = ContextCompat.getDrawable(projectPhotoActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-                    upArrow.setColorFilter(ContextCompat.getColor(projectPhotoActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                    getSupportActionBar().setTitle("PRJ1001");
-                    getSupportActionBar().setHomeAsUpIndicator(upArrow);
-                }
+        projectPhotoList = new ArrayList<>();
+        for(int i=2001; i<2009; i++){
+            GridItemProjectPhoto gridItemProjectPhoto = new GridItemProjectPhoto();
+            gridItemProjectPhoto.setReference("REF"+String.valueOf(i));
+            gridItemProjectPhoto.setRemarks("Remarks");
+            gridItemProjectPhoto.setPhotosCount(i-1990);
+
+            int rawResource = 0;
+            switch (i%4){
+                case 1:
+                    rawResource = R.drawable.sample_2;
+                    break;
+                case 2:
+                    rawResource = R.drawable.sample_3;
+                    break;
+                case 3:
+                    rawResource = R.drawable.sample_4;
+                    break;
+                default:
+                    rawResource = R.drawable.sample_1;
+                    break;
             }
 
-            projectPhotoList = new ArrayList<>();
-            for(int i=2001; i<2009; i++){
-                GridItemProjectPhoto gridItemProjectPhoto = new GridItemProjectPhoto();
-                gridItemProjectPhoto.setReference("REF"+String.valueOf(i));
-                gridItemProjectPhoto.setRemarks("Remarks");
-                gridItemProjectPhoto.setPhotosCount(i-1990);
+            Bitmap thumbnailRaw = BitmapFactory.decodeResource(projectPhotoActivity.getResources(), rawResource);
 
-                int rawResource = 0;
-                switch (i%4){
-                    case 1:
-                        rawResource = R.drawable.sample_2;
-                        break;
-                    case 2:
-                        rawResource = R.drawable.sample_3;
-                        break;
-                    case 3:
-                        rawResource = R.drawable.sample_4;
-                        break;
-                    default:
-                        rawResource = R.drawable.sample_1;
-                        break;
-                }
+            int newSize = thumbnailRaw.getWidth() < thumbnailRaw.getHeight() ? thumbnailRaw.getWidth() : thumbnailRaw.getHeight();
 
-                Bitmap thumbnailRaw = BitmapFactory.decodeResource(projectPhotoActivity.getResources(), rawResource);
+            gridItemProjectPhoto.setThumbnail(Bitmap.createBitmap(thumbnailRaw, 0, 0, newSize, newSize));
 
-                int newSize = thumbnailRaw.getWidth() < thumbnailRaw.getHeight() ? thumbnailRaw.getWidth() : thumbnailRaw.getHeight();
-
-                gridItemProjectPhoto.setThumbnail(Bitmap.createBitmap(thumbnailRaw, 0, 0, newSize, newSize));
-
-                projectPhotoList.add(gridItemProjectPhoto);
-            }
-
-            projectPhotoActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    gv_project_photos.setAdapter(new ProjectPhotoGridAdapter(projectPhotoActivity, projectPhotoList));
-                    gv_project_photos.setOnScrollListener(new gridViewOnScrollListener());
-                    fab_project_photo_add.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            FragmentManager fragmentManager = getFragmentManager();
-                            projectPhotoAddFragment = new ProjectPhotoAddFragment();
-                            projectPhotoAddFragment.setCancelable(false);
-                            projectPhotoAddFragment.show(fragmentManager, getString(R.string.label_add_project_photo));
-                        }
-                    });
-                }
-            });
-
-            thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            projectPhotoList.add(gridItemProjectPhoto);
         }
     }
 
     public void onActivityReady(){
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
+                upArrow = ContextCompat.getDrawable(projectPhotoActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                upArrow.setColorFilter(ContextCompat.getColor(projectPhotoActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                actionBar.setTitle("PRJ1001");
+                actionBar.setHomeAsUpIndicator(upArrow);
+            }
+        }
+
+        gv_project_photos.setAdapter(new ProjectPhotoGridAdapter(projectPhotoActivity, projectPhotoList));
+        gv_project_photos.setOnScrollListener(new gridViewOnScrollListener());
+        fab_project_photo_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getFragmentManager();
+                projectPhotoAddFragment = new ProjectPhotoAddFragment();
+                projectPhotoAddFragment.setCancelable(false);
+                projectPhotoAddFragment.show(fragmentManager, getString(R.string.label_add_project_photo));
+            }
+        });
     }
 
     public void goToProjectPhotoItem(View view){

@@ -46,6 +46,8 @@ public class TimesheetStaffFragment extends Fragment {
 
     ArrayList<RowStaff> staff_list;
 
+    SearchStaff searchStaff;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,8 +125,12 @@ public class TimesheetStaffFragment extends Fragment {
         return staffFragment;
     }
 
-    public void searchStaff(String searchTerm){
-        new SearchStaff(searchTerm).execute();
+    public void searchStaff(String searchTerm) {
+        if(searchStaff != null){
+            searchStaff.cancel(true);
+        }
+        searchStaff = new SearchStaff(searchTerm);
+        searchStaff.execute();
     }
 
     public class SearchStaff extends AsyncTask<Void, Void, Void>
@@ -142,6 +148,7 @@ public class TimesheetStaffFragment extends Fragment {
             recycler_staff_list.setVisibility(View.GONE);
             fab_auto_screening.setVisibility(View.GONE);
             rl_search_loader.setVisibility(View.VISIBLE);
+            rl_no_record.setVisibility(View.GONE);
         }
 
         @Override

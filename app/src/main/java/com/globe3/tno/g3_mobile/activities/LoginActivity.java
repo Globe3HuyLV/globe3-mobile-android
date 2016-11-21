@@ -45,6 +45,8 @@ public class LoginActivity extends BaseActivity{
         setContentView(R.layout.activity_login);
         super.onCreate(savedInstanceState);
 
+        loginActivity = this;
+
         tv_company = (EditText) findViewById(R.id.tv_company);
         tv_user = (EditText) findViewById(R.id.tv_userid);
         tv_password = (EditText) findViewById(R.id.tv_password);
@@ -79,7 +81,6 @@ public class LoginActivity extends BaseActivity{
     }
 
     public void onActivityLoading(){
-        loginActivity = this;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             if(PackageManager.PERMISSION_GRANTED== ActivityCompat.checkSelfPermission(loginActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
                 if(FileUtility.createAppFolders(loginActivity)){
@@ -96,7 +97,7 @@ public class LoginActivity extends BaseActivity{
     }
 
     public void onActivityReady(){
-        iv_login_loader.setAnimation(AnimationUtils.loadAnimation(this, R.anim.animate_rotate_clockwise));
+        iv_login_loader.setAnimation(AnimationUtils.loadAnimation(loginActivity, R.anim.animate_rotate_clockwise));
     }
 
     public void doLogin(View view){

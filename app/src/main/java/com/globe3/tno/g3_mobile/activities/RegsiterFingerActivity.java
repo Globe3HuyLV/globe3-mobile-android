@@ -1,7 +1,6 @@
 package com.globe3.tno.g3_mobile.activities;
 
 import android.app.SearchManager;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -11,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -39,7 +39,9 @@ public class RegsiterFingerActivity extends BaseActivity {
 
     RegisterFingerFragment registerFingerFragment;
 
+    ActionBar actionBar;
     Drawable upArrow;
+
     RecyclerView recycler_staff_list;
     RecyclerView.Adapter recyclerViewAdapter;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -50,16 +52,20 @@ public class RegsiterFingerActivity extends BaseActivity {
 
     ArrayList<RowStaff> staff_list;
 
+    SearchStaff searchStaff;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_regsiter_finger);
         super.onCreate(savedInstanceState);
+
+        registerFingerActivity = this;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_registerfinger, menu);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_staff));
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
@@ -77,7 +83,11 @@ public class RegsiterFingerActivity extends BaseActivity {
                 registerFingerActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        new SearchStaff(searchTerm.toString()).execute();
+                        if(searchStaff!=null){
+                            searchStaff.cancel(true);
+                        }
+                        searchStaff = new SearchStaff(searchTerm.toString());
+                        searchStaff.execute();
                     }
                 });
             }
@@ -95,64 +105,60 @@ public class RegsiterFingerActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
-        try {
-            registerFingerActivity = this;
+        staffFactory = new StaffFactory(registerFingerActivity);
 
-            staffFactory = new StaffFactory(registerFingerActivity);
+        recycler_staff_list = (RecyclerView) findViewById(R.id.recycler_staff_list);
+        rl_search_loader = (RelativeLayout) findViewById(R.id.rl_search_loader);
+        iv_search_loader = (ImageView) findViewById(R.id.iv_search_loader);
+        rl_no_record = (RelativeLayout) findViewById(R.id.rl_no_record);
 
-            recycler_staff_list = (RecyclerView) findViewById(R.id.recycler_staff_list);
-            rl_search_loader = (RelativeLayout) findViewById(R.id.rl_search_loader);
-            iv_search_loader = (ImageView) findViewById(R.id.iv_search_loader);
-            rl_no_record = (RelativeLayout) findViewById(R.id.rl_no_record);
+        actionBar = getSupportActionBar();
 
-            if(getSupportActionBar() != null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
-                    upArrow = ContextCompat.getDrawable(registerFingerActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-                    upArrow.setColorFilter(ContextCompat.getColor(registerFingerActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                    getSupportActionBar().setHomeAsUpIndicator(upArrow);
-                }
+        staff_list = new ArrayList<>();
+        for(Staff staff : staffFactory.getActiveStaffs()){
+            RowStaff rowStaff = new RowStaff();
+            rowStaff.setStaffCode(staff.getStaff_num());
+            rowStaff.setStaffName(staff.getStaff_desc());
+            rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
+
+            if(staff.getPhoto1()!=null){
+                Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
+
+                int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
+
+                rowStaff.setStaffPhoto(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
+            }else{
+                rowStaff.setStaffPhoto(null);
             }
 
-            iv_search_loader.setAnimation(AnimationUtils.loadAnimation(registerFingerActivity, R.anim.animate_rotate_clockwise));
-
-            staff_list = new ArrayList<>();
-            for(Staff staff : staffFactory.getActiveStaffs()){
-                RowStaff rowStaff = new RowStaff();
-                rowStaff.setStaffCode(staff.getStaff_num());
-                rowStaff.setStaffName(staff.getStaff_desc());
-                rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
-
-                if(staff.getPhoto1()!=null){
-                    Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
-
-                    int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
-
-                    rowStaff.setStaffPhoto(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
-                }else{
-                    rowStaff.setStaffPhoto(null);
-                }
-
-                rowStaff.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            rowStaff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                         /*FragmentManager fragmentManager = getFragmentManager();
                         registerFingerFragment = new RegisterFingerFragment();
                         registerFingerFragment.setCancelable(false);
                         registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));*/
-                    }
-                });
-                staff_list.add(rowStaff);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+                }
+            });
+            staff_list.add(rowStaff);
         }
     }
 
     public void onActivityReady(){
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
+                upArrow = ContextCompat.getDrawable(registerFingerActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                upArrow.setColorFilter(ContextCompat.getColor(registerFingerActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                actionBar.setHomeAsUpIndicator(upArrow);
+            }
+        }
+
+        iv_search_loader.setAnimation(AnimationUtils.loadAnimation(registerFingerActivity, R.anim.animate_rotate_clockwise));
+
         recycler_staff_list.setHasFixedSize(true);
 
-        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        recyclerViewLayoutManager = new LinearLayoutManager(registerFingerActivity);
         recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
 
         recyclerViewAdapter = new RegisterFingerStaffListAdapter(staff_list, registerFingerActivity);

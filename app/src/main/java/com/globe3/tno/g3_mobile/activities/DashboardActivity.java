@@ -60,6 +60,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     UserFactory userFactory;
     CompanyFactory companyFactory;
 
+    ActionBar actionBar;
+    ActionBarDrawerToggle toggle;
+
+    Drawable menuAppsIcons[];
+
     Toolbar dashboardToolbar;
     DrawerLayout dashboardDrawer;
     NavigationView dashboardNavigationView;
@@ -85,6 +90,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_dashboard);
         super.onCreate(savedInstanceState);
+
+        dashboardActivity = this;
     }
 
     @Override
@@ -116,89 +123,85 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void onActivityLoading(){
-        try {
-            dashboardActivity = this;
+        auditFactory = new AuditFactory(dashboardActivity);
+        userFactory = new UserFactory(dashboardActivity);
+        companyFactory = new CompanyFactory(dashboardActivity);
 
-            auditFactory = new AuditFactory(dashboardActivity);
-            userFactory = new UserFactory(dashboardActivity);
-            companyFactory = new CompanyFactory(dashboardActivity);
+        dashboardToolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
+        dashboardDrawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
+        dashboardNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigation_drawer = (NavigationView) findViewById(R.id.navigation_drawer);
+        menuApps = (FloatingActionMenu) findViewById(R.id.fam_apps);
 
-            dashboardToolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
-            dashboardDrawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
-            dashboardNavigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigation_drawer = (NavigationView) findViewById(R.id.navigation_drawer);
-            menuApps = (FloatingActionMenu) findViewById(R.id.fam_apps);
+        tv_server_connect = (TextView) findViewById(R.id.tv_server_connect);
+        tv_last_sync = (TextView) findViewById(R.id.tv_last_sync);
+        tv_gps = (TextView) findViewById(R.id.tv_gps);
+        tv_pending_sync = (TextView) findViewById(R.id.tv_pending_sync);
 
-            tv_server_connect = (TextView) findViewById(R.id.tv_server_connect);
-            tv_last_sync = (TextView) findViewById(R.id.tv_last_sync);
-            tv_gps = (TextView) findViewById(R.id.tv_gps);
-            tv_pending_sync = (TextView) findViewById(R.id.tv_pending_sync);
+        fab_timesheet = (FloatingActionButton) findViewById(R.id.fab_timesheet);
+        fab_register_finger = (FloatingActionButton) findViewById(R.id.fab_register_finger);
+        fab_location_check = (FloatingActionButton) findViewById(R.id.fab_location_check);
+        fab_photos = (FloatingActionButton) findViewById(R.id.fab_photos);
+        fab_task_update = (FloatingActionButton) findViewById(R.id.fab_task_update);
 
-            fab_timesheet = (FloatingActionButton) findViewById(R.id.fab_timesheet);
-            fab_register_finger = (FloatingActionButton) findViewById(R.id.fab_register_finger);
-            fab_location_check = (FloatingActionButton) findViewById(R.id.fab_location_check);
-            fab_photos = (FloatingActionButton) findViewById(R.id.fab_photos);
-            fab_task_update = (FloatingActionButton) findViewById(R.id.fab_task_update);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        actionBar = getSupportActionBar();
 
-            setSupportActionBar(dashboardToolbar);
-            if(getSupportActionBar() != null){
-                getSupportActionBar().setDisplayShowTitleEnabled(false);
-            }
+        toggle = new ActionBarDrawerToggle(dashboardActivity, dashboardDrawer, dashboardToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, dashboardDrawer, dashboardToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            dashboardDrawer.addDrawerListener(toggle);
-            toggle.syncState();
-
-            dashboardNavigationView.setNavigationItemSelectedListener(this);
-
-            menuApps.setClosedOnTouchOutside(true);
-            Drawable menuAppsIcons[] = new Drawable[2];
-            menuAppsIcons[0] = getDrawable(R.drawable.ic_apps_white_24dp);
-            menuAppsIcons[1] = getDrawable(R.drawable.ic_add_white_24dp);
-
-            final TransitionDrawable menuAppsCrossfader = new TransitionDrawable(menuAppsIcons);
-            menuAppsCrossfader.setCrossFadeEnabled(true);
-            menuApps.getMenuIconView().setImageDrawable(menuAppsCrossfader);
-            menuApps.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
-                @Override
-                public void onMenuToggle(boolean opened) {
-                    if(opened){
-                        menuAppsCrossfader.startTransition(150);
-                    }else{
-                        menuAppsCrossfader.reverseTransition(150);
-                    }
-                }
-            });
-
-            if(!USERLOGINID.equals("m8")){
-                fab_timesheet.setVisibility(MAC.substring(0,1).equals("n")?View.GONE:View.VISIBLE);
-                if(MAC.substring(1,2).equals("n")){
-                    navigation_drawer.getMenu().clear();
-                }else{
-                    navigation_drawer.inflateMenu(R.menu.activity_dashboard_drawer);
-                }
-                fab_register_finger.setVisibility(MAC.substring(2,3).equals("n")?View.GONE:View.VISIBLE);
-                fab_location_check.setVisibility(MAC.substring(3,4).equals("n")?View.GONE:View.VISIBLE);
-                fab_photos.setVisibility(MAC.substring(4,5).equals("n")?View.GONE:View.VISIBLE);
-                fab_task_update.setVisibility(MAC.substring(5,6).equals("n")?View.GONE:View.VISIBLE);
-            }
-
-            if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
-                mGPSUtility = new GPSUtility(dashboardActivity);
-                mGPSLocation = mGPSUtility.getGPSLocation();
-            }
-
-            loadCompanies();
-            showLastSync();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dashboardNavigationView.setNavigationItemSelectedListener(dashboardActivity);
     }
 
     public void onActivityReady(){
+        setSupportActionBar(dashboardToolbar);
+        if(actionBar != null){
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+
+        dashboardDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        menuApps.setClosedOnTouchOutside(true);
+        menuAppsIcons = new Drawable[2];
+        menuAppsIcons[0] = getDrawable(R.drawable.ic_apps_white_24dp);
+        menuAppsIcons[1] = getDrawable(R.drawable.ic_add_white_24dp);
+
+        final TransitionDrawable menuAppsCrossfader = new TransitionDrawable(menuAppsIcons);
+        menuAppsCrossfader.setCrossFadeEnabled(true);
+        menuApps.getMenuIconView().setImageDrawable(menuAppsCrossfader);
+        menuApps.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+                if(opened){
+                    menuAppsCrossfader.startTransition(150);
+                }else{
+                    menuAppsCrossfader.reverseTransition(150);
+                }
+            }
+        });
+
+        if(!USERLOGINID.equals("m8")){
+            fab_timesheet.setVisibility(MAC.substring(0,1).equals("n")?View.GONE:View.VISIBLE);
+            if(MAC.substring(1,2).equals("n")){
+                navigation_drawer.getMenu().clear();
+            }else{
+                navigation_drawer.inflateMenu(R.menu.activity_dashboard_drawer);
+            }
+            fab_register_finger.setVisibility(MAC.substring(2,3).equals("n")?View.GONE:View.VISIBLE);
+            fab_location_check.setVisibility(MAC.substring(3,4).equals("n")?View.GONE:View.VISIBLE);
+            fab_photos.setVisibility(MAC.substring(4,5).equals("n")?View.GONE:View.VISIBLE);
+            fab_task_update.setVisibility(MAC.substring(5,6).equals("n")?View.GONE:View.VISIBLE);
+        }
+
+        if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
+            mGPSUtility = new GPSUtility(dashboardActivity);
+            mGPSLocation = mGPSUtility.getGPSLocation();
+        }
+
+        loadCompanies();
+        showLastSync();
+
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
@@ -222,7 +225,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             ActionBar mActionBar = getSupportActionBar();
             mActionBar.setDisplayShowHomeEnabled(false);
             mActionBar.setDisplayShowTitleEnabled(false);
-            LayoutInflater mInflater = LayoutInflater.from(this);
+            LayoutInflater mInflater = LayoutInflater.from(dashboardActivity);
 
             View mCustomView = mInflater.inflate(R.layout.actionbar_dashboard, null);
             TextView mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
@@ -254,21 +257,16 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void showLastSync(){
-        dashboardActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Date lastSync = auditFactory.getLastSync(TagTableUsage.DATA_SYNC_DOWN);
-                if(lastSync==null){
-                    tv_last_sync.setText(getString(R.string.msg_never));
-                    tv_last_sync.setAllCaps(true);
-                    tv_last_sync.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorFailed));
-                }else{
-                    tv_last_sync.setText(DateUtility.getDateString(lastSync, "HH:mm MMM dd"));
-                    tv_last_sync.setAllCaps(false);
-                    tv_last_sync.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorBlackLight));
-                }
-            }
-        });
+        Date lastSync = auditFactory.getLastSync(TagTableUsage.DATA_SYNC_DOWN);
+        if(lastSync==null){
+            tv_last_sync.setText(getString(R.string.msg_never));
+            tv_last_sync.setAllCaps(true);
+            tv_last_sync.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorFailed));
+        }else{
+            tv_last_sync.setText(DateUtility.getDateString(lastSync, "HH:mm MMM dd"));
+            tv_last_sync.setAllCaps(false);
+            tv_last_sync.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorBlackLight));
+        }
     }
 
     public void syncDown(View view){
