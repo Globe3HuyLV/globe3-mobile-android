@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
@@ -51,6 +52,16 @@ public class ProjectPhotoActivity extends BaseActivity {
             selectedPhotos = data.getStringArrayListExtra("selected_photos");
             projectPhotoAddFragment.showPhotosCount(selectedPhotos.size());
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     public void onActivityLoading(){

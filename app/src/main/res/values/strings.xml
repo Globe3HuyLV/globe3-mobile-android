@@ -42,6 +42,7 @@
     <string name="label_tasks_update">Tasks Update</string>
     <string name="label_logout">Logout</string>
     <string name="label_finish">Finish</string>
+    <string name="label_restart">Restart</string>
     <string name="label_refresh_scanner">Refresh Scanner</string>
     <string name="label_next_scan">Next Scan</string>
     <string name="label_select_photos">Select Photos</string>
@@ -70,6 +71,7 @@
     <string name="msg_nothing_to_sync">Nothing to sync</string>
     <string name="msg_count_over">%1$d/%2$d</string>
     <string name="msg_an_error_has_occured">An error has occurred</string>
+    <string name="msg_fingers_not_match">Fingers did not match</string>
     <string name="msg_fingerprint_data_loaded">Fingerprint data loaded</string>
     <string name="msg_face_data_loaded">Face data loaded</string>
     <string name="msg_sync_up_complete">Sync up complete</string>

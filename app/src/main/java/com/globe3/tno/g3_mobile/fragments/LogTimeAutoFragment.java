@@ -66,7 +66,7 @@ public class LogTimeAutoFragment extends DialogFragment {
             }
         });
 
-        tv_refresh_scanner = (TextView) logTimeAutoFragment.findViewById(R.id.tv_refresh_scanner);
+        tv_refresh_scanner = (TextView) logTimeAutoFragment.findViewById(R.id.tv_action_button);
         tv_refresh_scanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

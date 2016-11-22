@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 import android.widget.GridView;
 
 import com.globe3.tno.g3_mobile.adapters.ProjectPhotoItemViewGridAdapter;
@@ -32,6 +33,16 @@ public class ProjectPhotoItemViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         projectPhotoItemViewActivity = this;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     public void onActivityLoading(){

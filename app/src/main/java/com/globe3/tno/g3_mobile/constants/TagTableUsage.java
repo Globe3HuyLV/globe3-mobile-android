@@ -11,9 +11,9 @@ public class TagTableUsage {
     public static String LOCATION_CHECK = "loc_chk";
     public static String TIMELOG_IN_OUT = "in_out";
     public static String TIMELOG_SYNC_UP = "tl_sync_up";
-    public static String STAFF_SYNC_UP = "wk_sync_up";
+    public static String STAFF_SYNC_UP = "stf_sync_up";
     public static String PROJECT_PHOTO = "proj_img";
-    public static String STAFF_PROJECT = "wk_proj";
+    public static String STAFF_PROJECT = "stf_proj";
     public static int AUTO_SCREENING_A = 1;
     public static int AUTO_SCREENING_B = 2;
 }

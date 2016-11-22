@@ -2,6 +2,7 @@ package com.globe3.tno.g3_mobile.activities;
 
 import android.app.FragmentManager;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -18,6 +19,7 @@ import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -26,6 +28,7 @@ import android.widget.RelativeLayout;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.RegisterFingerStaffListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.fragments.RegisterFingerFragment;
 
@@ -33,9 +36,12 @@ import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
 
+import static com.globe3.tno.g3_mobile.constants.App.ACTIVITY_RESULT_SELECT_PHOTOS;
+
 public class RegsiterFingerActivity extends BaseActivity {
     RegsiterFingerActivity registerFingerActivity;
 
+    AuditFactory auditFactory;
     StaffFactory staffFactory;
 
     RegisterFingerFragment registerFingerFragment;
@@ -105,7 +111,18 @@ public class RegsiterFingerActivity extends BaseActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
+    }
+
     public void onActivityLoading(){
+        auditFactory = new AuditFactory(registerFingerActivity);
         staffFactory = new StaffFactory(registerFingerActivity);
 
         recycler_staff_list = (RecyclerView) findViewById(R.id.recycler_staff_list);
@@ -116,7 +133,7 @@ public class RegsiterFingerActivity extends BaseActivity {
         actionBar = getSupportActionBar();
 
         staff_list = new ArrayList<>();
-        for(Staff staff : staffFactory.getActiveStaffs()){
+        for(final Staff staff : staffFactory.getActiveStaffs()){
             RowStaff rowStaff = new RowStaff();
             rowStaff.setStaffCode(staff.getStaff_num());
             rowStaff.setStaffName(staff.getStaff_desc());
@@ -135,10 +152,13 @@ public class RegsiterFingerActivity extends BaseActivity {
             rowStaff.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        FragmentManager fragmentManager = getFragmentManager();
-                        registerFingerFragment = new RegisterFingerFragment();
-                        registerFingerFragment.setCancelable(false);
-                        registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
+                    FragmentManager fragmentManager = getFragmentManager();
+                    registerFingerFragment = new RegisterFingerFragment();
+                    registerFingerFragment.setCancelable(false);
+                    registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
+                    registerFingerFragment.setStaffUnique(staff.getUniquenum());
+                    registerFingerFragment.setAuditFactory(auditFactory);
+                    registerFingerFragment.setStaffFactory(staffFactory);
                 }
             });
             staff_list.add(rowStaff);
@@ -166,18 +186,6 @@ public class RegsiterFingerActivity extends BaseActivity {
         recycler_staff_list.setAdapter(recyclerViewAdapter);
     }
 
-    public void startVerify(View view){
-        //registerFingerFragment.startVerify();
-    }
-
-    public void startRegistration(View view){
-        //registerFingerFragment.startRegistration();
-    }
-
-    public void simulate(View view){
-        registerFingerFragment.simulate();
-    }
-
     public void finishRegistration(View view){
         registerFingerFragment.finishRegistration();
     }
@@ -200,7 +208,7 @@ public class RegsiterFingerActivity extends BaseActivity {
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(Staff staff : (searchTerm.equals("")?staffFactory.getActiveStaffs():staffFactory.searchStaffs(searchTerm))){
+            for(final Staff staff : (searchTerm.equals("")?staffFactory.getActiveStaffs():staffFactory.searchStaffs(searchTerm))){
                 RowStaff rowStaff = new RowStaff();
                 rowStaff.setStaffCode(staff.getStaff_num());
                 rowStaff.setStaffName(staff.getStaff_desc());
@@ -223,6 +231,9 @@ public class RegsiterFingerActivity extends BaseActivity {
                         registerFingerFragment = new RegisterFingerFragment();
                         registerFingerFragment.setCancelable(false);
                         registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
+                        registerFingerFragment.setStaffUnique(staff.getUniquenum());
+                        registerFingerFragment.setAuditFactory(auditFactory);
+                        registerFingerFragment.setStaffFactory(staffFactory);
                     }
                 });
                 staff_list.add(rowStaff);
