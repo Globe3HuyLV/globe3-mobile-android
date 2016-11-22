@@ -35,11 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         layout_base_loader = (RelativeLayout) findViewById(R.id.layout_base_loader);
         image_loader = (ImageView) findViewById(R.id.image_loader);
         layout_main = (RelativeLayout) findViewById(R.id.layout_main);

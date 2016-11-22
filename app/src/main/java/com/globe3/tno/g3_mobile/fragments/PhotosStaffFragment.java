@@ -57,28 +57,7 @@ public class PhotosStaffFragment extends Fragment {
 
         staff_list = new ArrayList<>();
         for(Staff staff : staffFactory.getActiveStaffs()){
-            RowStaff rowStaff = new RowStaff();
-            rowStaff.setStaffCode(staff.getStaff_num());
-            rowStaff.setStaffName(staff.getStaff_desc());
-            rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
-
-            if(staff.getPhoto1()!=null){
-                Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
-
-                int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
-
-                rowStaff.setStaffPhoto(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
-            }else{
-                rowStaff.setStaffPhoto(null);
-            }
-
-            rowStaff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-            staff_list.add(rowStaff);
+            staff_list.add(createRowStaff(staff));
         }
 
         recycler_staff_list.setHasFixedSize(true);
@@ -92,6 +71,31 @@ public class PhotosStaffFragment extends Fragment {
         return staffFragment;
     }
 
+    private RowStaff createRowStaff(final Staff staff){
+        RowStaff rowStaff = new RowStaff();
+        rowStaff.setStaffCode(staff.getStaff_num());
+        rowStaff.setStaffName(staff.getStaff_desc());
+        rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
+
+        if(staff.getPhoto1()!=null){
+            Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
+
+            int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
+
+            rowStaff.setStaffPhoto(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
+        }else{
+            rowStaff.setStaffPhoto(null);
+        }
+
+        rowStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        return rowStaff;
+    }
     public void searchStaff(String searchTerm) {
         if(searchStaff != null){
             searchStaff.cancel(true);
@@ -119,40 +123,7 @@ public class PhotosStaffFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... param) {
             for(Staff staff : (searchTerm.equals("")?staffFactory.getActiveStaffs():staffFactory.searchStaffs(searchTerm))){
-                RowStaff rowStaff = new RowStaff();
-                rowStaff.setStaffCode(staff.getStaff_num());
-                rowStaff.setStaffName(staff.getStaff_desc());
-                rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
-
-                if(staff.getPhoto1()!=null){
-                    Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
-
-                    int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
-
-                    rowStaff.setStaffPhoto(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
-                }else{
-                    rowStaff.setStaffPhoto(null);
-                }
-
-                rowStaff.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        /*Bundle staffBundle = new Bundle();
-
-                        Staff staff = new Staff();
-                        staff.setStaff_num(String.valueOf(n));
-                        staff.setStaff_desc("Staff Name");
-
-                        staffBundle.putSerializable("staff", staff);
-
-                        FragmentManager fragmentManager = getActivity().getFragmentManager();
-                        logTimeFragment = new LogTimeFragment();
-                        logTimeFragment.setCancelable(false);
-                        logTimeFragment.setArguments(staffBundle);
-                        logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));*/
-                    }
-                });
-                staff_list.add(rowStaff);
+                staff_list.add(createRowStaff(staff));
             }
             return null;
         }

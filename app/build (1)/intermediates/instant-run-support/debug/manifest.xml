@@ -46,7 +46,7 @@
                 android:value=".activities.DashboardActivity" />
         </activity>
         <activity
-            android:name="com.globe3.tno.g3_mobile.activities.RegsiterFingerActivity"
+            android:name="com.globe3.tno.g3_mobile.activities.RegisterFingerActivity"
             android:label="@string/activity_finger_registration"
             android:theme="@style/AppThemeActionBarElevated" >
             <meta-data

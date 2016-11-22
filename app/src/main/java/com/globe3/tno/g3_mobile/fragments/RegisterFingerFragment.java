@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.activities.RegsiterFingerActivity;
+import com.globe3.tno.g3_mobile.activities.RegisterFingerActivity;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
@@ -43,7 +43,6 @@ import java.util.EnumSet;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 
 public class RegisterFingerFragment extends DialogFragment {
-    RegsiterFingerActivity regsiterFingerActivity;
     AuditFactory auditFactory;
     StaffFactory staffFactory;
 
@@ -94,22 +93,24 @@ public class RegisterFingerFragment extends DialogFragment {
     final static int PROMPT_EXTRACT_FAILED = 5;
     final static int PROMPT_ERROR_OCCURRED = 6;
     final static int PROMPT_NOT_MATCH = 7;
+    final static int PROMPT_EXTRACTING = 8;
+    final static int PROMPT_VERIFYING = 9;
 
-    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found, R.string.msg_extraction_failed, R.string.msg_an_error_has_occured, R.string.msg_finger_not_match};
-    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
-    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE};
-    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE};
-    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
-    final static int[] ACTION_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart, R.string.label_restart};
-    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight};
-    final static boolean[] ACTION_CLICKABLE = {false, true, true, true, true, true, true, true};
+    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found, R.string.msg_extraction_failed, R.string.msg_an_error_has_occured, R.string.msg_fingers_not_match, R.string.msg_extracting_fingerprint, R.string.msg_verifying_fingerprint};
+    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight};
+    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE};
+    final static int[] LOADER_COLOR = {R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight};
+    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE};
+    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight};
+    final static int[] ACTION_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart, R.string.label_restart, R.string.label_refresh_scanner, R.string.label_refresh_scanner};
+    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight, R.color.colorMenuLight};
+    final static boolean[] ACTION_CLICKABLE = {false, true, true, true, true, true, true, true, false, false};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         pathFingerRef = GLOBE3_DATA_DIR + staff_unique + ".jpeg";
         pathFingerCan = GLOBE3_DATA_DIR + staff_unique + "_c.jpeg";
 
-        regsiterFingerActivity = ((RegsiterFingerActivity) getActivity());
         View registerFragment = inflater.inflate(R.layout.fragment_regsiter_finger, viewGroup, false);
         parentContext = registerFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -133,7 +134,7 @@ public class RegisterFingerFragment extends DialogFragment {
 
         iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
 
-        NCore.setContext(regsiterFingerActivity);
+        NCore.setContext(getActivity());
 
         startExtract();
 
@@ -145,7 +146,9 @@ public class RegisterFingerFragment extends DialogFragment {
         public void completed(NBiometricStatus result, NSubject subject) {
             if (result == NBiometricStatus.OK) {
                 if(step_num == 1){
-                    extractStatus(NODE_SUCCESS);
+                    setPrompt(PROMPT_EXTRACTING);
+                }else{
+                    setPrompt(PROMPT_VERIFYING);
                 }
 
                 try {
@@ -155,6 +158,7 @@ public class RegisterFingerFragment extends DialogFragment {
                     subject.getFingers().get(0).getImage().save(outputFile.getAbsolutePath());
 
                     if(step_num == 1){
+                        extractStatus(NODE_SUCCESS);
                         capture();
                         step_num++;
                     }else{
@@ -265,7 +269,7 @@ public class RegisterFingerFragment extends DialogFragment {
     private NSubject createSubject(Uri uri) throws IOException {
         NSubject subject = new NSubject();
         NFinger finger = new NFinger();
-        finger.setImage(NImageUtils.fromUri(regsiterFingerActivity, uri));
+        finger.setImage(NImageUtils.fromUri(getActivity(), uri));
         subject.getFingers().add(finger);
         subject.setId(uri.getPath());
         return subject;
@@ -318,18 +322,19 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void setPrompt(final int status){
-        regsiterFingerActivity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tv_prompt.setText(getText(PROMPT_TEXT[status]));
                 tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
                 iv_loader.setVisibility(LOADER_DISPLAY[status]);
+                iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
                 iv_finger.setVisibility(FINGER_DISPLAY[status]);
                 iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
-                if(status!=PROMPT_CONNECTING){
-                    iv_loader.clearAnimation();
-                }else{
+                if(status == PROMPT_CONNECTING || status == PROMPT_EXTRACTING || status == PROMPT_VERIFYING){
                     iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+                }else{
+                    iv_loader.clearAnimation();
                 }
                 tv_action_button.setText(getText(ACTION_TEXT[status]));
                 tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
@@ -366,7 +371,7 @@ public class RegisterFingerFragment extends DialogFragment {
                     tv_action_button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dismiss();
+                            ((RegisterFingerActivity) getActivity()).finishRegistration();
                         }
                     });
                 }else if(status == PROMPT_ERROR_OCCURRED || status == PROMPT_NOT_MATCH){
@@ -385,7 +390,7 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void extractStatus(final int status){
-        regsiterFingerActivity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ll_extract_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
@@ -426,7 +431,7 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void verifyStatus(final int status){
-        regsiterFingerActivity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ll_verify_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
@@ -466,7 +471,7 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void registerStatus(final int status){
-        regsiterFingerActivity.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ll_registration_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));

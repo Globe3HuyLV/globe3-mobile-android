@@ -58,17 +58,7 @@ public class PhotosProjectFragment extends Fragment {
 
         project_list = new ArrayList<>();
         for(Project project : projectFactory.getActiveProjects()){
-            RowProject rowProject = new RowProject();
-            rowProject.setProjectCode(project.getCode());
-            rowProject.setProjectName(project.getDesc());
-            rowProject.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
-                    startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));
-                }
-            });
-            project_list.add(rowProject);
+            project_list.add(createRowProject(project));
         }
 
         recycler_project_list.setHasFixedSize(true);
@@ -82,6 +72,20 @@ public class PhotosProjectFragment extends Fragment {
         return projectFragment;
     }
 
+    private RowProject createRowProject(final Project project){
+        RowProject rowProject = new RowProject();
+        rowProject.setProjectCode(project.getCode());
+        rowProject.setProjectName(project.getDesc());
+        rowProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
+                startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));
+            }
+        });
+
+        return rowProject;
+    }
     public void searchProject(String searchTerm){
         if(searchProject!=null){
             searchProject.cancel(true);
@@ -109,17 +113,7 @@ public class PhotosProjectFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... param) {
             for(Project project : (searchTerm.equals("")?projectFactory.getActiveProjects():projectFactory.searchProject(searchTerm))){
-                RowProject rowProject = new RowProject();
-                rowProject.setProjectCode(project.getCode());
-                rowProject.setProjectName(project.getDesc());
-                rowProject.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
-                        startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));
-                    }
-                });
-                project_list.add(rowProject);
+                project_list.add(createRowProject(project));
             }
             return null;
         }

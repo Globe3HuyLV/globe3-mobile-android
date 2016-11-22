@@ -81,6 +81,8 @@
     <string name="msg_authentication_failed">Authentication failed</string>
     <string name="msg_extract_fingerprint">Extract Fingerprint</string>
     <string name="msg_verify_fingerprint">Verify Fingerprint</string>
+    <string name="msg_extracting_fingerprint">Extracting Fingerprint</string>
+    <string name="msg_verifying_fingerprint">Verifying Fingerprint</string>
     <string name="msg_connecting_to_scanner">Connecting to scanner</string>
     <string name="msg_scanner_not_found">Scanner not found</string>
     <string name="msg_processing_registration">Processing registration</string>

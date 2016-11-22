@@ -245,7 +245,7 @@
                 android:textColor="@color/colorBlueGrey"
                 android:background="?attr/selectableItemBackground"
                 android:text="@string/label_cancel"
-                android:onClick="finishRegistration"/>
+                android:onClick="cancelRegisterFragment"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>
