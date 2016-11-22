@@ -1,6 +1,5 @@
 package com.globe3.tno.g3_mobile.activities;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,6 +21,8 @@ import com.globe3.tno.g3_mobile.R;
 
 import java.util.ArrayList;
 
+import static com.globe3.tno.g3_mobile.constants.App.ACTIVITY_RESULT_SELECT_PHOTOS;
+
 public class ProjectPhotoActivity extends BaseActivity {
     ProjectPhotoActivity projectPhotoActivity;
     ArrayList<GridItemProjectPhoto> projectPhotoList;
@@ -34,12 +35,22 @@ public class ProjectPhotoActivity extends BaseActivity {
     GridView gv_project_photos;
     FloatingActionButton fab_project_photo_add;
 
+    ArrayList<String> selectedPhotos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_project_photo);
         super.onCreate(savedInstanceState);
 
         projectPhotoActivity = this;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(data!= null && requestCode == ACTIVITY_RESULT_SELECT_PHOTOS){
+            selectedPhotos = data.getStringArrayListExtra("selected_photos");
+            projectPhotoAddFragment.showPhotosCount(selectedPhotos.size());
+        }
     }
 
     public void onActivityLoading(){
@@ -79,6 +90,10 @@ public class ProjectPhotoActivity extends BaseActivity {
 
             projectPhotoList.add(gridItemProjectPhoto);
         }
+
+        if(selectedPhotos == null){
+            selectedPhotos = new ArrayList<>();
+        }
     }
 
     public void onActivityReady(){
@@ -116,6 +131,16 @@ public class ProjectPhotoActivity extends BaseActivity {
         }
     }
 
+    public void uploadPhotos(View view) {
+
+    }
+
+    public void goToSelectPhotos(View view){
+        Intent selePhotosIntent = new Intent(projectPhotoActivity, ProjectPhotoSelectActivity.class);
+        selePhotosIntent.putStringArrayListExtra("selected_photos", selectedPhotos);
+        startActivityForResult(selePhotosIntent, ACTIVITY_RESULT_SELECT_PHOTOS);
+    }
+
     public final class gridViewOnScrollListener implements AbsListView.OnScrollListener {
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -126,7 +151,7 @@ public class ProjectPhotoActivity extends BaseActivity {
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState){
-            if(scrollState == GridView.SCROLL_AXIS_NONE){
+            if(scrollState == GridView.SCROLL_AXIS_NONE || !fab_project_photo_add.isShown()){
                 fab_project_photo_add.show();
             }
         }

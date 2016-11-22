@@ -29,12 +29,14 @@
                     android:layout_marginStart="16dp"
                     android:gravity="center_vertical">
                     <TextView
+                        android:id="@+id/tv_project_code"
                         android:layout_width="wrap_content"
                         android:layout_height="24dp"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="16sp"
                         android:text="PRJ1001"/>
                     <TextView
+                        android:id="@+id/tv_project_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
@@ -46,8 +48,23 @@
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
                 android:background="@color/colorBorder"/>
+            <TextView
+                android:id="@+id/tv_selected_photos_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:clickable="true"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:textColor="@color/colorAccent"
+                android:background="?attr/selectableItemBackground"
+                android:visibility="gone"
+                android:onClick="goToSelectPhotos"/>
             <EditText
-                android:id="@+id/tv_reference"
+                android:id="@+id/et_ref_num"
                 android:background="@color/windowBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +77,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:hint="@string/hint_reference_number" />
             <EditText
-                android:id="@+id/tv_remarks"
+                android:id="@+id/et_remarks"
                 android:background="@color/windowBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,7 +91,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:hint="@string/hint_remarks" />
             <TextView
-                android:id="@+id/tv_refresh_scanner"
+                android:id="@+id/tv_select_photos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -86,7 +103,24 @@
                 android:textAllCaps="true"
                 android:textColor="@color/colorAccent"
                 android:background="?attr/selectableItemBackground"
-                android:text="@string/label_select_photos" />
+                android:text="@string/label_select_photos"
+                android:onClick="goToSelectPhotos"/>
+            <TextView
+                android:id="@+id/tv_upload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:clickable="true"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:textColor="@color/colorAccent"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/label_upload"
+                android:visibility="gone"
+                android:onClick="uploadPhotos"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

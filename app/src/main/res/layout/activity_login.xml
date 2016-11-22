@@ -37,7 +37,7 @@
                             android:textColorHint="@color/colorHint"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:hint="@string/hint_company"
-                            android:text="">
+                            android:text="PAYROLL">
                             <requestFocus />
                         </EditText>
                     </android.support.design.widget.TextInputLayout>
@@ -53,7 +53,7 @@
                             android:textColorHint="@color/colorHint"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:hint="@string/hint_userid"
-                            android:text=""/>
+                            android:text="PAYROLL"/>
                     </android.support.design.widget.TextInputLayout>
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
@@ -68,7 +68,7 @@
                             android:textColorHint="@color/colorHint"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:hint="@string/hint_password"
-                            android:text=""/>
+                            android:text="PAYROLL"/>
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
 

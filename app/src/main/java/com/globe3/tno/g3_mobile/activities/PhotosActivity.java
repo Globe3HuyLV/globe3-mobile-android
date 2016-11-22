@@ -1,6 +1,5 @@
 package com.globe3.tno.g3_mobile.activities;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -16,15 +15,12 @@ import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.PhotosTabAdapter;
 import com.globe3.tno.g3_mobile.fragments.PhotosProjectFragment;
 import com.globe3.tno.g3_mobile.fragments.PhotosStaffFragment;
-import com.globe3.tno.g3_mobile.fragments.TimesheetProjectFragment;
-import com.globe3.tno.g3_mobile.fragments.TimesheetStaffFragment;
 
 public class PhotosActivity extends BaseActivity {
     PhotosActivity photosActivity;
@@ -48,7 +44,7 @@ public class PhotosActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_registerfinger, menu);
+        getMenuInflater().inflate(R.menu.actionbar_search, menu);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));

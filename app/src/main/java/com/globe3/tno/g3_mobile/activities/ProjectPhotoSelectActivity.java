@@ -3,18 +3,27 @@ package com.globe3.tno.g3_mobile.activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -31,17 +40,24 @@ import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
 
+import static com.globe3.tno.g3_mobile.constants.App.ACTIVITY_RESULT_SELECT_PHOTOS;
+
 public class ProjectPhotoSelectActivity extends BaseActivity {
     ProjectPhotoSelectActivity projectPhotoSelectActivity;
+
+    ActionBar actionBar;
+    Drawable upArrow;
+    Menu menu;
 
     protected ImageLoader imageLoader = ImageLoader.getInstance();
 
     private ArrayList<String> imageUrls;
     private DisplayImageOptions options;
     private ImageAdapter imageAdapter;
+    private ArrayList<String> selectedPhotos;
 
-    GridView gridView;
-
+    GridView gv_select_photos;
+    
     private int maxSelect = 10;
 
     @Override
@@ -53,12 +69,53 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        return true;
+    }
+
+    @Override
     protected void onStop() {
         imageLoader.stop();
         super.onStop();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_add_photos:
+                ArrayList<String> selectedItems = imageAdapter.getCheckedItems();
+
+                if(selectedItems.size() > maxSelect){
+                    promptLimitReached();
+                }else{
+                    Intent resultIntent = new Intent();
+                    resultIntent.putStringArrayListExtra("selected_photos", selectedItems);
+                    projectPhotoSelectActivity.setResult(ACTIVITY_RESULT_SELECT_PHOTOS, resultIntent);
+                    finish();
+                }
+                break;
+        }
+        return true;
+    }
+
     public void onActivityLoading(){
+        actionBar = getSupportActionBar();
+
+        if(selectedPhotos == null){
+            selectedPhotos = new ArrayList<>();
+        }
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            if (extras.containsKey("selected_photos")) {
+                selectedPhotos = extras.getStringArrayList("selected_photos");
+            }
+        }
+
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
                 .threadPoolSize(3)
                 .threadPriority(Thread.NORM_PRIORITY - 2)
@@ -85,19 +142,43 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
         }
 
         options = new DisplayImageOptions.Builder()
-                .showStubImage(R.drawable.ic_image_black_48dp)
-                .showImageForEmptyUri(R.drawable.ic_image_black_48dp)
+                .showStubImage(R.drawable.image_stub)
+                .showImageForEmptyUri(R.drawable.image_stub)
                 .cacheInMemory()
                 .cacheOnDisc()
                 .build();
 
         imageAdapter = new ImageAdapter(this, imageUrls);
 
-        gridView = (GridView) findViewById(R.id.gv_select_photos);
+        gv_select_photos = (GridView) findViewById(R.id.gv_select_photos);
     }
 
     public void onActivityReady(){
-        gridView.setAdapter(imageAdapter);
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
+                upArrow = ContextCompat.getDrawable(projectPhotoSelectActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                upArrow.setColorFilter(ContextCompat.getColor(projectPhotoSelectActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                actionBar.setHomeAsUpIndicator(upArrow);
+            }
+        }
+
+        gv_select_photos.setAdapter(imageAdapter);
+    }
+
+    private void promptLimitReached(){
+        android.app.AlertDialog.Builder alertBuilder = new AlertDialog.Builder(projectPhotoSelectActivity)
+                .setMessage(String.format(projectPhotoSelectActivity.getString(R.string.msg_selection_limit_photos_reached), String.valueOf(maxSelect)))
+                .setPositiveButton(projectPhotoSelectActivity.getString(R.string.label_return), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        android.app.AlertDialog selectAlert = alertBuilder.create();
+        selectAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        selectAlert.show();
     }
 
     public class ImageAdapter extends BaseAdapter {
@@ -111,7 +192,7 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
             mContext = context;
             mInflater = LayoutInflater.from(mContext);
             mSparseBooleanArray = new SparseBooleanArray();
-            mList = new ArrayList<String>();
+            mList = new ArrayList<>();
             this.mList = imageList;
 
         }
@@ -150,66 +231,77 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
                 convertView = mInflater.inflate(R.layout.item_projectphotoselect, null);
             }
 
-            final RelativeLayout rlWrapper = (RelativeLayout) convertView.findViewById(R.id.rl_wrapper);
-            final CheckBox mCheckBox = (CheckBox) convertView.findViewById(R.id.chk_photo);
-            final ImageView mImageCheck = (ImageView) convertView.findViewById(R.id.iv_check_photo);
-            final ImageView imageView = (ImageView) convertView.findViewById(R.id.iv_photo);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            final RelativeLayout rl_wrapper = (RelativeLayout) convertView.findViewById(R.id.rl_wrapper);
+            final CheckBox chk_photo = (CheckBox) convertView.findViewById(R.id.chk_photo);
+            final ImageView iv_check_box = (ImageView) convertView.findViewById(R.id.iv_check_box);
+            final ImageView iv_photo = (ImageView) convertView.findViewById(R.id.iv_photo);
+            iv_photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(mCheckBox.isChecked()){
-                        mCheckBox.setChecked(false);
-                    }else if(!mCheckBox.isChecked()){
+                    if(chk_photo.isChecked()){
+                        chk_photo.setChecked(false);
+                    }else if(!chk_photo.isChecked()){
                         if(mSparseBooleanArray.size() < 10){
-                            mCheckBox.setChecked(true);
+                            chk_photo.setChecked(true);
                         }else{
-                            android.app.AlertDialog.Builder alertBuilder = new AlertDialog.Builder(projectPhotoSelectActivity)
-                                .setMessage(String.format(projectPhotoSelectActivity.getString(R.string.msg_selection_limit_photos_reached), String.valueOf(maxSelect)))
-                                .setPositiveButton(projectPhotoSelectActivity.getString(R.string.label_okay), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-
-                            android.app.AlertDialog selectAlert = alertBuilder.create();
-                            selectAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-                            selectAlert.show();
+                           promptLimitReached();
                         }
                     }
                 }
             });
 
-            imageLoader.displayImage("file://" + imageUrls.get(position), imageView, options, new SimpleImageLoadingListener() {
+            imageLoader.displayImage("file://" + imageUrls.get(position), iv_photo, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingComplete(Bitmap loadedImage) {
                     Animation anim = AnimationUtils.loadAnimation(projectPhotoSelectActivity, R.anim.animate_fade_in);
-                    imageView.setAnimation(anim);
+                    iv_photo.setAnimation(anim);
                     anim.start();
                 }
             });
 
-            mCheckBox.setTag(position);
-            mCheckBox.setChecked(mSparseBooleanArray.get(position));
-            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            chk_photo.setTag(position);
+            chk_photo.setChecked(mSparseBooleanArray.get(position) || selectedPhotos.contains(imageUrls.get(position)));
+            chk_photo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
                         mSparseBooleanArray.put((Integer) buttonView.getTag(), isChecked);
-                        mImageCheck.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_black_24dp));
-                        mImageCheck.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
-                        imageView.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
-                        rlWrapper.setBackgroundColor(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
+                        iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_black_24dp));
+                        iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
+                        iv_photo.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
+                        rl_wrapper.setBackgroundColor(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
                     }else{
                         mSparseBooleanArray.delete((Integer) buttonView.getTag());
-                        mImageCheck.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_outline_blank_black_24dp));
-                        mImageCheck.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
-                        imageView.setColorFilter(null);
-                        rlWrapper.setBackground(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.border_blue));
+                        iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_outline_blank_black_24dp));
+                        iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
+                        iv_photo.setColorFilter(null);
+                        rl_wrapper.setBackground(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.border_blue));
+                    }
+                    menu.clear();
+                    if(mSparseBooleanArray.size() > 0){
+                        getMenuInflater().inflate(R.menu.actionbar_add_photos, menu);
+                        MenuItem photos_count = menu.findItem(R.id.display_photos_count);
+                        photos_count.setTitle(String.format(projectPhotoSelectActivity.getString(R.string.msg_num_photos_selected), String.valueOf(mSparseBooleanArray.size())));
                     }
                 }
             });
-            mCheckBox.setEnabled(false);
+
+            chk_photo.setEnabled(false);
+
+            if(chk_photo.isChecked()){
+                mSparseBooleanArray.put((Integer) chk_photo.getTag(), chk_photo.isChecked());
+                iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_black_24dp));
+                iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
+                iv_photo.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
+                rl_wrapper.setBackgroundColor(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
+            }else{
+                mSparseBooleanArray.delete((Integer) chk_photo.getTag());
+                iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_outline_blank_black_24dp));
+                iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
+                iv_photo.setColorFilter(null);
+                rl_wrapper.setBackground(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.border_blue));
+            }
+
             return convertView;
         }
     }

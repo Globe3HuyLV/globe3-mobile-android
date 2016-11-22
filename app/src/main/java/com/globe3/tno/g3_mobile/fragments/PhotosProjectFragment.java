@@ -64,8 +64,8 @@ public class PhotosProjectFragment extends Fragment {
             rowProject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getActivity().startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
-                    /*startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));*/
+                    //startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
+                    startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));
                 }
             });
             project_list.add(rowProject);
@@ -115,20 +115,8 @@ public class PhotosProjectFragment extends Fragment {
                 rowProject.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        getActivity().startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
-                    /*FragmentManager fragmentManager = getActivity().getFragmentManager();
-                    Bundle projectBundle = new Bundle();
-
-                    Project project = new Project();
-                    project.setCode("PRJ"+String.valueOf(n));
-                    project.setDesc("Project Desc");
-
-                    projectBundle.putSerializable("entproject", project);
-
-                    logTimeStaffFragment = new LogTimeStaffFragment();
-                    logTimeStaffFragment.setCancelable(false);
-                    logTimeStaffFragment.setArguments(projectBundle);
-                    logTimeStaffFragment.show(fragmentManager, getString(R.string.label_log_time_staff));*/
+                        //startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
+                        startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));
                     }
                 });
                 project_list.add(rowProject);

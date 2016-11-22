@@ -24,6 +24,8 @@
 
     <style name="AppThemeActionBarElevated" parent="@style/AppTheme">
         <item name="actionBarStyle">@style/ActionBarElevated</item>
+        <item name="actionMenuTextColor">@color/colorBlackLight</item>
+        <item name="android:actionMenuTextColor">@color/colorBlackLight</item>
     </style>
 
     <style name="ActionBarElevated" parent="@style/Widget.AppCompat.ActionBar.Solid">
