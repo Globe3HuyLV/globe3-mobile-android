@@ -26,8 +26,16 @@ import com.globe3.tno.g3_mobile.app_objects.LoginDetails;
 import com.globe3.tno.g3_mobile.async.AppUpdate;
 import com.globe3.tno.g3_mobile.async.Login;
 import com.globe3.tno.g3_mobile.util.FileUtility;
+import com.neurotec.lang.NCore;
+import com.neurotec.licensing.LicensingManager;
+import com.neurotec.licensing.NLicense;
+
+import java.io.IOException;
 
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_WRITE_EXTERNAL_STORAGE;
+import static com.globe3.tno.g3_mobile.globals.Globals.DEVICES_LICENSE_OBTAINED;
+import static com.globe3.tno.g3_mobile.globals.Globals.EXTRACT_LICENSE_OBTAINED;
+import static com.globe3.tno.g3_mobile.globals.Globals.MATCHER_LICENSE_OBTAINED;
 
 public class LoginActivity extends BaseActivity{
     LoginActivity loginActivity;
@@ -93,6 +101,16 @@ public class LoginActivity extends BaseActivity{
             }else{
                 PermissionUtility.requestWriteStorage(loginActivity);
             }
+        }
+
+        NCore.setContext(this);
+        try {
+            EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
+            MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
+            DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

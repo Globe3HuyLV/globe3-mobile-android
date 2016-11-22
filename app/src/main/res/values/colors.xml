@@ -49,4 +49,7 @@
     <color name="colorDashboardYellowLight">#FFF59D</color>
     <color name="colorDashboardAmber">#FFB300</color>
     <color name="colorDashboardAmberLight">#FFE082</color>
+
+    <!-- Neurotec -->
+    <color name="neurotec_black">#000000</color>
 </resources>

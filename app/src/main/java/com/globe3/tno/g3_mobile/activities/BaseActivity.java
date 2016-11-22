@@ -6,13 +6,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.R;
+import com.neurotec.biometrics.client.NBiometricClient;
+import com.neurotec.devices.NDeviceManager;
+import com.neurotec.lang.NCore;
+import com.neurotec.licensing.NLicense;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public BaseActivity baseActivity;

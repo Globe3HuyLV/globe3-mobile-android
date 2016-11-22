@@ -3,10 +3,13 @@ package com.globe3.tno.g3_mobile.fragments;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +21,31 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.activities.RegsiterFingerActivity;
+import com.neurotec.biometrics.NBiometricStatus;
+import com.neurotec.biometrics.NFinger;
+import com.neurotec.biometrics.NSubject;
+import com.neurotec.biometrics.NTemplateSize;
+import com.neurotec.biometrics.client.NBiometricClient;
+import com.neurotec.devices.NDeviceManager;
+import com.neurotec.devices.NDeviceType;
+import com.neurotec.lang.NCore;
+import com.neurotec.licensing.LicensingManager;
+import com.neurotec.licensing.LicensingStateResult;
+import com.neurotec.util.concurrent.CompletionHandler;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.EnumSet;
 
 public class RegisterFingerFragment extends DialogFragment {
     int sim_num = 1;
 
     Context parentContext;
+
+    NBiometricClient mBiometricClient;
+    boolean scanner_found;
 
     LinearLayout ll_extract_node;
     ImageView iv_extract_node_check;
@@ -54,15 +77,16 @@ public class RegisterFingerFragment extends DialogFragment {
     final static int PROMPT_PLACE_FINGER_SCAN = 1;
     final static int PROMPT_LIFT_FINGER_SCAN = 2;
     final static int PROMPT_SUCCESS = 3;
+    final static int PROMPT_SCANNER_NOT_FOUND = 4;
 
-    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success};
-    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess};
-    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE};
-    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE};
-    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess};
-    final static int[] REFRESH_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish};
-    final static int[] REFRESH_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess};
-    final static boolean[] REFRESH_CLICKABLE = {false, true, true, true};
+    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found};
+    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed};
+    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE};
+    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE};
+    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed};
+    final static int[] REFRESH_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner};
+    final static int[] REFRESH_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight};
+    final static boolean[] REFRESH_CLICKABLE = {false, true, true, true, true};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -90,9 +114,63 @@ public class RegisterFingerFragment extends DialogFragment {
         Animation loader_rotate = AnimationUtils.loadAnimation(parentContext, R.anim.rotate);
         iv_loader.startAnimation(loader_rotate);
 
+        NCore.setContext(getActivity());
+
         simulate();
 
         return registerFragment;
+    }
+
+    private CompletionHandler<NBiometricStatus, NSubject> completionHandler = new CompletionHandler<NBiometricStatus, NSubject>() {
+        @Override
+        public void completed(NBiometricStatus result, NSubject subject) {
+            if (result == NBiometricStatus.OK) {
+                showMessage("Template Created");
+
+                File outputFile = new File(Environment.getExternalStorageDirectory().toString()+"/globe3/", "finger-from-scanner.png");
+                try {
+                    subject.getFingers().get(0).getImage().save(outputFile.getAbsolutePath());
+                    showMessage("Saved");
+                } catch (IOException e) {}
+            } else {
+                showMessage("Extraction Failed");
+            }
+        }
+
+        @Override
+        public void failed(Throwable exc, NSubject subject) {exc.printStackTrace();
+        }
+    };
+
+    private void capture() {
+        mBiometricClient = new NBiometricClient();
+        NSubject subject = new NSubject();
+        NFinger finger = new NFinger();
+
+        mBiometricClient.setUseDeviceManager(true);
+        NDeviceManager deviceManager = mBiometricClient.getDeviceManager();
+        deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
+        mBiometricClient.initialize();
+
+        NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
+        scanner_found = devices.size() > 0;
+        if(!scanner_found) {
+            return;
+        }
+
+        subject.getFingers().add(finger);
+
+        mBiometricClient.setFingersTemplateSize(NTemplateSize.LARGE);
+        mBiometricClient.createTemplate(subject, subject, completionHandler);
+    }
+
+    private void showMessage(final String message) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tv_prompt.setText(message);
+            }
+        });
     }
 
     private void setPrompt(int status){
@@ -234,8 +312,9 @@ public class RegisterFingerFragment extends DialogFragment {
             @Override
             public void run() {
                 try {
-                    new Thread().sleep(4000);
-                } catch (InterruptedException e) {
+                    capture();
+                    new Thread().sleep(2000);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -246,7 +325,7 @@ public class RegisterFingerFragment extends DialogFragment {
                 verifyStatus(NODE_INACTIVE);
                 registerStatus(NODE_INACTIVE);
 
-                setPrompt(PROMPT_PLACE_FINGER_SCAN);
+                setPrompt(scanner_found ? PROMPT_PLACE_FINGER_SCAN : PROMPT_SCANNER_NOT_FOUND);
             }
         }).execute();
     }

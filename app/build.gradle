@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.globe3.tno.g3_tms"
+        applicationId "com.globe3.tno.g3_mobile"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
@@ -29,4 +29,31 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.github.clans:fab:1.6.4'
     testCompile 'junit:junit:4.12'
+    compile files('lib/neurotec-devices-fscanners-miaxis-android.jar')
+    compile files('lib/neurotec-biometrics-client-android.jar')
+    compile files('lib/neurotec-devices-fscanners-bluefin-android.jar')
+    compile files('lib/jna.jar')
+    compile files('lib/neurotec-media-android.jar')
+    compile files('lib/neurotec-biometrics-android.jar')
+    compile files('lib/neurotec-devices-android.jar')
+    compile files('lib/neurotec-devices-fscanners-integratedbiometrics-android.jar')
+    compile files('lib/neurotec-devices-fscanners-futronic-android.jar')
+    compile files('lib/neurotec-devices-fscanners-secugen-android.jar')
+    compile files('lib/neurotec-devices-fscanners-suprema-biomini-android.jar')
+    compile files('lib/neurotec-media-processing-android.jar')
+    compile files('lib/neurotec-core-android.jar')
+    compile files('lib/neurotec-devices-fscanners-startek-android.jar')
+    compile files('lib/neurotec-devices-fscanners-futronic-bluetooth-android.jar')
+    compile files('lib/neurotec-devices-fscanners-smufsbio-android.jar')
+    compile files('lib/neurotec-devices-irisscanners-iritech-irishield-android.jar')
+    compile files('lib/neurotec-devices-virtual-android.jar')
+    compile files('lib/neurotec-licensing-android.jar')
+    compile files('lib/neurotec-licensing-gui-android.jar')
+    compile files('lib/acra.jar')
+    compile files('lib/neurotec-devices-fscanners-digitalpersona-uareu-android.jar')
+    compile files('lib/neurotec-devices-media-android.jar')
+    compile files('lib/neurotec-cluster-android.jar')
+    compile files('lib/neurotec-biometrics-gui-android.jar')
+    compile files('lib/neurotec-devices-fscanners-nextbiometrics-android.jar')
+    compile files('lib/neurotec-gui-android.jar')
 }

@@ -42,14 +42,23 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.GPSUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.util.PermissionUtility;
+import com.neurotec.biometrics.client.NBiometricClient;
+import com.neurotec.devices.NDeviceManager;
+import com.neurotec.lang.NCore;
+import com.neurotec.licensing.LicensingManager;
+import com.neurotec.licensing.NLicense;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
 import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
+import static com.globe3.tno.g3_mobile.globals.Globals.DEVICES_LICENSE_OBTAINED;
+import static com.globe3.tno.g3_mobile.globals.Globals.EXTRACT_LICENSE_OBTAINED;
 import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
+import static com.globe3.tno.g3_mobile.globals.Globals.MATCHER_LICENSE_OBTAINED;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 import static com.globe3.tno.g3_mobile.globals.Globals.mGPSLocation;

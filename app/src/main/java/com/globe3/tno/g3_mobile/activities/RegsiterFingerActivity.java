@@ -1,5 +1,6 @@
 package com.globe3.tno.g3_mobile.activities;
 
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -134,10 +135,10 @@ public class RegsiterFingerActivity extends BaseActivity {
             rowStaff.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        /*FragmentManager fragmentManager = getFragmentManager();
+                        FragmentManager fragmentManager = getFragmentManager();
                         registerFingerFragment = new RegisterFingerFragment();
                         registerFingerFragment.setCancelable(false);
-                        registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));*/
+                        registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
                 }
             });
             staff_list.add(rowStaff);
@@ -218,10 +219,10 @@ public class RegsiterFingerActivity extends BaseActivity {
                 rowStaff.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /*FragmentManager fragmentManager = getFragmentManager();
+                        FragmentManager fragmentManager = getFragmentManager();
                         registerFingerFragment = new RegisterFingerFragment();
                         registerFingerFragment.setCancelable(false);
-                        registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));*/
+                        registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
                     }
                 });
                 staff_list.add(rowStaff);

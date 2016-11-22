@@ -23,4 +23,8 @@ public class Globals {
 
     public static GPSUtility mGPSUtility;
     public static GPSLocation mGPSLocation;
+
+    public static boolean EXTRACT_LICENSE_OBTAINED = false;
+    public static boolean MATCHER_LICENSE_OBTAINED = false;
+    public static boolean DEVICES_LICENSE_OBTAINED = false;
 }
