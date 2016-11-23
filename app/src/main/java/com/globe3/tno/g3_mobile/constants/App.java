@@ -30,4 +30,6 @@ public class App {
     public static final int ACTIVITY_RESULT_SELECT_PHOTOS = 3;
 
     public static int[] FINGER_COUNTER = {R.drawable.ic_finger_one, R.drawable.ic_finger_one, R.drawable.ic_finger_two};
+
+    public static String WEB_SERVICE_PREFIX = "ws_";
 }

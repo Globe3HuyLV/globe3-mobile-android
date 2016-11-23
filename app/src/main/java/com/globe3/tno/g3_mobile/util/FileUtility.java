@@ -70,7 +70,7 @@ public class FileUtility {
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
         bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 100, bao);
         byte [] ba = bao.toByteArray();
-        String b64= Base64.encodeToString(ba, Base64.DEFAULT);
+        String b64= Base64.encodeToString(ba, Base64.NO_WRAP);
 
         return b64;
     }

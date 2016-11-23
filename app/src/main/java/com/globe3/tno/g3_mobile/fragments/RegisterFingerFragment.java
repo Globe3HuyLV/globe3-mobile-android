@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
+import com.globe3.tno.g3_mobile.async.StaffSingleUploadTask;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.FileUtility;
 import com.neurotec.biometrics.NBiometricStatus;
@@ -46,7 +49,7 @@ public class RegisterFingerFragment extends DialogFragment {
     AuditFactory auditFactory;
     StaffFactory staffFactory;
 
-    private String staff_unique;
+    private Staff staff;
 
     int step_num = 1;
     int finger_selected = 1;
@@ -57,6 +60,10 @@ public class RegisterFingerFragment extends DialogFragment {
 
     NBiometricClient mBiometricClient;
     boolean scanner_found;
+
+    ImageView iv_staff_photo;
+    TextView tv_staff_num;
+    TextView tv_staff_desc;
 
     LinearLayout ll_extract_node;
     ImageView iv_extract_node_check;
@@ -108,12 +115,16 @@ public class RegisterFingerFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        pathFingerRef = GLOBE3_DATA_DIR + staff_unique + ".jpeg";
-        pathFingerCan = GLOBE3_DATA_DIR + staff_unique + "_c.jpeg";
+        pathFingerRef = GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg";
+        pathFingerCan = GLOBE3_DATA_DIR + staff.getUniquenum() + "_c.jpeg";
 
         View registerFragment = inflater.inflate(R.layout.fragment_regsiter_finger, viewGroup, false);
         parentContext = registerFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        iv_staff_photo = (ImageView) registerFragment.findViewById(R.id.iv_staff_photo);
+        tv_staff_num = (TextView) registerFragment.findViewById(R.id.tv_staff_num);
+        tv_staff_desc = (TextView) registerFragment.findViewById(R.id.tv_staff_desc);
 
         ll_extract_node = (LinearLayout) registerFragment.findViewById(R.id.ll_extract_node);
         iv_extract_node_check = (ImageView) registerFragment.findViewById(R.id.iv_extract_node_check);
@@ -154,7 +165,7 @@ public class RegisterFingerFragment extends DialogFragment {
                 try {
                     String sPrefix = step_num == 1 ? "" : "_c";
 
-                    File outputFile = new File(GLOBE3_DATA_DIR, staff_unique + sPrefix + ".jpeg");
+                    File outputFile = new File(GLOBE3_DATA_DIR, staff.getUniquenum() + sPrefix + ".jpeg");
                     subject.getFingers().get(0).getImage().save(outputFile.getAbsolutePath());
 
                     if(step_num == 1){
@@ -196,6 +207,7 @@ public class RegisterFingerFragment extends DialogFragment {
         NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
         scanner_found = devices.size() > 0;
         if(!scanner_found) {
+            setPrompt(PROMPT_SCANNER_NOT_FOUND);
             return;
         }
 
@@ -214,31 +226,31 @@ public class RegisterFingerFragment extends DialogFragment {
             public void completed(NBiometricStatus result, Void attachment) {
                 try {
                     if (result == NBiometricStatus.OK) {
-                        Staff staff = staffFactory.getStaff(staff_unique);
                         staff.setRegistered(true);
 
                         switch (finger_selected){
                             case 1:
-                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff_unique + ".jpeg"));
+                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                             case 2:
-                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff_unique + ".jpeg"));
+                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                             case 3:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff_unique + ".jpeg"));
+                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                             case 4:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff_unique + ".jpeg"));
+                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                             case 5:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff_unique + ".jpeg"));
+                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                         }
 
                         staffFactory.updateStaff(staff);
 
-                        LogItem logItem = auditFactory.Log(TagTableUsage.STAFF_SYNC_UP);
-                        //new StaffSingleUploadTask(_activity, staff, staffFactory, logItem, null).execute();
+                        auditFactory.Log(TagTableUsage.FINGERPRINT_REGISTER);
+
+                        new StaffSingleUploadTask(staffFactory, staff, auditFactory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
 
                         insertRegister();
                         auditFactory.Log(TagTableUsage.FINGERPRINT_REGISTER);
@@ -281,7 +293,6 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void insertRegister(){
-        Staff staff = staffFactory.getStaff(staff_unique);
         staffFactory.registerFingerprint(staff);
     }
 
@@ -483,6 +494,19 @@ public class RegisterFingerFragment extends DialogFragment {
         new StepRegisterTask(new Runnable() {
             @Override
             public void run() {
+                if(staff.getPhoto1()!=null){
+                    Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
+
+                    int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
+
+                    iv_staff_photo.setImageBitmap(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
+                }else{
+                    iv_staff_photo.setImageResource(R.drawable.ic_person_black_48dp);
+                }
+
+                tv_staff_num.setText(staff.getStaff_num());
+                tv_staff_desc.setText(staff.getStaff_desc());
+
                 extractStatus(NODE_INACTIVE);
                 verifyStatus(NODE_INACTIVE);
                 registerStatus(NODE_INACTIVE);
@@ -515,8 +539,8 @@ public class RegisterFingerFragment extends DialogFragment {
         dismiss();
     }
 
-    public void setStaffUnique(String staff_unique){
-        this.staff_unique = staff_unique;
+    public void setStaff(Staff staff){
+        this.staff = staff;
     }
 
     public void setAuditFactory(AuditFactory auditFactory){

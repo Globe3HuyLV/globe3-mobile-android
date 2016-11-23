@@ -56,6 +56,7 @@ public class RegisterFingerActivity extends BaseActivity {
 
     ArrayList<RowStaff> staff_list;
 
+    SearchView.SearchAutoComplete search_box;
     SearchStaff searchStaff;
 
     @Override
@@ -73,7 +74,7 @@ public class RegisterFingerActivity extends BaseActivity {
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        SearchView.SearchAutoComplete search_box = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+        search_box = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
         ImageView search_close_btn = (ImageView) searchView.findViewById(R.id.search_close_btn);
 
         search_box.setHintTextColor(ActivityCompat.getColor(registerFingerActivity, R.color.colorActionBarHint));
@@ -178,10 +179,10 @@ public class RegisterFingerActivity extends BaseActivity {
                 FragmentManager fragmentManager = getFragmentManager();
                 registerFingerFragment = new RegisterFingerFragment();
                 registerFingerFragment.setCancelable(false);
-                registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
-                registerFingerFragment.setStaffUnique(staff.getUniquenum());
+                registerFingerFragment.setStaff(staff);
                 registerFingerFragment.setAuditFactory(auditFactory);
                 registerFingerFragment.setStaffFactory(staffFactory);
+                registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
             }
         });
 
@@ -202,7 +203,7 @@ public class RegisterFingerActivity extends BaseActivity {
                 if(searchStaff!=null){
                     searchStaff.cancel(true);
                 }
-                searchStaff = new SearchStaff("");
+                searchStaff = new SearchStaff(search_box.getText().toString());
                 searchStaff.execute();
             }
         });

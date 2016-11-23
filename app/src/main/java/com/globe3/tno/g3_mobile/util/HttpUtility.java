@@ -1,5 +1,7 @@
 package com.globe3.tno.g3_mobile.util;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -7,20 +9,26 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_SERVER_EXT;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_SERVER_INT;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_WEBSERVICE_ADDR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_WEBSERVICE_PATH;
 import static com.globe3.tno.g3_mobile.constants.App.HTTP_CONNECT_TIMEOUT;
 import static com.globe3.tno.g3_mobile.constants.App.HTTP_READ_TIMEOUT;
+import static com.globe3.tno.g3_mobile.constants.App.WEB_SERVICE_PREFIX;
 
 public class HttpUtility {
     public static JSONObject requestJSON(String web_func, String param){
         try{
-            return testConnection() ? new JSONObject(requestString(GLOBE3_WEBSERVICE_ADDR + web_func, param, HTTP_READ_TIMEOUT, HTTP_CONNECT_TIMEOUT, true)) : null;
+            return testConnection() ? new JSONObject(requestString(GLOBE3_WEBSERVICE_ADDR + WEB_SERVICE_PREFIX + web_func, param, HTTP_READ_TIMEOUT, HTTP_CONNECT_TIMEOUT, true)) : null;
         } catch (Exception e){
             e.printStackTrace();
             return null;
@@ -65,11 +73,28 @@ public class HttpUtility {
     }
 
     public static boolean testConnection(){
-        boolean intServer = requestString(GLOBE3_SERVER_INT + GLOBE3_WEBSERVICE_PATH + "ping", "", 750, 750, false)!="";
-        boolean extServer = requestString(GLOBE3_SERVER_EXT + GLOBE3_WEBSERVICE_PATH + "ping", "", 750, 750, false)!="";
+        boolean intServer = requestString(GLOBE3_SERVER_INT + GLOBE3_WEBSERVICE_PATH + WEB_SERVICE_PREFIX + "ping", "", 750, 750, false)!="";
+        boolean extServer = requestString(GLOBE3_SERVER_EXT + GLOBE3_WEBSERVICE_PATH + WEB_SERVICE_PREFIX + "ping", "", 750, 750, false)!="";
 
         GLOBE3_WEBSERVICE_ADDR = (extServer?GLOBE3_SERVER_EXT:GLOBE3_SERVER_INT) + GLOBE3_WEBSERVICE_PATH;
 
         return (intServer || extServer);
+    }
+
+    public static String hashMapToUrl(HashMap<String, String> params) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
     }
 }
