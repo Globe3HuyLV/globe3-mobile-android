@@ -70,4 +70,34 @@ public class PermissionUtility {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, App.REQUEST_GPS);
         }
     }
+
+    public static void requestCamera(final Activity activity, boolean doRequest) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA ) && !doRequest) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity)
+                            .setCancelable(false)
+                            .setMessage(activity.getString(R.string.msg_failed_to_grant_camera_permission))
+                            .setPositiveButton(activity.getString(R.string.label_cancel), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setNegativeButton(activity.getString(R.string.label_retry), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, App.REQUEST_CAMERA);
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert);
+
+                    android.app.AlertDialog cameraPermission = alertBuilder.create();
+                    cameraPermission.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    cameraPermission.show();
+                }
+            });
+        } else {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, App.REQUEST_CAMERA);
+        }
+    }
 }

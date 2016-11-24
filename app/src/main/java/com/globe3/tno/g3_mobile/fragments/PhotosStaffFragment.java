@@ -1,5 +1,7 @@
 package com.globe3.tno.g3_mobile.fragments;
 
+import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -14,9 +16,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.globe3.tno.g3_mobile.activities.PhotosActivity;
+import com.globe3.tno.g3_mobile.activities.RegisterFingerActivity;
 import com.globe3.tno.g3_mobile.adapters.PhotosStaffListAdapter;
 import com.globe3.tno.g3_mobile.adapters.RegisterFingerStaffListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 import com.globe3.tno.g3_mobile.R;
@@ -24,7 +29,11 @@ import com.globe3.tno.g3_mobile.R;
 import java.util.ArrayList;
 
 public class PhotosStaffFragment extends Fragment {
+
+    AuditFactory auditFactory;
     StaffFactory staffFactory;
+
+    StaffTakePhotoFragment staffTakePhotoFragment;
 
     RecyclerView recycler_staff_list;
     RecyclerView.Adapter recyclerViewAdapter;
@@ -42,6 +51,7 @@ public class PhotosStaffFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         staffFactory = new StaffFactory(getActivity());
+        auditFactory = new AuditFactory(getActivity());
     }
 
     @Override
@@ -90,12 +100,19 @@ public class PhotosStaffFragment extends Fragment {
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
+                staffTakePhotoFragment = new StaffTakePhotoFragment();
+                staffTakePhotoFragment.setCancelable(false);
+                staffTakePhotoFragment.setStaff(staff);
+                staffTakePhotoFragment.setStaffFactory(staffFactory);
+                staffTakePhotoFragment.setAuditFactory(auditFactory);
+                staffTakePhotoFragment.show(fragmentManager, getString(R.string.label_take_photo));
             }
         });
 
         return rowStaff;
     }
+
     public void searchStaff(String searchTerm) {
         if(searchStaff != null){
             searchStaff.cancel(true);

@@ -10,6 +10,7 @@
     <string name="activity_project_photos">Project Photos</string>
     <string name="activity_project_photo_items">Project Photo Items</string>
     <string name="activity_select_photos">Select Photos</string>
+    <string name="activity_take_photo">Take Photo</string>
 
     <string name="label_staff">Staff</string>
     <string name="label_project">Project</string>
@@ -65,6 +66,7 @@
     <string name="label_return">Return</string>
     <string name="label_add_photos">Add Photos</string>
     <string name="label_upload">Upload</string>
+    <string name="label_take_photo">Take photo</string>
 
     <string name="msg_data_is_latest">Data is latest</string>
     <string name="msg_connected">Connected</string>
@@ -99,6 +101,7 @@
     <string name="msg_failed_to_load_configuration">Failed to load configurations</string>
     <string name="msg_failed_to_grant_storage_permission">Failed to grant storage permission</string>
     <string name="msg_failed_to_grant_gps_permission">Failed to grant GPS permission</string>
+    <string name="msg_failed_to_grant_camera_permission">Failed to grant Camera permission</string>
     <string name="msg_update_available">Update available. Download?</string>
     <string name="msg_downloading_updates">Downloading updates</string>
     <string name="msg_cannot_connect_to_server">Cannot connect to server</string>
@@ -118,6 +121,8 @@
     <string name="msg_no_record_found">No record found</string>
     <string name="msg_selection_limit_photos_reached">Selection Limit of %1$s Photos Reached</string>
     <string name="msg_num_photos_selected">%1$s photo(s) selected</string>
+    <string name="msg_failed_to_obtain_camera_permission">Failed to obtain camera permission</string>
+    <string name="msg_camera_not_suppoted">Camera not suppoted</string>
     <plurals name="msg_item">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>

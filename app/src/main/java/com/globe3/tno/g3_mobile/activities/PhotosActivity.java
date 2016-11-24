@@ -125,6 +125,15 @@ public class PhotosActivity extends BaseActivity {
         });
     }
 
+    public void finishStaffTakePhoto(){
+        photosActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                doSearch(search_box.getText().toString());
+            }
+        });
+    }
+
     public void doSearch(String searchTerm){
         Fragment selectedFragment = photosAdapter.getRegisteredFragment(viewPager.getCurrentItem());
 

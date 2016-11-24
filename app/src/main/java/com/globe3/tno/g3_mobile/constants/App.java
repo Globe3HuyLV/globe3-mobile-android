@@ -26,6 +26,7 @@ public class App {
 
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     public static final int REQUEST_GPS = 2;
+    public static final int REQUEST_CAMERA = 3;
 
     public static final int ACTIVITY_RESULT_SELECT_PHOTOS = 3;
 

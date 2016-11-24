@@ -50,6 +50,7 @@
     <color name="colorDashboardAmber">#FFB300</color>
     <color name="colorDashboardAmberLight">#FFE082</color>
 
+    <color name="colorPhotoTakeBackground">#CC4285F4</color>
     <!-- Neurotec -->
     <color name="neurotec_black">#000000</color>
 </resources>
