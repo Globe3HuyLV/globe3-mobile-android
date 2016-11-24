@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 
+import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 
 public class RegisterFingerFragment extends DialogFragment {
@@ -64,6 +65,7 @@ public class RegisterFingerFragment extends DialogFragment {
     ImageView iv_staff_photo;
     TextView tv_staff_num;
     TextView tv_staff_desc;
+    ImageView iv_staff_finger_count;
 
     LinearLayout ll_extract_node;
     ImageView iv_extract_node_check;
@@ -171,7 +173,9 @@ public class RegisterFingerFragment extends DialogFragment {
     final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight};
     final static int[] ACTION_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart, R.string.label_restart, R.string.label_refresh_scanner, R.string.label_refresh_scanner};
     final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight, R.color.colorMenuLight};
+    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorMenuLight, R.color.colorMenuLight};
     final static boolean[] ACTION_CLICKABLE = {false, true, true, true, true, true, true, true, false, false};
+    final static boolean[] CANCEL_CLICKABLE = {false, true, true, true, true, true, true, true, false, false};
     final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderAnimate, loaderAnimate};
     final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, finish, refresh, refresh, restart, restart, refresh, refresh};
 
@@ -187,6 +191,7 @@ public class RegisterFingerFragment extends DialogFragment {
         iv_staff_photo = (ImageView) registerFragment.findViewById(R.id.iv_staff_photo);
         tv_staff_num = (TextView) registerFragment.findViewById(R.id.tv_staff_num);
         tv_staff_desc = (TextView) registerFragment.findViewById(R.id.tv_staff_desc);
+        iv_staff_finger_count = (ImageView) registerFragment.findViewById(R.id.iv_staff_finger_count);
 
         ll_extract_node = (LinearLayout) registerFragment.findViewById(R.id.ll_extract_node);
         iv_extract_node_check = (ImageView) registerFragment.findViewById(R.id.iv_extract_node_check);
@@ -205,6 +210,8 @@ public class RegisterFingerFragment extends DialogFragment {
         iv_finger = (ImageView) registerFragment.findViewById(R.id.iv_finger);
         tv_action_button = (TextView) registerFragment.findViewById(R.id.tv_action_button);
         tv_cancel = (TextView) registerFragment.findViewById(R.id.tv_cancel);
+
+        iv_staff_finger_count.setImageDrawable(ContextCompat.getDrawable(getActivity(), FINGER_COUNTER[finger_selected]));
 
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -418,6 +425,8 @@ public class RegisterFingerFragment extends DialogFragment {
                     tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
+                    tv_cancel.setTextColor(ContextCompat.getColor(parentContext, CANCEL_TEXT_COLOR[status]));
+                    tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
                 }
             });
         }
@@ -509,12 +518,14 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void registerStatus(final int status){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ll_registration_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
-            }
-        });
+        if(getActivity()!=null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ll_registration_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
+                }
+            });
+        }
     }
 
     public void startExtract(){

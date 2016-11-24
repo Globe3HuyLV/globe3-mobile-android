@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.DialogFragment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,6 +21,8 @@ import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
+
+import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
 
 public class SelectFingerFragment extends DialogFragment {
 
@@ -45,6 +49,12 @@ public class SelectFingerFragment extends DialogFragment {
     ImageView iv_finger_four;
     ImageView iv_finger_five;
 
+    ImageView iv_finger_num_one;
+    ImageView iv_finger_num_two;
+    ImageView iv_finger_num_three;
+    ImageView iv_finger_num_four;
+    ImageView iv_finger_num_five;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +63,7 @@ public class SelectFingerFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View selectFingerFragment = inflater.inflate(R.layout.fragment_select_finger, container, false);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         iv_staff_photo = (ImageView) selectFingerFragment.findViewById(R.id.iv_staff_photo);
         tv_staff_num = (TextView) selectFingerFragment.findViewById(R.id.tv_staff_num);
@@ -69,6 +80,12 @@ public class SelectFingerFragment extends DialogFragment {
         iv_finger_three = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_three);
         iv_finger_four = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_four);
         iv_finger_five = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_five);
+
+        iv_finger_num_one = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_num_one);
+        iv_finger_num_two = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_num_two);
+        iv_finger_num_three = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_num_three);
+        iv_finger_num_four = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_num_four);
+        iv_finger_num_five = (ImageView) selectFingerFragment.findViewById(R.id.iv_finger_num_five);
 
         rl_finger_one.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +123,12 @@ public class SelectFingerFragment extends DialogFragment {
         iv_finger_three.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image3()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
         iv_finger_four.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image4()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
         iv_finger_five.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image5()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
+
+        iv_finger_num_one.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image1()!=null?R.drawable.ic_finger_one:R.drawable.ic_finger_one_gray));
+        iv_finger_num_two.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image2()!=null?R.drawable.ic_finger_two:R.drawable.ic_finger_two_gray));
+        iv_finger_num_three.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image3()!=null?R.drawable.ic_finger_three:R.drawable.ic_finger_three_gray));
+        iv_finger_num_four.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image4()!=null?R.drawable.ic_finger_four:R.drawable.ic_finger_four_gray));
+        iv_finger_num_five.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image5()!=null?R.drawable.ic_finger_five:R.drawable.ic_finger_five_gray));
 
         if(staff.getPhoto1()!=null){
             Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);

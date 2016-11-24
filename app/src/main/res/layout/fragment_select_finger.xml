@@ -49,8 +49,8 @@
         android:padding="4dp">
         <RelativeLayout
             android:id="@+id/rl_finger_one"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:background="@color/colorFingerSelect">
             <ImageView
                 android:id="@+id/iv_finger_one"
@@ -60,6 +60,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_fingerprint_black_48dp" />
             <ImageView
+                android:id="@+id/iv_finger_num_one"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
@@ -68,8 +69,8 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rl_finger_two"
-            android:layout_width="72dp"
-            android:layout_height="72dp">
+            android:layout_width="64dp"
+            android:layout_height="64dp">
             <ImageView
                 android:id="@+id/iv_finger_two"
                 android:layout_width="wrap_content"
@@ -78,6 +79,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_fingerprint_black_48dp" />
             <ImageView
+                android:id="@+id/iv_finger_num_two"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
@@ -86,8 +88,8 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rl_finger_three"
-            android:layout_width="72dp"
-            android:layout_height="72dp">
+            android:layout_width="64dp"
+            android:layout_height="64dp">
             <ImageView
                 android:id="@+id/iv_finger_three"
                 android:layout_width="wrap_content"
@@ -96,6 +98,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_fingerprint_black_48dp" />
             <ImageView
+                android:id="@+id/iv_finger_num_three"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
@@ -104,8 +107,8 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rl_finger_four"
-            android:layout_width="72dp"
-            android:layout_height="72dp">
+            android:layout_width="64dp"
+            android:layout_height="64dp">
             <ImageView
                 android:id="@+id/iv_finger_four"
                 android:layout_width="wrap_content"
@@ -114,6 +117,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_fingerprint_black_48dp" />
             <ImageView
+                android:id="@+id/iv_finger_num_four"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
@@ -122,8 +126,8 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rl_finger_five"
-            android:layout_width="72dp"
-            android:layout_height="72dp">
+            android:layout_width="64dp"
+            android:layout_height="64dp">
             <ImageView
                 android:id="@+id/iv_finger_five"
                 android:layout_width="wrap_content"
@@ -132,6 +136,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_fingerprint_black_48dp" />
             <ImageView
+                android:id="@+id/iv_finger_num_five"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
