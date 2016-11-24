@@ -31,6 +31,7 @@ import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.fragments.RegisterFingerFragment;
 
+import com.globe3.tno.g3_mobile.fragments.SelectFingerFragment;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class RegisterFingerActivity extends BaseActivity {
     AuditFactory auditFactory;
     StaffFactory staffFactory;
 
-    RegisterFingerFragment registerFingerFragment;
+    SelectFingerFragment selectFingerFragment;
 
     ActionBar actionBar;
     Drawable upArrow;
@@ -161,7 +162,15 @@ public class RegisterFingerActivity extends BaseActivity {
         RowStaff rowStaff = new RowStaff();
         rowStaff.setStaffCode(staff.getStaff_num());
         rowStaff.setStaffName(staff.getStaff_desc());
-        rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
+
+        int staff_finger_count = 0;
+        staff_finger_count += (staff.getFingerprint_image1()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image2()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image3()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image4()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image5()==null?0:1);
+
+        rowStaff.setStaffFingerCount(staff_finger_count);
 
         if(staff.getPhoto1()!=null){
             Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
@@ -177,26 +186,31 @@ public class RegisterFingerActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getFragmentManager();
-                registerFingerFragment = new RegisterFingerFragment();
-                registerFingerFragment.setCancelable(false);
-                registerFingerFragment.setStaff(staff);
-                registerFingerFragment.setAuditFactory(auditFactory);
-                registerFingerFragment.setStaffFactory(staffFactory);
-                registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
+
+                selectFingerFragment = new SelectFingerFragment();
+                selectFingerFragment.setCancelable(false);
+                selectFingerFragment.setStaff(staff);
+                selectFingerFragment.setAuditFactory(auditFactory);
+                selectFingerFragment.setStaffFactory(staffFactory);
+                selectFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
             }
         });
 
         return rowStaff;
     }
 
-    public void cancelRegisterFragment(View view){
-        registerFingerFragment.finishRegistration();
-        registerFingerFragment = null;
+    public void startRegister(View view){
+        selectFingerFragment.startRegister();
+    }
+
+    public void cancelSelectFragment(View view){
+        if(selectFingerFragment != null){
+            selectFingerFragment.dismiss();
+            selectFingerFragment = null;
+        }
     }
 
     public void finishRegistration(){
-        registerFingerFragment.finishRegistration();
-        registerFingerFragment = null;
         registerFingerActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

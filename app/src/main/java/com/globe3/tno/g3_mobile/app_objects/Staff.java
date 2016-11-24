@@ -24,6 +24,8 @@ public class Staff implements Serializable{
     private byte[] fingerprint_image1;
     private byte[] fingerprint_image2;
     private byte[] fingerprint_image3;
+    private byte[] fingerprint_image4;
+    private byte[] fingerprint_image5;
     private byte[] photo1;
     private boolean active;
 
@@ -176,6 +178,22 @@ public class Staff implements Serializable{
 
     public void setFingerprint_image3(byte[] fingerprint_image3) {
         this.fingerprint_image3 = fingerprint_image3;
+    }
+
+    public byte[] getFingerprint_image4() {
+        return fingerprint_image4;
+    }
+
+    public void setFingerprint_image4(byte[] fingerprint_image4) {
+        this.fingerprint_image4 = fingerprint_image4;
+    }
+
+    public byte[] getFingerprint_image5() {
+        return fingerprint_image5;
+    }
+
+    public void setFingerprint_image5(byte[] fingerprint_image5) {
+        this.fingerprint_image5 = fingerprint_image5;
     }
 
     public byte[] getPhoto1() {

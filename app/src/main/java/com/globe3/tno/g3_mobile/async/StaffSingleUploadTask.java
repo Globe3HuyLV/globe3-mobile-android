@@ -45,6 +45,9 @@ public class StaffSingleUploadTask extends AsyncTask<Void, Void, Boolean> {
             detail.put("date_time_update", DateUtility.getDateString(staff.getDate_update() != null ? staff.getDate_update() : logItem.getLogDate(), "yyyy-MM-dd HH:mm:ss"));
             detail.put("fingerprint_image1", (staff.getFingerprint_image1() != null && staff.getFingerprint_image1().length > 0 ? Base64.encodeToString(staff.getFingerprint_image1(), Base64.DEFAULT) : ""));
             detail.put("fingerprint_image2", (staff.getFingerprint_image2() != null && staff.getFingerprint_image2().length > 0 ? Base64.encodeToString(staff.getFingerprint_image2(), Base64.DEFAULT) : ""));
+            detail.put("fingerprint_image3", (staff.getFingerprint_image3() != null && staff.getFingerprint_image3().length > 0 ? Base64.encodeToString(staff.getFingerprint_image3(), Base64.DEFAULT) : ""));
+            detail.put("fingerprint_image4", (staff.getFingerprint_image4() != null && staff.getFingerprint_image4().length > 0 ? Base64.encodeToString(staff.getFingerprint_image4(), Base64.DEFAULT) : ""));
+            detail.put("fingerprint_image5", (staff.getFingerprint_image5() != null && staff.getFingerprint_image5().length > 0 ? Base64.encodeToString(staff.getFingerprint_image5(), Base64.DEFAULT) : ""));
             detail.put("photo1", (staff.getPhoto1() != null && staff.getPhoto1().length > 0 ? Base64.encodeToString(staff.getPhoto1(), Base64.DEFAULT) : ""));
 
             String param = HttpUtility.hashMapToUrl(detail);

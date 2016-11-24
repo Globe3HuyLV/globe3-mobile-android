@@ -15,6 +15,8 @@
     <color name="colorMenuDark">#757575</color>
     <color name="colorActionBarHint">#E0E0E0</color>
 
+    <color name="colorFingerSelect">#90CAF9</color>
+
     <color name="colorBlack">#000000</color>
     <color name="colorBlackLight">#212121</color>
     <color name="colorBlackTranslucent">#66000000</color>

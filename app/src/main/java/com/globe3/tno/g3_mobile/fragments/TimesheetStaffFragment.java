@@ -96,7 +96,15 @@ public class TimesheetStaffFragment extends Fragment {
         RowStaff rowStaff = new RowStaff();
         rowStaff.setStaffCode(staff.getStaff_num());
         rowStaff.setStaffName(staff.getStaff_desc());
-        rowStaff.setStaffFingerCount((staff.getFingerprint_image1()==null?0:1)+(staff.getFingerprint_image2()==null?0:1));
+
+        int staff_finger_count = 0;
+        staff_finger_count += (staff.getFingerprint_image1()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image2()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image3()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image4()==null?0:1);
+        staff_finger_count += (staff.getFingerprint_image5()==null?0:1);
+
+        rowStaff.setStaffFingerCount(staff_finger_count);
 
         if(staff.getPhoto1()!=null){
             Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);

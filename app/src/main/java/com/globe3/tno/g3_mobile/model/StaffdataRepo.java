@@ -297,7 +297,7 @@ public class StaffdataRepo {
     public ArrayList<staffdata> get_registered_staffdatas() {
         ArrayList<staffdata> staffdatas = new ArrayList<staffdata>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (LENGTH(fingerprint_image1)>0 OR LENGTH(fingerprint_image2)>0)", null, null, null, null);
+        Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "companyfn = '"+COMPANYFN+"' AND (LENGTH(fingerprint_image1)>0 OR LENGTH(fingerprint_image2)>0 OR LENGTH(fingerprint_image3)>0 OR LENGTH(fingerprint_image4)>0 OR LENGTH(fingerprint_image2)>5)", null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

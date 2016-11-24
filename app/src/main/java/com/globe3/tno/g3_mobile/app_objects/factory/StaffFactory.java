@@ -85,6 +85,9 @@ public class StaffFactory {
 
             staff.fingerprint_image1 = FileUtility.getImage(staffJson.getString("fingerprint_image1"));
             staff.fingerprint_image2 = FileUtility.getImage(staffJson.getString("fingerprint_image2"));
+            staff.fingerprint_image3 = FileUtility.getImage(staffJson.getString("fingerprint_image3"));
+            staff.fingerprint_image4 = FileUtility.getImage(staffJson.getString("fingerprint_image4"));
+            staff.fingerprint_image5 = FileUtility.getImage(staffJson.getString("fingerprint_image5"));
 
             staff.photo1 = FileUtility.getImage(staffJson.getString("photo1"));
 
@@ -784,7 +787,7 @@ public class StaffFactory {
         staff.setStaff_desc(staffdata.staff_fullname);
         staff.setStaff_num(staffdata.staff_id);
         staff.setJob_title(staffdata.job_title);
-        staff.setRegistered((staffdata.fingerprint_image1 != null && staffdata.fingerprint_image1.length > 0) || (staffdata.fingerprint_image2 != null && staffdata.fingerprint_image2.length > 0) || (staffdata.fingerprint_image3 != null && staffdata.fingerprint_image3.length > 0) ? true : false);
+        staff.setRegistered((staffdata.fingerprint_image1 != null && staffdata.fingerprint_image1.length > 0) || (staffdata.fingerprint_image2 != null && staffdata.fingerprint_image2.length > 0) || (staffdata.fingerprint_image3 != null && staffdata.fingerprint_image3.length > 0) || (staffdata.fingerprint_image4 != null && staffdata.fingerprint_image4.length > 0) || (staffdata.fingerprint_image5 != null && staffdata.fingerprint_image5.length > 0) ? true : false);
 
         if(staff.getRegistered()){
             scanimage_repo.open();
@@ -809,6 +812,8 @@ public class StaffFactory {
         staff.setFingerprint_image1(staffdata.fingerprint_image1);
         staff.setFingerprint_image2(staffdata.fingerprint_image2);
         staff.setFingerprint_image3(staffdata.fingerprint_image3);
+        staff.setFingerprint_image4(staffdata.fingerprint_image4);
+        staff.setFingerprint_image5(staffdata.fingerprint_image5);
         staff.setPhoto1(staffdata.photo1);
         return staff;
     }
@@ -828,6 +833,8 @@ public class StaffFactory {
         staffdata.fingerprint_image1 = staff.getFingerprint_image1();
         staffdata.fingerprint_image2 = staff.getFingerprint_image2();
         staffdata.fingerprint_image3 = staff.getFingerprint_image3();
+        staffdata.fingerprint_image4 = staff.getFingerprint_image4();
+        staffdata.fingerprint_image5 = staff.getFingerprint_image5();
         staffdata.workpermit_num = staff.getWorkPermitId();
         staffdata.workpermit_issuedate = staff.getWorkPermitIssued();
         staffdata.workpermit_expirydate = staff.getWorkPermitExpiry();

@@ -81,6 +81,66 @@ public class RegisterFingerFragment extends DialogFragment {
     ImageView iv_loader;
     ImageView iv_finger;
     TextView tv_action_button;
+    TextView tv_cancel;
+
+    private View.OnClickListener refresh = new  View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            new StepRegisterTask(new Runnable() {
+                @Override
+                public void run() {
+                    setPrompt(PROMPT_CONNECTING);
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        capture();
+                        new Thread().sleep(5000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    setPrompt(scanner_found ? (step_num==1?PROMPT_PLACE_FINGER_SCAN:PROMPT_LIFT_FINGER_SCAN) : PROMPT_SCANNER_NOT_FOUND);
+                }
+            }).execute();
+        }
+    };
+
+    private View.OnClickListener restart = new  View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            step_num = 1;
+            fingerprintDelete(pathFingerRef);
+            fingerprintDelete(pathFingerCan);
+            startExtract();
+        }
+    };
+
+    private View.OnClickListener finish = new  View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            ((RegisterFingerActivity) getActivity()).finishRegistration();
+            dismiss();
+        }
+    };
+
+    private Runnable loaderAnimate = new Runnable() {
+        @Override
+        public void run() {
+            iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+        }
+    };
+
+    private Runnable loaderStop = new Runnable() {
+        @Override
+        public void run() {
+            iv_loader.clearAnimation();
+        }
+    };
 
     final static int NODE_INACTIVE = 0;
     final static int NODE_ACTIVE = 1;
@@ -112,6 +172,8 @@ public class RegisterFingerFragment extends DialogFragment {
     final static int[] ACTION_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart, R.string.label_restart, R.string.label_refresh_scanner, R.string.label_refresh_scanner};
     final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight, R.color.colorMenuLight};
     final static boolean[] ACTION_CLICKABLE = {false, true, true, true, true, true, true, true, false, false};
+    final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderAnimate, loaderAnimate};
+    final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, finish, refresh, refresh, restart, restart, refresh, refresh};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -142,6 +204,14 @@ public class RegisterFingerFragment extends DialogFragment {
         iv_loader = (ImageView) registerFragment.findViewById(R.id.iv_loader);
         iv_finger = (ImageView) registerFragment.findViewById(R.id.iv_finger);
         tv_action_button = (TextView) registerFragment.findViewById(R.id.tv_action_button);
+        tv_cancel = (TextView) registerFragment.findViewById(R.id.tv_cancel);
+
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
         iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
 
@@ -239,10 +309,10 @@ public class RegisterFingerFragment extends DialogFragment {
                                 staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                             case 4:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image4(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                             case 5:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image5(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
                                 break;
                         }
 
@@ -333,152 +403,109 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void setPrompt(final int status){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tv_prompt.setText(getText(PROMPT_TEXT[status]));
-                tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
-                iv_loader.setVisibility(LOADER_DISPLAY[status]);
-                iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
-                iv_finger.setVisibility(FINGER_DISPLAY[status]);
-                iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
-                if(status == PROMPT_CONNECTING || status == PROMPT_EXTRACTING || status == PROMPT_VERIFYING){
-                    iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
-                }else{
-                    iv_loader.clearAnimation();
+        if(getActivity()!=null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tv_prompt.setText(getText(PROMPT_TEXT[status]));
+                    tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
+                    iv_loader.setVisibility(LOADER_DISPLAY[status]);
+                    iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
+                    iv_finger.setVisibility(FINGER_DISPLAY[status]);
+                    iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
+                    LOADER_ANIMATION[status].run();
+                    tv_action_button.setText(getText(ACTION_TEXT[status]));
+                    tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
+                    tv_action_button.setClickable(ACTION_CLICKABLE[status]);
+                    tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
                 }
-                tv_action_button.setText(getText(ACTION_TEXT[status]));
-                tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
-                tv_action_button.setClickable(ACTION_CLICKABLE[status]);
-
-                if(status == PROMPT_CONNECTING || status == PROMPT_PLACE_FINGER_SCAN || status == PROMPT_LIFT_FINGER_SCAN || status == PROMPT_SCANNER_NOT_FOUND || status == PROMPT_EXTRACT_FAILED){
-                    tv_action_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            new StepRegisterTask(new Runnable() {
-                                @Override
-                                public void run() {
-                                    setPrompt(PROMPT_CONNECTING);
-                                }
-                            }, new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        capture();
-                                        new Thread().sleep(5000);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, new Runnable() {
-                                @Override
-                                public void run() {
-                                    setPrompt(scanner_found ? (step_num==1?PROMPT_PLACE_FINGER_SCAN:PROMPT_LIFT_FINGER_SCAN) : PROMPT_SCANNER_NOT_FOUND);
-                                }
-                            }).execute();
-                        }
-                    });
-                }else if(status == PROMPT_SUCCESS){
-                    tv_action_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ((RegisterFingerActivity) getActivity()).finishRegistration();
-                        }
-                    });
-                }else if(status == PROMPT_ERROR_OCCURRED || status == PROMPT_NOT_MATCH){
-                    tv_action_button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            step_num = 1;
-                            fingerprintDelete(pathFingerRef);
-                            fingerprintDelete(pathFingerCan);
-                            startExtract();
-                        }
-                    });
-                }
-            }
-        });
+            });
+        }
     }
 
     private void extractStatus(final int status){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ll_extract_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
-                tv_extract_node_num.setVisibility(NODE_NUM_DISPLAY[status]);
-                iv_extract_node_check.setVisibility(NODE_CHECK_DISPLAY[status]);
-                line_step_1.setVisibility(LINE_DISPLAY[status]);
-                if(status==NODE_SUCCESS){
-                    ObjectAnimator stepperLineAnim = ObjectAnimator.ofFloat(line_step_1, "scaleX", 0.1f, 1f);
-                    stepperLineAnim.setDuration(500);
-                    stepperLineAnim.start();
-                    stepperLineAnim.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animator) {
+        if(getActivity()!=null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ll_extract_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
+                    tv_extract_node_num.setVisibility(NODE_NUM_DISPLAY[status]);
+                    iv_extract_node_check.setVisibility(NODE_CHECK_DISPLAY[status]);
+                    line_step_1.setVisibility(LINE_DISPLAY[status]);
+                    if(status==NODE_SUCCESS){
+                        ObjectAnimator stepperLineAnim = ObjectAnimator.ofFloat(line_step_1, "scaleX", 0.1f, 1f);
+                        stepperLineAnim.setDuration(500);
+                        stepperLineAnim.start();
+                        stepperLineAnim.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onAnimationEnd(Animator animator) {
-                            verifyStatus(NODE_ACTIVE);
-                            registerStatus(NODE_INACTIVE);
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                verifyStatus(NODE_ACTIVE);
+                                registerStatus(NODE_INACTIVE);
 
-                            setPrompt(PROMPT_LIFT_FINGER_SCAN);
-                        }
+                                setPrompt(PROMPT_LIFT_FINGER_SCAN);
+                            }
 
-                        @Override
-                        public void onAnimationCancel(Animator animator) {
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onAnimationRepeat(Animator animator) {
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void verifyStatus(final int status){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ll_verify_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
-                tv_verify_node_num.setVisibility(NODE_NUM_DISPLAY[status]);
-                iv_verify_node_check.setVisibility(NODE_CHECK_DISPLAY[status]);
-                line_step_2.setVisibility(LINE_DISPLAY[status]);
-                if(status==NODE_SUCCESS){
-                    ObjectAnimator stepperLineAnim = ObjectAnimator.ofFloat(line_step_2, "scaleX", 0.1f, 1f);
-                    stepperLineAnim.setDuration(500);
-                    stepperLineAnim.start();
-                    stepperLineAnim.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animator) {
+        if(getActivity()!=null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ll_verify_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
+                    tv_verify_node_num.setVisibility(NODE_NUM_DISPLAY[status]);
+                    iv_verify_node_check.setVisibility(NODE_CHECK_DISPLAY[status]);
+                    line_step_2.setVisibility(LINE_DISPLAY[status]);
+                    if(status==NODE_SUCCESS){
+                        ObjectAnimator stepperLineAnim = ObjectAnimator.ofFloat(line_step_2, "scaleX", 0.1f, 1f);
+                        stepperLineAnim.setDuration(500);
+                        stepperLineAnim.start();
+                        stepperLineAnim.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onAnimationEnd(Animator animator) {
-                            registerStatus(NODE_SUCCESS);
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                registerStatus(NODE_SUCCESS);
 
-                            setPrompt(PROMPT_SUCCESS);
-                        }
+                                setPrompt(PROMPT_SUCCESS);
+                            }
 
-                        @Override
-                        public void onAnimationCancel(Animator animator) {
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onAnimationRepeat(Animator animator) {
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void registerStatus(final int status){
@@ -535,12 +562,12 @@ public class RegisterFingerFragment extends DialogFragment {
         }).execute();
     }
 
-    public void finishRegistration(){
-        dismiss();
-    }
-
     public void setStaff(Staff staff){
         this.staff = staff;
+    }
+
+    public void setFingerSelected(int finger_selected){
+        this.finger_selected = finger_selected;
     }
 
     public void setAuditFactory(AuditFactory auditFactory){

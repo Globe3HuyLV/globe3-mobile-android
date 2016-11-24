@@ -2,35 +2,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
-    <com.globe3.tno.g3_mobile.custom_views.AutoFitTextureView
-        android:id="@+id/texture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <com.globe3.tno.g3_mobile.custom_views.SquareRelativeLayout
-        android:id="@+id/square"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_blue_translucent"/>
     <RelativeLayout
-        android:id="@+id/anchor"
+        android:id="@+id/rl_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/square"></RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/control"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/anchor"
-        android:layout_alignBottom="@+id/texture"
-        android:background="@color/colorBlueTransparent">
-        <ImageView
-            android:id="@+id/picture"
+        android:layout_height="wrap_content">
+        <com.globe3.tno.g3_mobile.custom_views.AutoFitTextureView
+            android:id="@+id/texture_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.globe3.tno.g3_mobile.custom_views.SquareRelativeLayout
+            android:id="@+id/layout_crop_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_photo_camera_black_48dp"
-            android:tint="@color/colorWhite"/>
+            android:background="@drawable/border_blue_translucent"/>
+        <RelativeLayout
+            android:id="@+id/rl_anchor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/layout_crop_indicator"/>
+        <RelativeLayout
+            android:id="@+id/rl_filler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/rl_anchor"
+            android:layout_alignBottom="@+id/texture_camera"
+            android:background="@color/colorBlueTransparent">
+            <ImageView
+                android:id="@+id/iv_take_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_photo_camera_black_48dp"
+                android:tint="@color/colorWhite"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:padding="12dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_close_black_24dp"
+                android:tint="@color/colorWhite"/>
+        </RelativeLayout>
     </RelativeLayout>
+
 </RelativeLayout>
