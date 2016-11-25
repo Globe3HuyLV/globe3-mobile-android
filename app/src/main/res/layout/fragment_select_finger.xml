@@ -3,7 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.globe3.tno.g3_mobile.fragments.SelectFingerFragment">
+    tools:context="com.globe3.tno.g3_mobile.fragments.SelectFingerFragment"
+    android:background="@color/windowBackground"
+    android:id="@+id/main_container">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -64,7 +66,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_finger_one"
+                android:src="@drawable/ic_finger_one_gray"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
         <RelativeLayout
@@ -83,7 +85,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_finger_two"
+                android:src="@drawable/ic_finger_two_gray"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
         <RelativeLayout
@@ -102,7 +104,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_finger_three"
+                android:src="@drawable/ic_finger_three_gray"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
         <RelativeLayout
@@ -121,7 +123,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_finger_four"
+                android:src="@drawable/ic_finger_four_gray"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
         <RelativeLayout
@@ -140,7 +142,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_finger_five"
+                android:src="@drawable/ic_finger_five_gray"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
     </LinearLayout>

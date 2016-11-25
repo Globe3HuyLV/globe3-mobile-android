@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.activities.RegisterFingerActivity;
-import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
@@ -47,6 +46,8 @@ import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 
 public class RegisterFingerFragment extends DialogFragment {
+    SelectFingerFragment selectFingerFragment;
+
     AuditFactory auditFactory;
     StaffFactory staffFactory;
 
@@ -126,6 +127,19 @@ public class RegisterFingerFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             ((RegisterFingerActivity) getActivity()).finishRegistration();
+            if(selectFingerFragment!=null){
+                selectFingerFragment.dismiss();
+            }
+            dismiss();
+        }
+    };
+
+    private View.OnClickListener cancel = new  View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            if(selectFingerFragment!=null){
+                selectFingerFragment.show(staff);
+            }
             dismiss();
         }
     };
@@ -213,12 +227,7 @@ public class RegisterFingerFragment extends DialogFragment {
 
         iv_staff_finger_count.setImageDrawable(ContextCompat.getDrawable(getActivity(), FINGER_COUNTER[finger_selected]));
 
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        tv_cancel.setOnClickListener(cancel);
 
         iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
 
@@ -587,5 +596,9 @@ public class RegisterFingerFragment extends DialogFragment {
 
     public void setStaffFactory(StaffFactory staffFactory){
         this.staffFactory = staffFactory;
+    }
+
+    public void setSelectFingerFragment(SelectFingerFragment selectFingerFragment) {
+        this.selectFingerFragment = selectFingerFragment;
     }
 }

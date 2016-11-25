@@ -9,11 +9,13 @@ import android.app.DialogFragment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
 
 public class SelectFingerFragment extends DialogFragment {
@@ -31,7 +34,9 @@ public class SelectFingerFragment extends DialogFragment {
 
     Staff staff;
 
-    int finger_num = 0;
+    int finger_num = 1;
+
+    LinearLayout main_container;
 
     ImageView iv_staff_photo;
     TextView tv_staff_num;
@@ -64,6 +69,8 @@ public class SelectFingerFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View selectFingerFragment = inflater.inflate(R.layout.fragment_select_finger, container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        main_container = (LinearLayout) selectFingerFragment.findViewById(R.id.main_container);
 
         iv_staff_photo = (ImageView) selectFingerFragment.findViewById(R.id.iv_staff_photo);
         tv_staff_num = (TextView) selectFingerFragment.findViewById(R.id.tv_staff_num);
@@ -124,7 +131,7 @@ public class SelectFingerFragment extends DialogFragment {
         iv_finger_four.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image4()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
         iv_finger_five.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image5()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
 
-        iv_finger_num_one.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image1()!=null?R.drawable.ic_finger_one:R.drawable.ic_finger_one_gray));
+        iv_finger_num_one.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image1()!=null?R.drawable.ic_finger_one_select:R.drawable.ic_finger_one_gray_select));
         iv_finger_num_two.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image2()!=null?R.drawable.ic_finger_two:R.drawable.ic_finger_two_gray));
         iv_finger_num_three.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image3()!=null?R.drawable.ic_finger_three:R.drawable.ic_finger_three_gray));
         iv_finger_num_four.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image4()!=null?R.drawable.ic_finger_four:R.drawable.ic_finger_four_gray));
@@ -154,6 +161,12 @@ public class SelectFingerFragment extends DialogFragment {
         rl_finger_three.setBackgroundColor(fingerNum==3? ResourcesCompat.getColor(getResources(), R.color.colorFingerSelect, null) : 0x00000000);
         rl_finger_four.setBackgroundColor(fingerNum==4? ResourcesCompat.getColor(getResources(), R.color.colorFingerSelect, null) : 0x00000000);
         rl_finger_five.setBackgroundColor(fingerNum==5? ResourcesCompat.getColor(getResources(), R.color.colorFingerSelect, null) : 0x00000000);
+
+        iv_finger_num_one.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image1()!=null?(fingerNum==1?R.drawable.ic_finger_one_select:R.drawable.ic_finger_one):(fingerNum==1?R.drawable.ic_finger_one_gray_select:R.drawable.ic_finger_one_gray)));
+        iv_finger_num_two.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image2()!=null?(fingerNum==2?R.drawable.ic_finger_two_select:R.drawable.ic_finger_two):(fingerNum==2?R.drawable.ic_finger_two_gray_select:R.drawable.ic_finger_two_gray)));
+        iv_finger_num_three.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image3()!=null?(fingerNum==3?R.drawable.ic_finger_three_select:R.drawable.ic_finger_three):(fingerNum==3?R.drawable.ic_finger_three_gray_select:R.drawable.ic_finger_three_gray)));
+        iv_finger_num_four.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image4()!=null?(fingerNum==4?R.drawable.ic_finger_four_select:R.drawable.ic_finger_four):(fingerNum==4?R.drawable.ic_finger_four_gray_select:R.drawable.ic_finger_four_gray)));
+        iv_finger_num_five.setImageDrawable(ContextCompat.getDrawable(getActivity(), staff.getFingerprint_image5()!=null?(fingerNum==5?R.drawable.ic_finger_five_select:R.drawable.ic_finger_five):(fingerNum==5?R.drawable.ic_finger_five_gray_select:R.drawable.ic_finger_five_gray)));
     }
 
     public void startRegister(){
@@ -164,18 +177,31 @@ public class SelectFingerFragment extends DialogFragment {
         registerFingerFragment.setAuditFactory(auditFactory);
         registerFingerFragment.setStaffFactory(staffFactory);
         registerFingerFragment.setFingerSelected(finger_num);
+        registerFingerFragment.setSelectFingerFragment(this);
         registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
-        dismiss();
+        main_container.setVisibility(View.GONE);
     }
 
     public void setAuditFactory(AuditFactory auditFactory){
         this.auditFactory = auditFactory;
     }
-
     public void setStaffFactory(StaffFactory staffFactory){
         this.staffFactory = staffFactory;
     }
     public void setStaff(Staff staff){
         this.staff = staff;
+    }
+
+    public void show(Staff staff) {
+        this.staff = staff;
+
+        iv_finger_one.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image1()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
+        iv_finger_two.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image2()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
+        iv_finger_three.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image3()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
+        iv_finger_four.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image4()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
+        iv_finger_five.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image5()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
+
+        selectFinger(finger_num);
+        main_container.setVisibility(View.VISIBLE);
     }
 }

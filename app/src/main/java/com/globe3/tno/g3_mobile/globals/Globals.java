@@ -2,6 +2,7 @@ package com.globe3.tno.g3_mobile.globals;
 
 import com.globe3.tno.g3_mobile.app_objects.GPSLocation;
 import com.globe3.tno.g3_mobile.util.GPSUtility;
+import com.neurotec.biometrics.client.NBiometricClient;
 
 public class Globals {
     public static String CFSQLFILENAME = "";
@@ -19,7 +20,7 @@ public class Globals {
     public static String DEVICE_NAME = "";
     public static String PHONE_NUMBER = "";
 
-    //public static NBiometricClient Globe3BiometricClient;
+    public static NBiometricClient Globe3BiometricClient;
 
     public static GPSUtility mGPSUtility;
     public static GPSLocation mGPSLocation;
