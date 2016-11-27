@@ -1,9 +1,9 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
+import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
 import com.globe3.tno.g3_mobile.app_objects.DailyTime;
 import com.globe3.tno.g3_mobile.app_objects.LocationHistory;
@@ -28,17 +28,17 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
-import static com.globe3.tno.g3_mobile.globals.Globals.mGPSLocation;
+import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
 public class StaffFactory {
     private Activity _activity;
@@ -90,6 +90,18 @@ public class StaffFactory {
             staff.fingerprint_image5 = FileUtility.getImage(staffJson.getString("fingerprint_image5"));
 
             staff.photo1 = FileUtility.getImage(staffJson.getString("photo1"));
+
+            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_1");
+            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_2");
+            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_3");
+            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_4");
+            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_5");
+
+            BiometricUtility.enrollFinger(staff.fingerprint_image1, staff.uniquenum_pri + "_1");
+            BiometricUtility.enrollFinger(staff.fingerprint_image2, staff.uniquenum_pri + "_2");
+            BiometricUtility.enrollFinger(staff.fingerprint_image3, staff.uniquenum_pri + "_3");
+            BiometricUtility.enrollFinger(staff.fingerprint_image4, staff.uniquenum_pri + "_4");
+            BiometricUtility.enrollFinger(staff.fingerprint_image5, staff.uniquenum_pri + "_5");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -314,12 +326,12 @@ public class StaffFactory {
             dailytime.date_lastupdate = now;
 
             dailytime.date_time_in = now;
-            dailytime.gps_location_in = mGPSLocation.getCoordinates();
+            dailytime.gps_location_in = GPS_LOCATION.getCoordinates();
             dailytime.device_id_in = DEVICE_ID;
 
             dailytime.nvar25_01 = DEVICE_MODEL;
             dailytime.nvar100_01 = DEVICE_NAME;
-            dailytime.nvar100_03 = mGPSLocation.getFullAddress();
+            dailytime.nvar100_03 = GPS_LOCATION.getFullAddress();
 
             dailytime.uniquenum_pri = Uniquenum.Generate();
             dailytime.tag_table_usage = TagTableUsage.TIMELOG;
@@ -351,12 +363,12 @@ public class StaffFactory {
                 dailytime.date_lastupdate = now;
 
                 dailytime.date_time_out = now;
-                dailytime.gps_location_out = mGPSLocation.getCoordinates();
+                dailytime.gps_location_out = GPS_LOCATION.getCoordinates();
                 dailytime.device_id_out = DEVICE_ID;
 
                 dailytime.nvar25_02 = DEVICE_MODEL;
                 dailytime.nvar100_02 = DEVICE_NAME;
-                dailytime.nvar100_04 = mGPSLocation.getFullAddress();
+                dailytime.nvar100_04 = GPS_LOCATION.getFullAddress();
 
                 dailytime.uniquenum_pri = Uniquenum.Generate();
                 dailytime.tag_table_usage = TagTableUsage.TIMELOG;
@@ -379,12 +391,12 @@ public class StaffFactory {
                 dailytime.date_lastupdate = now;
 
                 dailytime.date_time_out = now;
-                dailytime.gps_location_out = mGPSLocation.getCoordinates();
+                dailytime.gps_location_out = GPS_LOCATION.getCoordinates();
                 dailytime.device_id_out = DEVICE_ID;
 
                 dailytime.nvar25_02 = DEVICE_MODEL;
                 dailytime.nvar100_02 = DEVICE_NAME;
-                dailytime.nvar100_04 = mGPSLocation.getFullAddress();
+                dailytime.nvar100_04 = GPS_LOCATION.getFullAddress();
 
                 dailytime.type_in_out = TagTableUsage.TIMELOG_IN_OUT;
                 dailytime_repo.update_dailytime(dailytime);
@@ -400,12 +412,12 @@ public class StaffFactory {
             dailytime.date_lastupdate = now;
 
             dailytime.date_time_in = now;
-            dailytime.gps_location_in = mGPSLocation.getCoordinates();
+            dailytime.gps_location_in = GPS_LOCATION.getCoordinates();
             dailytime.device_id_in = DEVICE_ID;
 
             dailytime.nvar25_01 = DEVICE_MODEL;
             dailytime.nvar100_01 = DEVICE_NAME;
-            dailytime.nvar100_03 = mGPSLocation.getFullAddress();
+            dailytime.nvar100_03 = GPS_LOCATION.getFullAddress();
 
             dailytime.uniquenum_pri = Uniquenum.Generate();
             dailytime.tag_table_usage = TagTableUsage.LOCATION_CHECK;
@@ -442,12 +454,12 @@ public class StaffFactory {
         dailytime.date_lastupdate = dateout;
 
         dailytime.date_time_out = dateout;
-        dailytime.gps_location_out = mGPSLocation.getCoordinates();
+        dailytime.gps_location_out = GPS_LOCATION.getCoordinates();
         dailytime.device_id_out = DEVICE_ID;
 
         dailytime.nvar25_02 = DEVICE_MODEL;
         dailytime.nvar100_02 = DEVICE_NAME;
-        dailytime.nvar100_04 = mGPSLocation.getFullAddress();
+        dailytime.nvar100_04 = GPS_LOCATION.getFullAddress();
 
         dailytime.uniquenum_pri = Uniquenum.Generate();
         dailytime.tag_table_usage = TagTableUsage.TIMELOG;

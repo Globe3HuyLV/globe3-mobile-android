@@ -108,7 +108,6 @@ public class LoginActivity extends BaseActivity{
             EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
             MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
             DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -135,4 +135,9 @@ public class FileUtility {
         } catch (FileNotFoundException e) {}
         return null;
     }
+
+    public static void fileDelete(String path){
+        File file = new File(path);
+        file.delete();
+    }
 }

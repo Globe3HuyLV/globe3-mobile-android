@@ -20,10 +20,10 @@ public class Globals {
     public static String DEVICE_NAME = "";
     public static String PHONE_NUMBER = "";
 
-    public static NBiometricClient Globe3BiometricClient;
+    public static NBiometricClient BIOMETRIC_DATA;
 
-    public static GPSUtility mGPSUtility;
-    public static GPSLocation mGPSLocation;
+    public static GPSUtility GPS_UTILITY;
+    public static GPSLocation GPS_LOCATION;
 
     public static boolean EXTRACT_LICENSE_OBTAINED = false;
     public static boolean MATCHER_LICENSE_OBTAINED = false;

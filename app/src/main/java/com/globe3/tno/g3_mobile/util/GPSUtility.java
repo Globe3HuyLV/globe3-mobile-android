@@ -239,7 +239,7 @@ public class GPSUtility extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        Globals.mGPSLocation = getGPSLocation();
+        Globals.GPS_LOCATION = getGPSLocation();
     }
 
     @Override

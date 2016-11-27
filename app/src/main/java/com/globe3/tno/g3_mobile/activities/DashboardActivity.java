@@ -38,17 +38,21 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.GPSUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.util.PermissionUtility;
+import com.neurotec.biometrics.NMatchingSpeed;
+import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
+import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
-import static com.globe3.tno.g3_mobile.globals.Globals.mGPSLocation;
-import static com.globe3.tno.g3_mobile.globals.Globals.mGPSUtility;
+import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
+import static com.globe3.tno.g3_mobile.globals.Globals.GPS_UTILITY;
 
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     DashboardActivity dashboardActivity;
@@ -115,8 +119,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     PermissionUtility.requestLocationServices(dashboardActivity, false);
                 }else{
-                    mGPSUtility = new GPSUtility(dashboardActivity);
-                    mGPSLocation = mGPSUtility.getGPSLocation();
+                    GPS_UTILITY = new GPSUtility(dashboardActivity);
+                    GPS_LOCATION = GPS_UTILITY.getGPSLocation();
                 }
             }
         }
@@ -146,7 +150,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        mGPSLocation = new GPSLocation();
+        GPS_LOCATION = new GPSLocation();
+
+        if(BIOMETRIC_DATA==null){
+            BIOMETRIC_DATA = new NBiometricClient();
+            BIOMETRIC_DATA.setMatchingThreshold(48);
+            BIOMETRIC_DATA.setFingersMatchingSpeed(NMatchingSpeed.LOW);
+            BIOMETRIC_DATA.setDatabaseConnectionToSQLite(GLOBE3_DB);
+        }
 
         actionBar = getSupportActionBar();
     }
@@ -199,8 +210,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
             PermissionUtility.requestLocationServices(dashboardActivity, false);
         }else{
-            mGPSUtility = new GPSUtility(dashboardActivity);
-            mGPSLocation = mGPSUtility.getGPSLocation();
+            GPS_UTILITY = new GPSUtility(dashboardActivity);
+            GPS_LOCATION = GPS_UTILITY.getGPSLocation();
         }
 
         loadCompanies();
@@ -284,8 +295,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
             PermissionUtility.requestLocationServices(dashboardActivity, false);
         }else{
-            mGPSUtility = new GPSUtility(dashboardActivity);
-            mGPSLocation = mGPSUtility.getGPSLocation();
+            GPS_UTILITY = new GPSUtility(dashboardActivity);
+            GPS_LOCATION = GPS_UTILITY.getGPSLocation();
         }
     }
 

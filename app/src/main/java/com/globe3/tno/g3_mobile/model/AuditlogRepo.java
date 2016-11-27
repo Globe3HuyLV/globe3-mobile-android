@@ -16,7 +16,7 @@ import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.PHONE_NUMBER;
-import static com.globe3.tno.g3_mobile.globals.Globals.mGPSLocation;
+import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
 
 public class AuditlogRepo {
@@ -79,12 +79,12 @@ public class AuditlogRepo {
         values.put(Globe3Db.COLUMN_COMPANYFN, auditlog.companyfn);
         values.put(Globe3Db.COLUMN_USERID, auditlog.userid);
         values.put(Globe3Db.COLUMN_USER_SPECIALNUM, auditlog.user_specialnum);
-        values.put(Globe3Db.COLUMN_GPS_LOCATION, mGPSLocation.getCoordinates());
+        values.put(Globe3Db.COLUMN_GPS_LOCATION, GPS_LOCATION.getCoordinates());
         values.put(Globe3Db.COLUMN_DEVICE_ID, DEVICE_ID);
         values.put(Globe3Db.COLUMN_NVAR25_01, DEVICE_MODEL);
         values.put(Globe3Db.COLUMN_NVAR25_02, DEVICE_NAME);
         values.put(Globe3Db.COLUMN_NVAR25_03, PHONE_NUMBER);
-        values.put(Globe3Db.COLUMN_NVAR100_01, mGPSLocation.getFullAddress());
+        values.put(Globe3Db.COLUMN_NVAR100_01, GPS_LOCATION.getFullAddress());
         values.put(Globe3Db.COLUMN_NVAR100_02, auditlog.nvar100_02);
         values.put(Globe3Db.COLUMN_NVAR100_03, auditlog.nvar100_03);
         values.put(Globe3Db.COLUMN_DATE01, DateUtility.getDateString(auditlog.date01));
@@ -126,12 +126,12 @@ public class AuditlogRepo {
         values.put(Globe3Db.COLUMN_COMPANYFN, auditlog.companyfn);
         values.put(Globe3Db.COLUMN_USERID, auditlog.userid);
         values.put(Globe3Db.COLUMN_USER_SPECIALNUM, auditlog.user_specialnum);
-        values.put(Globe3Db.COLUMN_GPS_LOCATION, mGPSLocation.getCoordinates());
+        values.put(Globe3Db.COLUMN_GPS_LOCATION, GPS_LOCATION.getCoordinates());
         values.put(Globe3Db.COLUMN_DEVICE_ID, DEVICE_ID);
         values.put(Globe3Db.COLUMN_NVAR25_01, DEVICE_MODEL);
         values.put(Globe3Db.COLUMN_NVAR25_02, DEVICE_NAME);
         values.put(Globe3Db.COLUMN_NVAR25_03, PHONE_NUMBER);
-        values.put(Globe3Db.COLUMN_NVAR100_01, mGPSLocation.getFullAddress());
+        values.put(Globe3Db.COLUMN_NVAR100_01, GPS_LOCATION.getFullAddress());
         values.put(Globe3Db.COLUMN_NVAR100_02, auditlog.nvar100_02);
         values.put(Globe3Db.COLUMN_NVAR100_03, auditlog.nvar100_03);
         values.put(Globe3Db.COLUMN_DATE01, DateUtility.getDateString(auditlog.date01));

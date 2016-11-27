@@ -26,6 +26,7 @@ import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.async.StaffSingleUploadTask;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
+import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.globe3.tno.g3_mobile.util.FileUtility;
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NFinger;
@@ -117,8 +118,8 @@ public class RegisterFingerFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             step_num = 1;
-            fingerprintDelete(pathFingerRef);
-            fingerprintDelete(pathFingerCan);
+            FileUtility.fileDelete(pathFingerRef);
+            FileUtility.fileDelete(pathFingerCan);
             startExtract();
         }
     };
@@ -304,8 +305,8 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void verify() throws IOException {
-        NSubject fingerReference = createSubject(Uri.parse(pathFingerRef));
-        NSubject fingerCandidate = createSubject(Uri.parse(pathFingerCan));
+        NSubject fingerReference = BiometricUtility.createSubject(getActivity(), Uri.parse(pathFingerRef));
+        NSubject fingerCandidate = BiometricUtility.createSubject(getActivity(), Uri.parse(pathFingerCan));
 
         mBiometricClient.verify(fingerReference, fingerCandidate, null, new CompletionHandler<NBiometricStatus, Void>() {
             @Override
@@ -338,7 +339,7 @@ public class RegisterFingerFragment extends DialogFragment {
 
                         new StaffSingleUploadTask(staffFactory, staff, auditFactory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
 
-                        insertRegister();
+                        staffFactory.registerFingerprint(staff);
                         auditFactory.Log(TagTableUsage.FINGERPRINT_REGISTER);
 
                         verifyStatus(NODE_SUCCESS);
@@ -351,8 +352,8 @@ public class RegisterFingerFragment extends DialogFragment {
                     e.printStackTrace();
                     setPrompt(PROMPT_ERROR_OCCURRED);
                 } finally {
-                    fingerprintDelete(pathFingerRef);
-                    fingerprintDelete(pathFingerCan);
+                    FileUtility.fileDelete(pathFingerRef);
+                    FileUtility.fileDelete(pathFingerCan);
                 }
             }
 
@@ -362,24 +363,6 @@ public class RegisterFingerFragment extends DialogFragment {
                 setPrompt(PROMPT_ERROR_OCCURRED);
             }
         });
-    }
-
-    private NSubject createSubject(Uri uri) throws IOException {
-        NSubject subject = new NSubject();
-        NFinger finger = new NFinger();
-        finger.setImage(NImageUtils.fromUri(getActivity(), uri));
-        subject.getFingers().add(finger);
-        subject.setId(uri.getPath());
-        return subject;
-    }
-
-    private void fingerprintDelete(String path){
-        File file = new File(path);
-        file.delete();
-    }
-
-    private void insertRegister(){
-        staffFactory.registerFingerprint(staff);
     }
 
     private class StepRegisterTask extends AsyncTask<Void, Void, Boolean> {

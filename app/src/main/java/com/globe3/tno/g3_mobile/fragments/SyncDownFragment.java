@@ -27,6 +27,10 @@ import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
+import com.neurotec.biometrics.NBiometricOperation;
+import com.neurotec.biometrics.NBiometricStatus;
+import com.neurotec.biometrics.NBiometricTask;
+import com.neurotec.util.concurrent.CompletionHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
