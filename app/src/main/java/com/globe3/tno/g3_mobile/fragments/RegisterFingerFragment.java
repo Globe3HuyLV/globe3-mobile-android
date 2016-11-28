@@ -548,7 +548,7 @@ public class RegisterFingerFragment extends DialogFragment {
             public void run() {
                 try {
                     capture();
-                    new Thread().sleep(2000);
+                    new Thread().sleep(5000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

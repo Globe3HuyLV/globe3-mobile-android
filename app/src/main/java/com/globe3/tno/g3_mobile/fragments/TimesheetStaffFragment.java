@@ -119,19 +119,11 @@ public class TimesheetStaffFragment extends Fragment {
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        /*Bundle staffBundle = new Bundle();
-
-                        Staff staff = new Staff();
-                        staff.setStaff_num(String.valueOf(n));
-                        staff.setStaff_desc("Staff Name");
-
-                        staffBundle.putSerializable("staff", staff);
-
                         FragmentManager fragmentManager = getActivity().getFragmentManager();
                         logTimeFragment = new LogTimeFragment();
                         logTimeFragment.setCancelable(false);
-                        logTimeFragment.setArguments(staffBundle);
-                        logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));*/
+                        logTimeFragment.setStaff(staff);
+                        logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));
             }
         });
 

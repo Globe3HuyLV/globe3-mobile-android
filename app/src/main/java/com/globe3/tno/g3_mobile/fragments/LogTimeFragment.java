@@ -1,23 +1,40 @@
 package com.globe3.tno.g3_mobile.fragments;
 
 import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.app_objects.TimeLog;
+import com.globe3.tno.g3_mobile.constants.App;
+import com.globe3.tno.g3_mobile.util.BiometricUtility;
+import com.neurotec.biometrics.NBiometricOperation;
+import com.neurotec.biometrics.NBiometricStatus;
+import com.neurotec.biometrics.NBiometricTask;
+import com.neurotec.biometrics.NFinger;
+import com.neurotec.biometrics.NSubject;
+import com.neurotec.biometrics.NTemplateSize;
+import com.neurotec.biometrics.client.NBiometricClient;
+import com.neurotec.devices.NDeviceManager;
+import com.neurotec.devices.NDeviceType;
+import com.neurotec.util.concurrent.CompletionHandler;
 
-import java.util.Calendar;
+import java.util.EnumSet;
 
 public class LogTimeFragment extends DialogFragment {
     Context parentContext;
@@ -25,37 +42,145 @@ public class LogTimeFragment extends DialogFragment {
     Staff staff;
     Project project;
 
-    TextView tv_staff_id;
-    TextView tv_staff_name;
-    TextView tv_time_in;
-    TextView tv_time_out;
-    TextView tv_refresh_scanner;
-    TextView tv_cancel;
-
     LogTimeSummaryFragment logTimeSummaryFragment;
     LogTimeProjectFragment logTimeProjectFragment;
 
+    NBiometricClient mBiometricData;
+    NBiometricClient mBiometricClient;
+    boolean scanner_found;
+
+    ImageView iv_staff_photo;
+    TextView tv_staff_id;
+    TextView tv_staff_name;
+    ImageView iv_staff_finger;
+    ImageView iv_staff_finger_count;
+    TextView tv_time_in;
+    TextView tv_time_out;
+
+    TextView tv_prompt;
+    ImageView iv_loader;
+    ImageView iv_finger;
+    TextView tv_action_button;
+    TextView tv_cancel;
+
+    private View.OnClickListener refresh = new  View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            new ScanTask(new Runnable() {
+                @Override
+                public void run() {
+                    setPrompt(PROMPT_CONNECTING);
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        capture();
+                        new Thread().sleep(5000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    setPrompt(scanner_found ? PROMPT_PLACE_FINGER_SCAN : PROMPT_SCANNER_NOT_FOUND);
+                }
+            }).execute();
+        }
+    };
+
+    private View.OnClickListener scan_again = new  View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            setPrompt(PROMPT_PLACE_FINGER_SCAN);
+        }
+    };
+
+    private Runnable loaderAnimate = new Runnable() {
+        @Override
+        public void run() {
+            iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+        }
+    };
+
+    private Runnable loaderStop = new Runnable() {
+        @Override
+        public void run() {
+            iv_loader.clearAnimation();
+        }
+    };
+
+    final static int PROMPT_CONNECTING = 0;
+    final static int PROMPT_PLACE_FINGER_SCAN = 1;
+    final static int PROMPT_SEARCHING = 2;
+    final static int PROMPT_FINGER_NOT_FOUND = 3;
+    final static int PROMPT_SCANNER_NOT_FOUND = 4;
+    final static int PROMPT_EXTRACT_FAILED = 5;
+
+    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_searching, R.string.msg_no_match_found, R.string.msg_scanner_not_found, R.string.msg_extraction_failed};
+    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
+    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.VISIBLE, View.GONE, View.GONE, View.GONE};
+    final static int[] LOADER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
+    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE};
+    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
+    final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderAnimate, loaderStop, loaderStop, loaderStop};
+    final static int[] ACTION_TEXT = {R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_refresh_scanner, R.string.msg_scan_again};
+    final static boolean[] ACTION_CLICKABLE = {false, true, false, true,true, true};
+    final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, scan_again, refresh, refresh};
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View logTimeFragment = inflater.inflate(R.layout.fragment_log_time, viewGroup, false);
         parentContext = logTimeFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        if(getArguments() != null && getArguments().containsKey("staff")){
-            staff = (Staff) getArguments().getSerializable("staff");
+        iv_staff_photo = (ImageView) logTimeFragment.findViewById(R.id.iv_staff_photo);
+        tv_staff_id = (TextView) logTimeFragment.findViewById(R.id.tv_staff_id);
+        tv_staff_name = (TextView) logTimeFragment.findViewById(R.id.tv_staff_name);
+        iv_staff_finger = (ImageView) logTimeFragment.findViewById(R.id.iv_staff_finger);
+        iv_staff_finger_count = (ImageView) logTimeFragment.findViewById(R.id.iv_staff_finger_count);
+        tv_time_in = (TextView) logTimeFragment.findViewById(R.id.tv_time_in);
+        tv_time_out = (TextView) logTimeFragment.findViewById(R.id.tv_time_out);
 
-            tv_staff_id = (TextView) logTimeFragment.findViewById(R.id.tv_staff_id);
+        tv_prompt = (TextView) logTimeFragment.findViewById(R.id.tv_prompt);
+        iv_loader = (ImageView) logTimeFragment.findViewById(R.id.iv_loader);
+        iv_finger = (ImageView) logTimeFragment.findViewById(R.id.iv_finger);
+        tv_action_button = (TextView) logTimeFragment.findViewById(R.id.tv_action_button);
+        tv_cancel = (TextView) logTimeFragment.findViewById(R.id.tv_cancel);
+
+        mBiometricData = new NBiometricClient();
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image1(), staff.getUniquenum() + "_1");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image2(), staff.getUniquenum() + "_2");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image3(), staff.getUniquenum() + "_3");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image4(), staff.getUniquenum() + "_4");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image5(), staff.getUniquenum() + "_5");
+
+        if(staff!=null){
+            if(staff.getPhoto1()!=null){
+                Bitmap staffPhoto = BitmapFactory.decodeByteArray(staff.getPhoto1(), 0, staff.getPhoto1().length);
+
+                int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
+
+                iv_staff_photo.setImageBitmap(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
+            }else{
+                iv_staff_photo.setImageResource(R.drawable.ic_person_black_48dp);
+            }
+
+            int staff_finger_count = 0;
+            staff_finger_count += (staff.getFingerprint_image1()==null?0:1);
+            staff_finger_count += (staff.getFingerprint_image2()==null?0:1);
+            staff_finger_count += (staff.getFingerprint_image3()==null?0:1);
+            staff_finger_count += (staff.getFingerprint_image4()==null?0:1);
+            staff_finger_count += (staff.getFingerprint_image5()==null?0:1);
+
+            iv_staff_finger.setColorFilter(ContextCompat.getColor(parentContext, (staff_finger_count > 0 ? R.color.colorSuccess : R.color.colorMenuLight)));
+            iv_staff_finger_count.setImageDrawable(ResourcesCompat.getDrawable(parentContext.getResources(), App.FINGER_COUNTER[staff_finger_count], null));
+            iv_staff_finger_count.setVisibility(staff_finger_count > 0 ? View.VISIBLE : View.GONE);
+
             tv_staff_id.setText(staff.getStaff_num());
-
-            tv_staff_name = (TextView) logTimeFragment.findViewById(R.id.tv_staff_name);
             tv_staff_name.setText(staff.getStaff_desc());
         }
 
-        if(getArguments() != null && getArguments().containsKey("entproject")){
-            project = (Project) getArguments().getSerializable("entproject");
-        }
-
-        tv_time_in = (TextView) logTimeFragment.findViewById(R.id.tv_time_in);
         tv_time_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +193,6 @@ public class LogTimeFragment extends DialogFragment {
             }
         });
 
-        tv_time_out = (TextView) logTimeFragment.findViewById(R.id.tv_time_out);
         tv_time_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,11 +205,10 @@ public class LogTimeFragment extends DialogFragment {
             }
         });
 
-        tv_refresh_scanner = (TextView) logTimeFragment.findViewById(R.id.tv_action_button);
-        tv_refresh_scanner.setOnClickListener(new View.OnClickListener() {
+        tv_action_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(project==null){
+                /*if(project==null){
                     Bundle staffBundle = new Bundle();
                     staffBundle.putSerializable("staff", staff);
 
@@ -108,17 +231,174 @@ public class LogTimeFragment extends DialogFragment {
                     logTimeSummaryFragment.setCancelable(false);
                     logTimeSummaryFragment.setArguments(logTimeBundle);
                     logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
-                }
+                }*/
             }
         });
 
-        tv_cancel = (TextView) logTimeFragment.findViewById(R.id.tv_cancel);
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
             }
         });
+
+        startExtract();
         return logTimeFragment;
+    }
+
+    private CompletionHandler<NBiometricStatus, NSubject> captureHandler = new CompletionHandler<NBiometricStatus, NSubject>() {
+        @Override
+        public void completed(NBiometricStatus result, NSubject subject) {
+            if (result == NBiometricStatus.OK) {
+                setPrompt(PROMPT_SEARCHING);
+
+                NBiometricTask identifyTask = mBiometricClient.createTask(EnumSet.of(NBiometricOperation.IDENTIFY), subject);
+                mBiometricClient.performTask(identifyTask, NBiometricOperation.IDENTIFY, identifyHandler);
+
+            } else {
+                setPrompt(PROMPT_EXTRACT_FAILED);
+            }
+        }
+
+        @Override
+        public void failed(Throwable exc, NSubject subject) {exc.printStackTrace();
+        }
+    };
+
+    private CompletionHandler<NBiometricTask, NBiometricOperation> identifyHandler = new CompletionHandler<NBiometricTask, NBiometricOperation>() {
+
+        @Override
+        public void completed(NBiometricTask result, NBiometricOperation attachment) {
+            switch (attachment) {
+                case IDENTIFY:
+                    if (result.getStatus() == NBiometricStatus.OK) {
+                        if(result.getSubjects().get(0).getMatchingResults().size() > 0){
+                            //success
+                        }else{
+                            setPrompt(PROMPT_FINGER_NOT_FOUND);
+                        }
+
+                    } else {
+                        setPrompt(PROMPT_EXTRACT_FAILED);
+                    }
+                    capture();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void failed(Throwable th, NBiometricOperation attachment) {
+            setPrompt(PROMPT_EXTRACT_FAILED);
+        }
+
+    };
+
+    private void capture() {
+        mBiometricClient = new NBiometricClient();
+        NSubject subject = new NSubject();
+        NFinger finger = new NFinger();
+
+        mBiometricClient.setUseDeviceManager(true);
+        NDeviceManager deviceManager = mBiometricClient.getDeviceManager();
+        deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
+        mBiometricClient.initialize();
+
+        NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
+        scanner_found = devices.size() > 0;
+        if(!scanner_found) {
+            setPrompt(PROMPT_SCANNER_NOT_FOUND);
+            return;
+        }
+
+        subject.getFingers().add(finger);
+
+        mBiometricClient.setFingersTemplateSize(NTemplateSize.LARGE);
+        mBiometricClient.createTemplate(subject, subject, captureHandler);
+    }
+
+    private void setPrompt(final int status){
+        if(getActivity()!=null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tv_prompt.setText(getText(PROMPT_TEXT[status]));
+                    tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
+                    iv_loader.setVisibility(LOADER_DISPLAY[status]);
+                    iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
+                    iv_finger.setVisibility(FINGER_DISPLAY[status]);
+                    iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
+                    LOADER_ANIMATION[status].run();
+                    tv_action_button.setText(ACTION_TEXT[status]);
+                    tv_action_button.setClickable(ACTION_CLICKABLE[status]);
+                    tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
+                }
+            });
+        }
+    }
+
+    private void startExtract(){
+        new ScanTask(new Runnable() {
+            @Override
+            public void run() {
+                setPrompt(PROMPT_CONNECTING);
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    capture();
+                    new Thread().sleep(2000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                setPrompt(scanner_found ? PROMPT_PLACE_FINGER_SCAN : PROMPT_SCANNER_NOT_FOUND);
+            }
+        }).execute();
+    }
+
+    private class ScanTask extends AsyncTask<Void, Void, Boolean> {
+        Runnable pre;
+        Runnable exec;
+        Runnable post;
+
+        public ScanTask(Runnable pre, Runnable exec, Runnable post){
+            this.pre = pre;
+            this.exec = exec;
+            this.post = post;
+        }
+        @Override
+        protected void onPreExecute() {
+            pre.run();
+        }
+
+        protected Boolean doInBackground(Void... params) {
+            try{
+                exec.run();
+
+                Thread thread = new Thread();
+                thread.sleep(100);
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        protected void onPostExecute(Boolean taskSuccess) {
+            if(taskSuccess){
+                post.run();
+            }else{
+                post.run();
+            }
+        }
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
 }

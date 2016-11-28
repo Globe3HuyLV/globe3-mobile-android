@@ -7,6 +7,7 @@ import com.neurotec.biometrics.NBiometricOperation;
 import com.neurotec.biometrics.NBiometricTask;
 import com.neurotec.biometrics.NFinger;
 import com.neurotec.biometrics.NSubject;
+import com.neurotec.biometrics.client.NBiometricClient;
 import com.neurotec.images.NImage;
 import com.neurotec.util.NImageUtils;
 import com.neurotec.util.concurrent.CompletionHandler;
@@ -49,6 +50,30 @@ public class BiometricUtility {
             }
             NBiometricTask enrollTask = BIOMETRIC_DATA.createTask(EnumSet.of(NBiometricOperation.ENROLL), candidateSubject);
             BIOMETRIC_DATA.performTask(enrollTask, NBiometricOperation.ENROLL, new CompletionHandler<NBiometricTask, NBiometricOperation>() {
+                @Override
+                public void completed(NBiometricTask result, NBiometricOperation attachment) {
+                }
+
+                @Override
+                public void failed(Throwable th, NBiometricOperation attachment) {
+                }
+            });
+        }
+
+        return true;
+    }
+
+    public static boolean enrollFinger(NBiometricClient nBiometricClient, byte[] finger_data, String finger_data_id) {
+        if(finger_data != null){
+            NSubject candidateSubject = null;
+            try {
+                candidateSubject = createSubject(finger_data, finger_data_id);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            NBiometricTask enrollTask = nBiometricClient.createTask(EnumSet.of(NBiometricOperation.ENROLL), candidateSubject);
+            nBiometricClient.performTask(enrollTask, NBiometricOperation.ENROLL, new CompletionHandler<NBiometricTask, NBiometricOperation>() {
                 @Override
                 public void completed(NBiometricTask result, NBiometricOperation attachment) {
                 }

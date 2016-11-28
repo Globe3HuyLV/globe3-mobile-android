@@ -91,6 +91,7 @@
     <string name="msg_verifying_fingerprint">Verifying Fingerprint</string>
     <string name="msg_connecting_to_scanner">Connecting to scanner</string>
     <string name="msg_scanner_not_found">Scanner not found</string>
+    <string name="msg_no_match_found">No match found</string>
     <string name="msg_processing_registration">Processing registration</string>
     <string name="msg_scan_your_fingerprint">Scan your fingerprint</string>
     <string name="msg_extraction_failed">Extraction Failed</string>
@@ -129,6 +130,8 @@
     <string name="msg_failed_capture">Failed capture</string>
     <string name="msg_camera_not_suppoted">Camera not supported</string>
     <string name="msg_camera_thread">Camera Thread</string>
+    <string name="msg_searching">Searching</string>
+    <string name="msg_scan_again">Scan again</string>
     <plurals name="msg_item">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
