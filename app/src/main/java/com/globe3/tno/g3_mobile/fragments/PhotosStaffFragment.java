@@ -33,7 +33,7 @@ public class PhotosStaffFragment extends Fragment {
     AuditFactory auditFactory;
     StaffFactory staffFactory;
 
-    StaffTakePhotoFragment staffTakePhotoFragment;
+    StaffPhotoPreview staffPhotoPreview;
 
     RecyclerView recycler_staff_list;
     RecyclerView.Adapter recyclerViewAdapter;
@@ -109,12 +109,12 @@ public class PhotosStaffFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getActivity().getFragmentManager();
-                staffTakePhotoFragment = new StaffTakePhotoFragment();
-                staffTakePhotoFragment.setCancelable(false);
-                staffTakePhotoFragment.setStaff(staff);
-                staffTakePhotoFragment.setStaffFactory(staffFactory);
-                staffTakePhotoFragment.setAuditFactory(auditFactory);
-                staffTakePhotoFragment.show(fragmentManager, getString(R.string.label_take_photo));
+                StaffPhotoPreview staffPhotoPreview = new StaffPhotoPreview();
+                staffPhotoPreview.setCancelable(false);
+                staffPhotoPreview.setStaff(staff);
+                staffPhotoPreview.setStaffFactory(staffFactory);
+                staffPhotoPreview.setAuditFactory(auditFactory);
+                staffPhotoPreview.show(fragmentManager, getString(R.string.label_take_photo));
             }
         });
 

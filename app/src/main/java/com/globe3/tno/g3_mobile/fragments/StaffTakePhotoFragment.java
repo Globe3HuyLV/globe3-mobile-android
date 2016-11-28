@@ -82,6 +82,8 @@ import java.util.concurrent.TimeUnit;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_CAMERA;
 
 public class StaffTakePhotoFragment extends DialogFragment implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+    StaffPhotoPreview staffPhotoPreview;
+
     AuditFactory auditFactory;
     StaffFactory staffFactory;
 
@@ -644,6 +646,9 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
             }
             case R.id.rl_close: {
                 closeCamera();
+                if(staffPhotoPreview!=null){
+                    staffPhotoPreview.show(staff, false);
+                }
                 dismiss();
                 break;
             }
@@ -695,7 +700,9 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
 
                 Matrix matrix = new Matrix();
 
-                matrix.postRotate(90);
+                if(staffPhoto.getWidth() > staffPhoto.getHeight()){
+                    matrix.postRotate(90);
+                }
 
                 Bitmap newBitmap = Bitmap.createScaledBitmap(Bitmap.createBitmap(staffPhoto , 0, 0, newSize, newSize, matrix, true), 512, 512, false);;
 
@@ -703,13 +710,12 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
                 newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
                 staff.setPhoto1(stream.toByteArray());
-                staffFactory.updateStaff(staff);
 
                 closeCamera();
 
-                ((PhotosActivity) getActivity()).finishStaffTakePhoto();
-
-                new StaffSingleUploadTask(staffFactory, staff, auditFactory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
+                if(staffPhotoPreview!=null){
+                    staffPhotoPreview.show(staff, true);
+                }
 
                 dismiss();
             } catch (Exception e) {
@@ -785,4 +791,7 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
         }
     }
 
+    public void setStaffPhotoPreview(StaffPhotoPreview staffPhotoPreview) {
+        this.staffPhotoPreview = staffPhotoPreview;
+    }
 }

@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -82,6 +83,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     FloatingActionButton fab_location_check;
     FloatingActionButton fab_photos;
     FloatingActionButton fab_task_update;
+
+    NavigationView navigation_drawer_logout;
 
     ArrayList<Company> companyList;
 
@@ -148,6 +151,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         fab_photos = (FloatingActionButton) findViewById(R.id.fab_photos);
         fab_task_update = (FloatingActionButton) findViewById(R.id.fab_task_update);
 
+        navigation_drawer_logout = (NavigationView) findViewById(R.id.navigation_drawer_logout);
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         GPS_LOCATION = new GPSLocation();
@@ -202,8 +207,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 navigation_drawer.inflateMenu(R.menu.activity_dashboard_drawer);
             }
             fab_register_finger.setVisibility(MAC.substring(2,3).equals("n")?View.GONE:View.VISIBLE);
-            fab_location_check.setVisibility(MAC.substring(3,4).equals("n")?View.GONE:View.VISIBLE);
-            fab_photos.setVisibility(MAC.substring(4,5).equals("n")?View.GONE:View.VISIBLE);
+            fab_photos.setVisibility(MAC.substring(3,4).equals("n")?View.GONE:View.VISIBLE);
+            fab_location_check.setVisibility(MAC.substring(4,5).equals("n")?View.GONE:View.VISIBLE);
             fab_task_update.setVisibility(MAC.substring(5,6).equals("n")?View.GONE:View.VISIBLE);
         }
 
@@ -213,6 +218,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             GPS_UTILITY = new GPSUtility(dashboardActivity);
             GPS_LOCATION = GPS_UTILITY.getGPSLocation();
         }
+
+        navigation_drawer_logout.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                dashboardActivity.finish();
+                return true;
+            }
+        });
 
         loadCompanies();
         showLastSync();

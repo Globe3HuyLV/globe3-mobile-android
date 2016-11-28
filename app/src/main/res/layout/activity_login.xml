@@ -36,6 +36,7 @@
                             android:paddingTop="0dp"
                             android:textColorHint="@color/colorHint"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:singleLine="true"
                             android:hint="@string/hint_company"
                             android:text="">
                             <requestFocus />
@@ -52,6 +53,7 @@
                             android:paddingTop="0dp"
                             android:textColorHint="@color/colorHint"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:singleLine="true"
                             android:hint="@string/hint_userid"
                             android:text=""/>
                     </android.support.design.widget.TextInputLayout>
@@ -67,6 +69,7 @@
                             android:inputType="textPassword"
                             android:textColorHint="@color/colorHint"
                             android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:singleLine="true"
                             android:hint="@string/hint_password"
                             android:text=""/>
                     </android.support.design.widget.TextInputLayout>

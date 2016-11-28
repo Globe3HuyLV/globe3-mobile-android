@@ -68,6 +68,8 @@
     <string name="label_add_photos">Add Photos</string>
     <string name="label_upload">Upload</string>
     <string name="label_take_photo">Take photo</string>
+    <string name="label_save_photo">Save photo</string>
+    <string name="label_no_photo">No photo</string>
     <string name="label_start_registration">Start registration</string>
 
     <string name="msg_data_is_latest">Data is latest</string>

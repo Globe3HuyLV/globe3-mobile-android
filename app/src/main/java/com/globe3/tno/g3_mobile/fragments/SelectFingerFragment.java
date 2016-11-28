@@ -3,13 +3,10 @@ package com.globe3.tno.g3_mobile.fragments;
 import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.DialogFragment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +21,6 @@ import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
-
 public class SelectFingerFragment extends DialogFragment {
 
     AuditFactory auditFactory;
@@ -36,7 +30,7 @@ public class SelectFingerFragment extends DialogFragment {
 
     int finger_num = 1;
 
-    LinearLayout main_container;
+    LinearLayout ll_main_container;
 
     ImageView iv_staff_photo;
     TextView tv_staff_num;
@@ -70,7 +64,7 @@ public class SelectFingerFragment extends DialogFragment {
         View selectFingerFragment = inflater.inflate(R.layout.fragment_select_finger, container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        main_container = (LinearLayout) selectFingerFragment.findViewById(R.id.main_container);
+        ll_main_container = (LinearLayout) selectFingerFragment.findViewById(R.id.ll_main_container);
 
         iv_staff_photo = (ImageView) selectFingerFragment.findViewById(R.id.iv_staff_photo);
         tv_staff_num = (TextView) selectFingerFragment.findViewById(R.id.tv_staff_num);
@@ -179,7 +173,7 @@ public class SelectFingerFragment extends DialogFragment {
         registerFingerFragment.setFingerSelected(finger_num);
         registerFingerFragment.setSelectFingerFragment(this);
         registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
-        main_container.setVisibility(View.GONE);
+        ll_main_container.setVisibility(View.GONE);
     }
 
     public void setAuditFactory(AuditFactory auditFactory){
@@ -202,6 +196,6 @@ public class SelectFingerFragment extends DialogFragment {
         iv_finger_five.setColorFilter(ResourcesCompat.getColor(getResources(), (staff.getFingerprint_image5()!=null?R.color.colorSuccess:R.color.colorMenuLight), null));
 
         selectFinger(finger_num);
-        main_container.setVisibility(View.VISIBLE);
+        ll_main_container.setVisibility(View.VISIBLE);
     }
 }
