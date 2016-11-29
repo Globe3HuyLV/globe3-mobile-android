@@ -95,6 +95,7 @@
     <string name="msg_processing_registration">Processing registration</string>
     <string name="msg_scan_your_fingerprint">Scan your fingerprint</string>
     <string name="msg_extraction_failed">Extraction Failed</string>
+    <string name="msg_finger_registered_to_multiple_staff">Finger registered to multiple staff</string>
     <string name="msg_scanner_disconnected">Scanner Disconnected</string>
     <string name="msg_refresh_scanner">Refresh Scanner</string>
     <string name="msg_registration">Registration</string>

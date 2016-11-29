@@ -80,17 +80,7 @@ public class TimesheetStaffFragment extends Fragment {
         });
 
         staff_list = new ArrayList<>();
-        for(Staff staff : staffFactory.getActiveStaffs()){
-            staff_list.add(createRowStaff(staff));
-        }
-
-        recycler_staff_list.setHasFixedSize(true);
-
-        recyclerViewLayoutManager = new LinearLayoutManager(viewGroup.getContext());
-        recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
-
-        recyclerViewAdapter = new TimesheetStaffListAdapter(staff_list, viewGroup.getContext());
-        recycler_staff_list.setAdapter(recyclerViewAdapter);
+        searchStaff("");
 
         return staffFragment;
     }
@@ -118,6 +108,8 @@ public class TimesheetStaffFragment extends Fragment {
         }else{
             rowStaff.setStaffPhoto(null);
         }
+
+        rowStaff.setDisplayBottomSpacer(false);
 
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +158,7 @@ public class TimesheetStaffFragment extends Fragment {
             for(Staff staff : (searchTerm.equals("")?staffFactory.getActiveStaffs():staffFactory.searchStaffs(searchTerm))){
                 staff_list.add(createRowStaff(staff));
             }
+            staff_list.get(staff_list.size()-1).setDisplayBottomSpacer(true);
             return null;
         }
 
@@ -176,7 +169,7 @@ public class TimesheetStaffFragment extends Fragment {
             recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
             recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
 
-            recyclerViewAdapter = new RegisterFingerStaffListAdapter(staff_list, getActivity());
+            recyclerViewAdapter = new TimesheetStaffListAdapter(staff_list, getActivity());
             recycler_staff_list.setAdapter(recyclerViewAdapter);
 
             recycler_staff_list.setVisibility(staff_list.size()==0?View.GONE:View.VISIBLE);

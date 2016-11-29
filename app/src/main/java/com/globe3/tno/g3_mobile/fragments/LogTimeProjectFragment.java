@@ -38,6 +38,7 @@ public class LogTimeProjectFragment extends DialogFragment {
     Staff staff;
 
     LogTimeFragment logTimeFragment;
+    LogTimeAutoFragment logTimeAutoFragment;
 
     RecyclerView recycler_project_list;
     RecyclerView.Adapter recyclerViewAdapter;
@@ -69,7 +70,7 @@ public class LogTimeProjectFragment extends DialogFragment {
 
         timeLog = new TimeLog();
         timeLog.setDate(Calendar.getInstance().getTime());
-        timeLog.setType(logTimeFragment.getLog_type());
+        timeLog.setType(logTimeFragment!=null?logTimeFragment.getLog_type() : logTimeAutoFragment.getLog_type());
         timeLog.setStaff(staff);
 
         if(staff!=null){
@@ -123,6 +124,9 @@ public class LogTimeProjectFragment extends DialogFragment {
                 if(logTimeFragment!=null){
                     logTimeFragment.startExtract();
                 }
+                if(logTimeAutoFragment!=null){
+                    logTimeAutoFragment.startExtract();
+                }
                 dismiss();
             }
         });
@@ -142,6 +146,7 @@ public class LogTimeProjectFragment extends DialogFragment {
         logTimeSummaryFragment = new LogTimeSummaryFragment();
         logTimeSummaryFragment.setCancelable(false);
         logTimeSummaryFragment.setTimeLog(timeLog);
+        logTimeSummaryFragment.setLogTimeAutoFragment(logTimeAutoFragment);
         logTimeSummaryFragment.setLogTimeFragment(logTimeFragment);
 
         dismiss();
@@ -154,5 +159,8 @@ public class LogTimeProjectFragment extends DialogFragment {
 
     public void setLogTimeFragment(LogTimeFragment logTimeFragment) {
         this.logTimeFragment = logTimeFragment;
+    }
+    public void setLogTimeAutoFragment(LogTimeAutoFragment logTimeAutoFragment) {
+        this.logTimeAutoFragment = logTimeAutoFragment;
     }
 }

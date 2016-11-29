@@ -8,6 +8,7 @@ public class RowStaff {
     private String staffCode;
     private String staffName;
     private int staffFingerCount;
+    private boolean displayBottomSpacer;
     private View.OnClickListener onClickListener;
 
     public Bitmap getStaffPhoto() {
@@ -40,6 +41,14 @@ public class RowStaff {
 
     public void setStaffFingerCount(int staffFingerCount) {
         this.staffFingerCount = staffFingerCount;
+    }
+
+    public boolean isDisplayBottomSpacer() {
+        return displayBottomSpacer;
+    }
+
+    public void setDisplayBottomSpacer(boolean displayBottomSpacer) {
+        this.displayBottomSpacer = displayBottomSpacer;
     }
 
     public View.OnClickListener getOnClickListener() {

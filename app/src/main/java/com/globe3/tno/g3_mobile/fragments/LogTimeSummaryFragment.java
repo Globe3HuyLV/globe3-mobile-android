@@ -24,6 +24,7 @@ public class LogTimeSummaryFragment extends DialogFragment {
     TimeLog timeLog;
 
     LogTimeFragment logTimeFragment;
+    LogTimeAutoFragment logTimeAutoFragment;
 
     ImageView iv_staff_photo;
     TextView tv_staff_id;
@@ -96,6 +97,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
                 if(logTimeFragment!=null){
                     logTimeFragment.startExtract();
                 }
+                if(logTimeAutoFragment!=null){
+                    logTimeAutoFragment.startExtract();
+                }
                 dismiss();
             }
         });
@@ -106,6 +110,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
             public void onClick(View v) {
                 if(logTimeFragment!=null){
                     logTimeFragment.dismiss();
+                }
+                if(logTimeAutoFragment!=null){
+                    logTimeAutoFragment.dismiss();
                 }
                 dismiss();
             }
@@ -118,5 +125,8 @@ public class LogTimeSummaryFragment extends DialogFragment {
     }
     public void setLogTimeFragment(LogTimeFragment logTimeFragment) {
         this.logTimeFragment = logTimeFragment;
+    }
+    public void setLogTimeAutoFragment(LogTimeAutoFragment logTimeAutoFragment) {
+        this.logTimeAutoFragment = logTimeAutoFragment;
     }
 }
