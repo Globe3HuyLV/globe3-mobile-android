@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.util.BiometricUtility;
@@ -28,6 +29,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
@@ -759,7 +761,7 @@ public class StaffFactory {
 
         dailyTime.setIdcode(dailytime.idcode);
         dailyTime.setUniquenum_pri(dailytime.uniquenum_pri);
-        dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
+        dailyTime.setStaff(staff);
         dailyTime.setDateTimePost(dailytime.date_post);
 
         dailyTime.setDateTimeIn(dailytime.date_time_in);

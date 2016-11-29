@@ -2,6 +2,7 @@ package com.globe3.tno.g3_mobile.activities;
 
 import android.Manifest;
 import android.app.FragmentManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -10,6 +11,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,10 +48,14 @@ import com.neurotec.biometrics.client.NBiometricClient;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
+import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
+import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
+import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
@@ -152,6 +159,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         fab_task_update = (FloatingActionButton) findViewById(R.id.fab_task_update);
 
         navigation_drawer_logout = (NavigationView) findViewById(R.id.navigation_drawer_logout);
+
+        DEVICE_ID = Settings.Secure.getString(dashboardActivity.getContentResolver(), Settings.Secure.ANDROID_ID);
+        DEVICE_MODEL = android.os.Build.MODEL;
+        DEVICE_NAME = BluetoothAdapter.getDefaultAdapter().getName();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,17 +29,19 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout rl_row_staff;
+        public LinearLayout ll_row_staff;
         public ImageView iv_staff_photo;
         public TextView tv_staff_id;
         public TextView tv_staff_name;
+        public View v_spacer;
 
         public ViewHolder(View view) {
             super(view);
-            rl_row_staff = (RelativeLayout) view.findViewById(R.id.rl_row_staff);
+            ll_row_staff = (LinearLayout) view.findViewById(R.id.ll_row_staff);
             iv_staff_photo = (ImageView) view.findViewById(R.id.iv_staff_photo);
             tv_staff_id = (TextView) view.findViewById(R.id.tv_staff_id);
             tv_staff_name = (TextView) view.findViewById(R.id.tv_staff_name);
+            v_spacer = view.findViewById(R.id.v_spacer);
         }
     }
 
@@ -63,7 +66,7 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         RowStaff rowStaff = staffList.get(position);
-        viewHolder.rl_row_staff.setOnClickListener(rowStaff.getOnClickListener());
+        viewHolder.ll_row_staff.setOnClickListener(rowStaff.getOnClickListener());
         if(rowStaff.getStaffPhoto()!=null){
             viewHolder.iv_staff_photo.setImageBitmap(rowStaff.getStaffPhoto());
         }else{
@@ -71,7 +74,7 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
         }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
-
+        viewHolder.v_spacer.setVisibility(rowStaff.isLastRecord() ? View.VISIBLE : View.GONE);
     }
 
     @Override

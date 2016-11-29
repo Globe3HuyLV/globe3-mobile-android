@@ -24,6 +24,7 @@ import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,8 @@ import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
 public class TimesheetStaffFragment extends Fragment {
     StaffFactory staffFactory;
+
+    NBiometricClient mBiometricClient;
 
     LogTimeAutoFragment logTimeAutoFragment;
     LogTimeFragment logTimeFragment;
@@ -119,11 +122,13 @@ public class TimesheetStaffFragment extends Fragment {
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        FragmentManager fragmentManager = getActivity().getFragmentManager();
-                        logTimeFragment = new LogTimeFragment();
-                        logTimeFragment.setCancelable(false);
-                        logTimeFragment.setStaff(staff);
-                        logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));
+                mBiometricClient = new NBiometricClient();
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
+                logTimeFragment = new LogTimeFragment();
+                logTimeFragment.setCancelable(false);
+                logTimeFragment.setStaff(staff);
+                logTimeFragment.setmBiometricClient(mBiometricClient);
+                logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));
             }
         });
 

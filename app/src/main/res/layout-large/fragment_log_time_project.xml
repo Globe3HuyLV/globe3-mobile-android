@@ -7,7 +7,7 @@
     tools:context="com.globe3.tno.g3_mobile.fragments.RegisterFingerFragment"
     android:layout_height="match_parent">
     <android.support.v7.widget.CardView
-        android:layout_width="280dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         card_view:cardCornerRadius="2dp">
@@ -20,7 +20,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="?android:attr/listPreferredItemHeight">
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/rl_staff_photo"
                     android:layout_width="72dp"
@@ -30,7 +30,10 @@
                         android:id="@+id/iv_staff_photo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="8dp"
                         android:src="@drawable/ic_person_black_48dp" />
                 </LinearLayout>
                 <LinearLayout
@@ -51,27 +54,6 @@
                         android:layout_height="wrap_content"
                         android:textSize="12sp"/>
                 </LinearLayout>
-                <RelativeLayout
-                    android:id="@+id/rl_staff_finger"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp">
-                    <ImageView
-                        android:id="@+id/iv_staff_finger"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/colorSuccess"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_fingerprint_black_48dp" />
-
-                    <ImageView
-                        android:id="@+id/iv_staff_finger_count"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:src="@drawable/ic_finger_one"
-                        tools:ignore="ContentDescription"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true" />
-                </RelativeLayout>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -110,7 +92,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_project_list"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="256dp"
                     android:background="@color/windowBackground"
                     android:scrollbars="vertical"/>
             </LinearLayout>

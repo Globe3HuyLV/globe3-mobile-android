@@ -2,15 +2,20 @@ package com.globe3.tno.g3_mobile.fragments;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.TimeLog;
+import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 
 public class LogTimeSummaryFragment extends DialogFragment {
@@ -18,6 +23,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
 
     TimeLog timeLog;
 
+    LogTimeFragment logTimeFragment;
+
+    ImageView iv_staff_photo;
     TextView tv_staff_id;
     TextView tv_staff_name;
     TextView tv_log_type;
@@ -33,39 +41,62 @@ public class LogTimeSummaryFragment extends DialogFragment {
         parentContext = logTimeSummaryFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        if(getArguments() != null && getArguments().containsKey("time_log")) {
-            timeLog = (TimeLog) getArguments().getSerializable("time_log");
-            if(timeLog != null){
-                if(timeLog.getStaff()!=null){
-                    tv_staff_id = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_staff_id);
-                    tv_staff_id.setText(timeLog.getStaff().getStaff_num());
+        iv_staff_photo = (ImageView) logTimeSummaryFragment.findViewById(R.id.iv_staff_photo);
+        tv_staff_id = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_staff_id);
+        tv_log_type = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_type);
+        tv_log_time = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_time);
+        tv_log_date = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_date);
+        tv_log_project = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_project);
 
-                    tv_staff_name = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_staff_name);
-                    tv_staff_name.setText(timeLog.getStaff().getStaff_desc());
+        if(timeLog != null){
+            if(timeLog.getStaff()!=null){
+                if(timeLog.getStaff().getPhoto1()!=null){
+                    Bitmap staffPhoto = BitmapFactory.decodeByteArray(timeLog.getStaff().getPhoto1(), 0, timeLog.getStaff().getPhoto1().length);
+
+                    int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
+
+                    iv_staff_photo.setImageBitmap(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize));
+                }else{
+                    iv_staff_photo.setImageResource(R.drawable.ic_person_black_48dp);
                 }
+                tv_staff_id.setText(timeLog.getStaff().getStaff_num());
+                tv_staff_name = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_staff_name);
+                tv_staff_name.setText(timeLog.getStaff().getStaff_desc());
+            }
 
-                tv_log_type = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_type);
-                tv_log_type.setText(timeLog.getType());
+            switch (timeLog.getType()){
+                case TagTableUsage.TIMELOG_IN:
+                    tv_log_type.setText(getString(R.string.label_time_in));
+                    tv_log_type.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorGreen, null));
+                    tv_log_time.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorGreen, null));
+                    break;
+                case TagTableUsage.TIMELOG_OUT:
+                    tv_log_type.setText(getString(R.string.label_time_out));
+                    tv_log_type.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorOrange, null));
+                    tv_log_time.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorOrange, null));
+                    break;
+                default:
+                    break;
+            }
 
-                tv_log_time = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_time);
-                tv_log_time.setText(DateUtility.getDateString(timeLog.getDate(), "HH:mm"));
+            tv_log_time.setText(DateUtility.getDateString(timeLog.getDate(), "HH:mm"));
+            tv_log_date.setText(DateUtility.getDateString(timeLog.getDate(), "dd MMM yyyy"));
 
-                tv_log_date = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_date);
-                tv_log_date.setText(DateUtility.getDateString(timeLog.getDate(), "dd MMM yyyy"));
-
-                if(timeLog.getProject()!=null){
-                    tv_log_project = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_project);
-                    tv_log_project.setText(timeLog.getProject().getCode());
-                }
+            if(timeLog.getProject()!=null){
+                tv_log_project.setText(timeLog.getProject().getCode());
+            }else{
+                tv_log_project.setText("-");
             }
         }
-
 
         tv_next_scan = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_next_scan);
         tv_next_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //next scan
+                if(logTimeFragment!=null){
+                    logTimeFragment.startExtract();
+                }
+                dismiss();
             }
         });
 
@@ -73,9 +104,19 @@ public class LogTimeSummaryFragment extends DialogFragment {
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(logTimeFragment!=null){
+                    logTimeFragment.dismiss();
+                }
                 dismiss();
             }
         });
         return logTimeSummaryFragment;
+    }
+
+    public void setTimeLog(TimeLog timeLog) {
+        this.timeLog = timeLog;
+    }
+    public void setLogTimeFragment(LogTimeFragment logTimeFragment) {
+        this.logTimeFragment = logTimeFragment;
     }
 }

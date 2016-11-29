@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.fragments;
 
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,32 +10,46 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.globe3.tno.g3_mobile.app_objects.DailyTime;
+import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.app_objects.TimeLog;
+import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
+import com.globe3.tno.g3_mobile.async.TimeLogSingleUploadTask;
 import com.globe3.tno.g3_mobile.constants.App;
+import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.neurotec.biometrics.NBiometricOperation;
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NBiometricTask;
 import com.neurotec.biometrics.NFinger;
+import com.neurotec.biometrics.NMatchingResult;
 import com.neurotec.biometrics.NSubject;
 import com.neurotec.biometrics.NTemplateSize;
 import com.neurotec.biometrics.client.NBiometricClient;
+import com.neurotec.devices.NDevice;
 import com.neurotec.devices.NDeviceManager;
 import com.neurotec.devices.NDeviceType;
 import com.neurotec.util.concurrent.CompletionHandler;
 
+import java.util.Calendar;
 import java.util.EnumSet;
+
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
 public class LogTimeFragment extends DialogFragment {
     Context parentContext;
@@ -42,12 +57,16 @@ public class LogTimeFragment extends DialogFragment {
     Staff staff;
     Project project;
 
-    LogTimeSummaryFragment logTimeSummaryFragment;
     LogTimeProjectFragment logTimeProjectFragment;
+    LogTimeSummaryFragment logTimeSummaryFragment;
 
     NBiometricClient mBiometricData;
     NBiometricClient mBiometricClient;
     boolean scanner_found;
+
+    String log_type = TagTableUsage.TIMELOG_IN;
+
+    LinearLayout ll_main_container;
 
     ImageView iv_staff_photo;
     TextView tv_staff_id;
@@ -69,6 +88,7 @@ public class LogTimeFragment extends DialogFragment {
             new ScanTask(new Runnable() {
                 @Override
                 public void run() {
+                    mBiometricClient = new NBiometricClient();
                     setPrompt(PROMPT_CONNECTING);
                 }
             }, new Runnable() {
@@ -94,6 +114,7 @@ public class LogTimeFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             setPrompt(PROMPT_PLACE_FINGER_SCAN);
+            capture();
         }
     };
 
@@ -133,6 +154,8 @@ public class LogTimeFragment extends DialogFragment {
         View logTimeFragment = inflater.inflate(R.layout.fragment_log_time, viewGroup, false);
         parentContext = logTimeFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        ll_main_container = (LinearLayout) logTimeFragment.findViewById(R.id.ll_main_container);
 
         iv_staff_photo = (ImageView) logTimeFragment.findViewById(R.id.iv_staff_photo);
         tv_staff_id = (TextView) logTimeFragment.findViewById(R.id.tv_staff_id);
@@ -190,6 +213,7 @@ public class LogTimeFragment extends DialogFragment {
                 tv_time_out.setBackground(ResourcesCompat.getDrawable(getActivity().getResources(), R.drawable.background_button_group_last_stroke_green, null));
                 tv_time_out.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorOrangeLight, null));
                 tv_time_out.setTypeface(null, Typeface.NORMAL);
+                log_type = TagTableUsage.TIMELOG_IN;
             }
         });
 
@@ -202,42 +226,14 @@ public class LogTimeFragment extends DialogFragment {
                 tv_time_in.setBackground(ResourcesCompat.getDrawable(getActivity().getResources(), R.drawable.background_button_group_first_stroke_amber, null));
                 tv_time_in.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorGreenLight, null));
                 tv_time_in.setTypeface(null, Typeface.NORMAL);
-            }
-        });
-
-        tv_action_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if(project==null){
-                    Bundle staffBundle = new Bundle();
-                    staffBundle.putSerializable("staff", staff);
-
-                    FragmentManager fragmentManager = getActivity().getFragmentManager();
-                    logTimeProjectFragment = new LogTimeProjectFragment();
-                    logTimeProjectFragment.setCancelable(false);
-                    logTimeProjectFragment.setArguments(staffBundle);
-                    logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
-                }else{
-                    Bundle logTimeBundle = new Bundle();
-                    TimeLog timeLog = new TimeLog();
-                    timeLog.setDate(Calendar.getInstance().getTime());
-                    timeLog.setType("Time In");
-                    timeLog.setStaff(staff);
-                    timeLog.setProject(project);
-
-                    logTimeBundle.putSerializable("time_log", timeLog);
-                    FragmentManager fragmentManager = getActivity().getFragmentManager();
-                    logTimeSummaryFragment = new LogTimeSummaryFragment();
-                    logTimeSummaryFragment.setCancelable(false);
-                    logTimeSummaryFragment.setArguments(logTimeBundle);
-                    logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
-                }*/
+                log_type = TagTableUsage.TIMELOG_OUT;
             }
         });
 
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mBiometricClient = null;
                 dismiss();
             }
         });
@@ -252,8 +248,14 @@ public class LogTimeFragment extends DialogFragment {
             if (result == NBiometricStatus.OK) {
                 setPrompt(PROMPT_SEARCHING);
 
-                NBiometricTask identifyTask = mBiometricClient.createTask(EnumSet.of(NBiometricOperation.IDENTIFY), subject);
-                mBiometricClient.performTask(identifyTask, NBiometricOperation.IDENTIFY, identifyHandler);
+                try {
+                    new Thread().sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                NBiometricTask identifyTask = mBiometricData.createTask(EnumSet.of(NBiometricOperation.IDENTIFY), subject);
+                mBiometricData.performTask(identifyTask, NBiometricOperation.IDENTIFY, identifyHandler);
 
             } else {
                 setPrompt(PROMPT_EXTRACT_FAILED);
@@ -268,20 +270,30 @@ public class LogTimeFragment extends DialogFragment {
     private CompletionHandler<NBiometricTask, NBiometricOperation> identifyHandler = new CompletionHandler<NBiometricTask, NBiometricOperation>() {
 
         @Override
-        public void completed(NBiometricTask result, NBiometricOperation attachment) {
+        public void completed(final NBiometricTask result, NBiometricOperation attachment) {
             switch (attachment) {
                 case IDENTIFY:
                     if (result.getStatus() == NBiometricStatus.OK) {
                         if(result.getSubjects().get(0).getMatchingResults().size() > 0){
-                            //success
+                            if(project==null){
+                                if(log_type.equals(TagTableUsage.TIMELOG_IN)){
+                                    selectProject();
+                                }else{
+                                    showSummary();
+                                }
+
+                                mBiometricClient = null;
+                            }
                         }else{
                             setPrompt(PROMPT_FINGER_NOT_FOUND);
                         }
 
-                    } else {
+                    } else if (result.getStatus() == NBiometricStatus.MATCH_NOT_FOUND) {
+                        setPrompt(PROMPT_FINGER_NOT_FOUND);
+                    }else {
                         setPrompt(PROMPT_EXTRACT_FAILED);
                     }
-                    capture();
+
                     break;
                 default:
                     break;
@@ -290,13 +302,15 @@ public class LogTimeFragment extends DialogFragment {
 
         @Override
         public void failed(Throwable th, NBiometricOperation attachment) {
-            setPrompt(PROMPT_EXTRACT_FAILED);
+            //setPrompt(PROMPT_EXTRACT_FAILED);
         }
 
     };
 
     private void capture() {
-        mBiometricClient = new NBiometricClient();
+        if(mBiometricClient==null){
+            mBiometricClient = new NBiometricClient();
+        }
         NSubject subject = new NSubject();
         NFinger finger = new NFinger();
 
@@ -338,7 +352,8 @@ public class LogTimeFragment extends DialogFragment {
         }
     }
 
-    private void startExtract(){
+    public void startExtract(){
+        ll_main_container.setVisibility(View.VISIBLE);
         new ScanTask(new Runnable() {
             @Override
             public void run() {
@@ -349,7 +364,7 @@ public class LogTimeFragment extends DialogFragment {
             public void run() {
                 try {
                     capture();
-                    new Thread().sleep(2000);
+                    new Thread().sleep(5000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -360,6 +375,66 @@ public class LogTimeFragment extends DialogFragment {
                 setPrompt(scanner_found ? PROMPT_PLACE_FINGER_SCAN : PROMPT_SCANNER_NOT_FOUND);
             }
         }).execute();
+    }
+
+    private void selectProject(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ll_main_container.setVisibility(View.GONE);
+            }
+        });
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        logTimeProjectFragment = new LogTimeProjectFragment();
+        logTimeProjectFragment.setCancelable(false);
+        logTimeProjectFragment.setStaff(staff);
+        logTimeProjectFragment.setLogTimeFragment(this);
+        logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
+
+        /*Bundle logTimeBundle = new Bundle();
+            TimeLog timeLog = new TimeLog();
+            timeLog.setDate(Calendar.getInstance().getTime());
+            timeLog.setType("Time In");
+            timeLog.setStaff(staff);
+            timeLog.setProject(project);
+
+            logTimeBundle.putSerializable("time_log", timeLog);
+            FragmentManager fragmentManager = getActivity().getFragmentManager();
+            logTimeSummaryFragment = new LogTimeSummaryFragment();
+            logTimeSummaryFragment.setCancelable(false);
+            logTimeSummaryFragment.setArguments(logTimeBundle);
+            logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));*/
+    }
+
+    private void showSummary(){
+        StaffFactory staffFactory = new StaffFactory(getActivity());
+
+        TimeLog timeLog = new TimeLog();
+        timeLog.setDate(Calendar.getInstance().getTime());
+        timeLog.setType(log_type);
+        timeLog.setStaff(staff);
+
+        DailyTime dailyTime = staffFactory.logTime(staff, null, log_type);
+
+        LogItem logItem = new AuditFactory(getActivity()).Log(log_type);
+
+        new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        logTimeSummaryFragment = new LogTimeSummaryFragment();
+        logTimeSummaryFragment.setCancelable(false);
+        logTimeSummaryFragment.setTimeLog(timeLog);
+        logTimeSummaryFragment.setLogTimeFragment(this);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ll_main_container.setVisibility(View.GONE);
+            }
+        });
+
+        logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
     }
 
     private class ScanTask extends AsyncTask<Void, Void, Boolean> {
@@ -398,7 +473,13 @@ public class LogTimeFragment extends DialogFragment {
         }
     }
 
+    public String getLog_type() {
+        return log_type;
+    }
     public void setStaff(Staff staff) {
         this.staff = staff;
+    }
+    public void setmBiometricClient(NBiometricClient mBiometricClient) {
+        this.mBiometricClient = mBiometricClient;
     }
 }

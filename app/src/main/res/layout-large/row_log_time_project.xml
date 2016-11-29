@@ -5,20 +5,6 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:clickable="true"
     android:background="?attr/selectableItemBackground">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:gravity="center"
-        android:layout_alignParentEnd="true">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tint="@color/colorMenu"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_keyboard_arrow_right_black_36dp" />
-    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -27,26 +13,40 @@
         android:layout_marginEnd="8dp"
         android:background="@color/colorBorder"
         android:id="@+id/view" />
-
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/view">
-        <TextView
-            android:id="@+id/tv_project_code"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:textColor="@color/colorBlackLight"
-            android:textSize="16sp"
-            android:text="PROJECT-0001"/>
-        <TextView
-            android:id="@+id/tv_project_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="Project Description"/>
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|left">
+            <TextView
+                android:id="@+id/tv_project_code"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/colorBlackLight"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/tv_project_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/colorMenu"
+                android:src="@drawable/ic_keyboard_arrow_right_black_36dp" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="com.globe3.tno.g3_mobile.fragments.RegisterFingerFragment"
-    android:layout_height="match_parent">
+    android:id="@+id/ll_main_container">
 
     <android.support.v7.widget.CardView
         android:layout_width="240dp"

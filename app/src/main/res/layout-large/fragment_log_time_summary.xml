@@ -14,14 +14,14 @@
         card_view:cardCornerRadius="2dp">
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="0dp"
             android:background="#FFF">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="?android:attr/listPreferredItemHeight">
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/rl_staff_photo"
                     android:layout_width="72dp"
@@ -31,7 +31,10 @@
                         android:id="@+id/iv_staff_photo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="8dp"
                         android:src="@drawable/ic_person_black_48dp" />
                 </LinearLayout>
                 <LinearLayout
@@ -59,99 +62,112 @@
                 android:layout_marginBottom="4dp"
                 android:background="@color/colorBorder"/>
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_gravity="center"
                 android:gravity="center">
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp">
+                    android:gravity="left">
                     <TextView
                         android:id="@+id/tv_log_type"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.30"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="4dp"
                         android:gravity="left"
                         android:textColor="@color/colorBlackLight"
                         android:textStyle="bold"
                         android:text="@string/label_time_in"/>
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="0.10"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/colorBlackLight"
-                        android:text=":"/>
-                    <TextView
-                        android:id="@+id/tv_log_time"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.60"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textColor="@color/colorBlackLight"
-                        android:text=""/>
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="0.30"
-                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="4dp"
                         android:gravity="left"
                         android:textColor="@color/colorBlackLight"
                         android:textStyle="bold"
                         android:text="@string/label_date"/>
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="0.10"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/colorBlackLight"
-                        android:text=":"/>
-                    <TextView
-                        android:id="@+id/tv_log_date"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.60"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textColor="@color/colorBlackLight"
-                        android:text=""/>
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="0.30"
-                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="4dp"
                         android:gravity="left"
                         android:textColor="@color/colorBlackLight"
                         android:textStyle="bold"
                         android:text="@string/label_project"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="0.10"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:gravity="center"
                         android:textColor="@color/colorBlackLight"
                         android:text=":"/>
                     <TextView
-                        android:id="@+id/tv_log_project"
-                        android:layout_width="0dp"
-                        android:layout_weight="0.60"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="left"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="center"
                         android:textColor="@color/colorBlackLight"
-                        android:text=""/>
+                        android:text=":"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="center"
+                        android:textColor="@color/colorBlackLight"
+                        android:text=":"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left">
+                    <TextView
+                        android:id="@+id/tv_log_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="left"
+                        android:textColor="@color/colorBlackLight"/>
+                    <TextView
+                        android:id="@+id/tv_log_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="left"
+                        android:textColor="@color/colorBlackLight"/>
+                    <TextView
+                        android:id="@+id/tv_log_project"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="left"
+                        android:textColor="@color/colorBlackLight"/>
                 </LinearLayout>
             </LinearLayout>
 
