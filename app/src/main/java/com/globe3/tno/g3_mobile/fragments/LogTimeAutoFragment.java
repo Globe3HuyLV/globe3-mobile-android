@@ -143,6 +143,7 @@ public class LogTimeAutoFragment extends DialogFragment {
     final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop};
     final static int[] ACTION_TEXT = {R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_scan_again};
     final static boolean[] ACTION_CLICKABLE = {false, true, false, true,true, true, true};
+    final static boolean[] CANCEL_CLICKABLE = {false, true, false, true,true, true, true};
     final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, scan_again, refresh, refresh, scan_again};
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -190,6 +191,9 @@ public class LogTimeAutoFragment extends DialogFragment {
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mBiometricClient!=null){
+                    mBiometricClient.cancel();
+                }
                 mBiometricClient = null;
                 dismiss();
             }
@@ -234,9 +238,10 @@ public class LogTimeAutoFragment extends DialogFragment {
                         if(result.getSubjects().get(0).getMatchingResults().size() > 0){
                             boolean single_staff = true;
                             String staff_unique = result.getSubjects().get(0).getMatchingResults().get(0).getId();
+                            staff_unique = staff_unique.substring(0, staff_unique.indexOf('_'));
 
                             for(NMatchingResult matchingResult : result.getSubjects().get(0).getMatchingResults()){
-                                if(!staff_unique.equals(matchingResult.getId())){
+                                if(!staff_unique.equals(matchingResult.getId().substring(0, matchingResult.getId().indexOf('_')))){
                                     single_staff = false;
                                     break;
                                 }
@@ -269,7 +274,8 @@ public class LogTimeAutoFragment extends DialogFragment {
 
         @Override
         public void failed(Throwable th, NBiometricOperation attachment) {
-            //setPrompt(PROMPT_EXTRACT_FAILED);
+            th.printStackTrace();
+            setPrompt(PROMPT_EXTRACT_FAILED);
         }
 
     };
@@ -314,6 +320,7 @@ public class LogTimeAutoFragment extends DialogFragment {
                     tv_action_button.setText(ACTION_TEXT[status]);
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
+                    tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
                 }
             });
         }

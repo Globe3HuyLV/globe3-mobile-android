@@ -67,6 +67,9 @@ public class LoginActivity extends BaseActivity{
     @Override
     public void onResume(){
         super.onResume();
+        tv_company.setText("");
+        tv_user.setText("");
+        tv_password.setText("");
         enableLogin(true);
     }
 

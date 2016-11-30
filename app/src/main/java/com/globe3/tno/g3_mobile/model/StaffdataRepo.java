@@ -316,8 +316,12 @@ public class StaffdataRepo {
 
         Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);
 
-        cursor.moveToFirst();
-        return cursorToObject(cursor);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            return cursorToObject(cursor);
+        }else{
+            return null;
+        }
     }
 
     private staffdata cursorToObject(Cursor cursor) {

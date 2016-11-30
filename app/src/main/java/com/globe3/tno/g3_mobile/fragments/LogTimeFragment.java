@@ -233,6 +233,9 @@ public class LogTimeFragment extends DialogFragment {
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mBiometricClient!=null){
+                    mBiometricClient.cancel();
+                }
                 mBiometricClient = null;
                 dismiss();
             }

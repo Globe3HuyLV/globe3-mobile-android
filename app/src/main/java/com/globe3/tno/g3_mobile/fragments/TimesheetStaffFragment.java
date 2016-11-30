@@ -72,9 +72,11 @@ public class TimesheetStaffFragment extends Fragment {
         fab_auto_screening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mBiometricClient = new NBiometricClient();
                 FragmentManager fragmentManager = getActivity().getFragmentManager();
                 logTimeAutoFragment = new LogTimeAutoFragment();
                 logTimeAutoFragment.setCancelable(false);
+                logTimeAutoFragment.setmBiometricClient(mBiometricClient);
                 logTimeAutoFragment.show(fragmentManager, getString(R.string.label_log_time_auto));
             }
         });

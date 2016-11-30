@@ -45,6 +45,7 @@ import java.util.EnumSet;
 
 import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
+import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
 public class RegisterFingerFragment extends DialogFragment {
     SelectFingerFragment selectFingerFragment;
@@ -127,6 +128,10 @@ public class RegisterFingerFragment extends DialogFragment {
     private View.OnClickListener finish = new  View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            if(mBiometricClient!=null){
+                mBiometricClient.cancel();
+            }
+            mBiometricClient = null;
             ((RegisterFingerActivity) getActivity()).finishRegistration();
             if(selectFingerFragment!=null){
                 selectFingerFragment.dismiss();
@@ -138,6 +143,10 @@ public class RegisterFingerFragment extends DialogFragment {
     private View.OnClickListener cancel = new  View.OnClickListener(){
         @Override
         public void onClick(View v) {
+            if(mBiometricClient!=null){
+                mBiometricClient.cancel();
+            }
+            mBiometricClient = null;
             if(selectFingerFragment!=null){
                 selectFingerFragment.show(staff);
             }
@@ -341,6 +350,8 @@ public class RegisterFingerFragment extends DialogFragment {
 
                         staffFactory.registerFingerprint(staff);
                         auditFactory.Log(TagTableUsage.FINGERPRINT_REGISTER);
+
+                        BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenum() + "_" + String.valueOf(finger_selected));
 
                         verifyStatus(NODE_SUCCESS);
                     } else {
