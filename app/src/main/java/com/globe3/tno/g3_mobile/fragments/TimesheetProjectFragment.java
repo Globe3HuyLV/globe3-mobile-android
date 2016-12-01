@@ -83,19 +83,11 @@ public class TimesheetProjectFragment extends Fragment {
         rowProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    /*FragmentManager fragmentManager = getActivity().getFragmentManager();
-                    Bundle projectBundle = new Bundle();
-
-                    Project project = new Project();
-                    project.setCode("PRJ"+String.valueOf(n));
-                    project.setDesc("Project Desc");
-
-                    projectBundle.putSerializable("entproject", project);
-
+                    FragmentManager fragmentManager = getActivity().getFragmentManager();
                     logTimeStaffFragment = new LogTimeStaffFragment();
                     logTimeStaffFragment.setCancelable(false);
-                    logTimeStaffFragment.setArguments(projectBundle);
-                    logTimeStaffFragment.show(fragmentManager, getString(R.string.label_log_time_staff));*/
+                    logTimeStaffFragment.setProject(project);
+                    logTimeStaffFragment.show(fragmentManager, getString(R.string.label_log_time_staff));
             }
         });
 

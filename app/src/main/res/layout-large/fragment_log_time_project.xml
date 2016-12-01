@@ -94,7 +94,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="256dp"
                     android:background="@color/windowBackground"
-                    android:scrollbars="vertical"/>
+                    android:scrollbars="vertical"
+                    android:visibility="visible"/>
+                <RelativeLayout
+                    android:id="@+id/rl_search_loader"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="@color/windowBackground"
+                    android:visibility="gone">
+                    <ImageView
+                        android:id="@+id/iv_search_loader"
+                        android:src="@drawable/progress_indeterminate"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:contentDescription="@string/image_rotate_loader"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/rl_no_record"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="@color/windowBackground"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/colorBlackLight"
+                        android:textSize="16sp"
+                        android:text="@string/msg_no_record_found"/>
+                </RelativeLayout>
             </LinearLayout>
 
             <TextView

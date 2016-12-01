@@ -21,7 +21,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="left"
             android:padding="8dp"
-            android:background="@color/colorBlackTranslucent">
+            android:background="@color/colorBlackTransparent">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="0dp"

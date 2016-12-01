@@ -61,6 +61,11 @@ public class LogTimeStaffListAdapter extends RecyclerView.Adapter<LogTimeStaffLi
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         RowStaff rowStaff = staffList.get(position);
         viewHolder.rl_row_staff.setOnClickListener(rowStaff.getOnClickListener());
+        if(rowStaff.getStaffPhoto()!=null){
+            viewHolder.iv_staff_photo.setImageBitmap(rowStaff.getStaffPhoto());
+        }else{
+            viewHolder.iv_staff_photo.setImageResource(R.drawable.ic_person_black_48dp);
+        }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
 

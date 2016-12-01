@@ -77,7 +77,6 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
         }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
-        Log.i(APP_NAME, String.valueOf(rowStaff.isDisplayBottomSpacer()));
         viewHolder.v_bottom_spacer.setVisibility(rowStaff.isDisplayBottomSpacer() ? View.VISIBLE : View.GONE);
     }
 

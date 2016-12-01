@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,6 +85,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     TextView tv_last_sync;
     TextView tv_gps;
     TextView tv_pending_sync;
+
+    RelativeLayout rl_blocker;
 
     FloatingActionButton fab_timesheet;
     FloatingActionButton fab_register_finger;
@@ -152,6 +155,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         tv_gps = (TextView) findViewById(R.id.tv_gps);
         tv_pending_sync = (TextView) findViewById(R.id.tv_pending_sync);
 
+        rl_blocker = (RelativeLayout) findViewById(R.id.rl_blocker);
+
         fab_timesheet = (FloatingActionButton) findViewById(R.id.fab_timesheet);
         fab_register_finger = (FloatingActionButton) findViewById(R.id.fab_register_finger);
         fab_location_check = (FloatingActionButton) findViewById(R.id.fab_location_check);
@@ -202,9 +207,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             @Override
             public void onMenuToggle(boolean opened) {
                 if(opened){
+                    rl_blocker.setVisibility(View.VISIBLE);
                     menuAppsCrossfader.startTransition(150);
                 }else{
                     menuAppsCrossfader.reverseTransition(150);
+                    rl_blocker.setVisibility(View.GONE);
                 }
             }
         });
@@ -325,8 +332,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     private void goToActivity(Class<?> activityClass){
-        menuApps.close(true);
+        menuApps.close(false);
         startActivity(new Intent(dashboardActivity, activityClass));
+    }
+
+    public void closeMenuApps(View view){
+        menuApps.close(true);
     }
 
     public void goToTimesheet(View view){

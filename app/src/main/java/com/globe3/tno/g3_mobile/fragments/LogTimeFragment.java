@@ -55,8 +55,10 @@ public class LogTimeFragment extends DialogFragment {
     Context parentContext;
 
     Staff staff;
+
     Project project;
 
+    LogTimeStaffFragment logTimeStaffFragment;
     LogTimeProjectFragment logTimeProjectFragment;
     LogTimeSummaryFragment logTimeSummaryFragment;
 
@@ -88,6 +90,10 @@ public class LogTimeFragment extends DialogFragment {
             new ScanTask(new Runnable() {
                 @Override
                 public void run() {
+                    if(mBiometricClient != null){
+                        mBiometricClient.cancel();
+                        mBiometricClient = null;
+                    }
                     mBiometricClient = new NBiometricClient();
                     setPrompt(PROMPT_CONNECTING);
                 }
@@ -107,6 +113,20 @@ public class LogTimeFragment extends DialogFragment {
                     setPrompt(scanner_found ? PROMPT_PLACE_FINGER_SCAN : PROMPT_SCANNER_NOT_FOUND);
                 }
             }).execute();
+        }
+    };
+
+    private View.OnClickListener cancel = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            if(mBiometricClient!=null){
+                mBiometricClient.cancel();
+                mBiometricClient = null;
+            }
+            if(logTimeStaffFragment != null){
+                logTimeStaffFragment.resume();
+            }
+            dismiss();
         }
     };
 
@@ -147,8 +167,13 @@ public class LogTimeFragment extends DialogFragment {
     final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
     final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderAnimate, loaderStop, loaderStop, loaderStop};
     final static int[] ACTION_TEXT = {R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_refresh_scanner, R.string.msg_scan_again};
-    final static boolean[] ACTION_CLICKABLE = {false, true, false, true,true, true};
-    final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, scan_again, refresh, refresh};
+    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
+    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
+    final static boolean[] ACTION_CLICKABLE = {false, true, false, true, true, true, true};
+    final static boolean[] CANCEL_CLICKABLE = {false, true, false, true, true, true, true};
+    final View.OnClickListener[] ONCLICK_ACTION = {null, refresh, null, scan_again, refresh, refresh, scan_again};
+    final View.OnClickListener[] ONCLICK_CANCEL = {null, cancel, null, cancel, cancel, cancel, cancel};
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View logTimeFragment = inflater.inflate(R.layout.fragment_log_time, viewGroup, false);
@@ -230,19 +255,18 @@ public class LogTimeFragment extends DialogFragment {
             }
         });
 
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mBiometricClient!=null){
-                    mBiometricClient.cancel();
-                }
-                mBiometricClient = null;
-                dismiss();
-            }
-        });
+        tv_cancel.setOnClickListener(cancel);
 
         startExtract();
         return logTimeFragment;
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if(logTimeStaffFragment != null){
+            logTimeStaffFragment.resume();
+        }
     }
 
     private CompletionHandler<NBiometricStatus, NSubject> captureHandler = new CompletionHandler<NBiometricStatus, NSubject>() {
@@ -278,15 +302,13 @@ public class LogTimeFragment extends DialogFragment {
                 case IDENTIFY:
                     if (result.getStatus() == NBiometricStatus.OK) {
                         if(result.getSubjects().get(0).getMatchingResults().size() > 0){
-                            if(project==null){
-                                if(log_type.equals(TagTableUsage.TIMELOG_IN)){
-                                    selectProject();
-                                }else{
-                                    showSummary();
-                                }
-
-                                mBiometricClient = null;
+                            if(project==null && log_type.equals(TagTableUsage.TIMELOG_IN)){
+                                selectProject();
+                            }else{
+                                showSummary();
                             }
+                            mBiometricClient.cancel();
+                            mBiometricClient = null;
                         }else{
                             setPrompt(PROMPT_FINGER_NOT_FOUND);
                         }
@@ -305,7 +327,8 @@ public class LogTimeFragment extends DialogFragment {
 
         @Override
         public void failed(Throwable th, NBiometricOperation attachment) {
-            //setPrompt(PROMPT_EXTRACT_FAILED);
+            th.printStackTrace();
+            setPrompt(PROMPT_EXTRACT_FAILED);
         }
 
     };
@@ -348,8 +371,12 @@ public class LogTimeFragment extends DialogFragment {
                     iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
                     LOADER_ANIMATION[status].run();
                     tv_action_button.setText(ACTION_TEXT[status]);
+                    tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
+                    tv_cancel.setTextColor(ContextCompat.getColor(parentContext, CANCEL_TEXT_COLOR[status]));
+                    tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
+                    tv_cancel.setOnClickListener(ONCLICK_CANCEL[status]);
                 }
             });
         }
@@ -394,20 +421,6 @@ public class LogTimeFragment extends DialogFragment {
         logTimeProjectFragment.setStaff(staff);
         logTimeProjectFragment.setLogTimeFragment(this);
         logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
-
-        /*Bundle logTimeBundle = new Bundle();
-            TimeLog timeLog = new TimeLog();
-            timeLog.setDate(Calendar.getInstance().getTime());
-            timeLog.setType("Time In");
-            timeLog.setStaff(staff);
-            timeLog.setProject(project);
-
-            logTimeBundle.putSerializable("time_log", timeLog);
-            FragmentManager fragmentManager = getActivity().getFragmentManager();
-            logTimeSummaryFragment = new LogTimeSummaryFragment();
-            logTimeSummaryFragment.setCancelable(false);
-            logTimeSummaryFragment.setArguments(logTimeBundle);
-            logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));*/
     }
 
     private void showSummary(){
@@ -416,9 +429,10 @@ public class LogTimeFragment extends DialogFragment {
         TimeLog timeLog = new TimeLog();
         timeLog.setDate(Calendar.getInstance().getTime());
         timeLog.setType(log_type);
+        timeLog.setProject(project);
         timeLog.setStaff(staff);
 
-        DailyTime dailyTime = staffFactory.logTime(staff, null, log_type);
+        DailyTime dailyTime = staffFactory.logTime(staff, project, log_type);
 
         LogItem logItem = new AuditFactory(getActivity()).Log(log_type);
 
@@ -481,6 +495,12 @@ public class LogTimeFragment extends DialogFragment {
     }
     public void setStaff(Staff staff) {
         this.staff = staff;
+    }
+    public void setProject(Project project) {
+        this.project = project;
+    }
+    public void setLogTimeStaffFragment(LogTimeStaffFragment logTimeStaffFragment) {
+        this.logTimeStaffFragment = logTimeStaffFragment;
     }
     public void setmBiometricClient(NBiometricClient mBiometricClient) {
         this.mBiometricClient = mBiometricClient;
