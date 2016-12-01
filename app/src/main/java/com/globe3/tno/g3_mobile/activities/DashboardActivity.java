@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -208,8 +209,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             public void onMenuToggle(boolean opened) {
                 if(opened){
                     rl_blocker.setVisibility(View.VISIBLE);
+                    rl_blocker.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_fade_in));
                     menuAppsCrossfader.startTransition(150);
                 }else{
+                    rl_blocker.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_fade_out));
                     menuAppsCrossfader.reverseTransition(150);
                     rl_blocker.setVisibility(View.GONE);
                 }
