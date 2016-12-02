@@ -176,10 +176,7 @@ public class LocationCheckActivity extends BaseActivity {
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        /*FragmentManager fragmentManager = getFragmentManager();
-                        registerFingerFragment = new RegisterFingerFragment();
-                        registerFingerFragment.setCancelable(false);
-                        registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));*/
+
             }
         });
 
