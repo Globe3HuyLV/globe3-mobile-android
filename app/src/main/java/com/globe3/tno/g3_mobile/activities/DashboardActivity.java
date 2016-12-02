@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -20,17 +21,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.globe3.tno.g3_mobile.BuildConfig;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Company;
 import com.globe3.tno.g3_mobile.app_objects.GPSLocation;
@@ -49,8 +51,9 @@ import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
@@ -71,16 +74,18 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     UserFactory userFactory;
     CompanyFactory companyFactory;
 
-    ActionBar actionBar;
+    ActionBar action_bar;
     ActionBarDrawerToggle toggle;
 
-    Drawable menuAppsIcons[];
+    Drawable menu_apps_icons[];
 
-    Toolbar dashboardToolbar;
-    DrawerLayout dashboardDrawer;
-    NavigationView dashboardNavigationView;
+    Toolbar dashboard_toolbar;
+    DrawerLayout dashboard_drawer;
+    NavigationView dashboard_nav_view;
+    LinearLayout ll_logo;
+    View navigation_drawer_header;
     NavigationView navigation_drawer;
-    FloatingActionMenu menuApps;
+    FloatingActionMenu menu_apps;
 
     TextView tv_server_connect;
     TextView tv_last_sync;
@@ -97,9 +102,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     NavigationView navigation_drawer_logout;
 
-    ArrayList<Company> companyList;
+    ArrayList<Company> company_list;
 
-    LocationManager locationManager;
+    LocationManager location_manager;
+
+    int logo_touch_counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +118,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (dashboardDrawer.isDrawerOpen(GravityCompat.START)) {
-            dashboardDrawer.closeDrawer(GravityCompat.START);
+        if (dashboard_drawer.isDrawerOpen(GravityCompat.START)) {
+            dashboard_drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -121,7 +128,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        dashboardDrawer.closeDrawer(GravityCompat.START);
+        dashboard_drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -145,11 +152,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         userFactory = new UserFactory(dashboardActivity);
         companyFactory = new CompanyFactory(dashboardActivity);
 
-        dashboardToolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
-        dashboardDrawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
-        dashboardNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        dashboard_toolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
+        dashboard_drawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
+        dashboard_nav_view = (NavigationView) findViewById(R.id.nav_view);
         navigation_drawer = (NavigationView) findViewById(R.id.navigation_drawer);
-        menuApps = (FloatingActionMenu) findViewById(R.id.fam_apps);
+        navigation_drawer_header = navigation_drawer.getHeaderView(0);
+        ll_logo = (LinearLayout) navigation_drawer_header.findViewById(R.id.ll_logo);
+        menu_apps = (FloatingActionMenu) findViewById(R.id.fam_apps);
 
         tv_server_connect = (TextView) findViewById(R.id.tv_server_connect);
         tv_last_sync = (TextView) findViewById(R.id.tv_last_sync);
@@ -170,7 +179,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         DEVICE_MODEL = android.os.Build.MODEL;
         DEVICE_NAME = BluetoothAdapter.getDefaultAdapter().getName();
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         GPS_LOCATION = new GPSLocation();
 
@@ -181,30 +190,37 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             BIOMETRIC_DATA.setDatabaseConnectionToSQLite(GLOBE3_DB);
         }
 
-        actionBar = getSupportActionBar();
+        action_bar = getSupportActionBar();
     }
 
     public void onActivityReady(){
-        setSupportActionBar(dashboardToolbar);
-        if(actionBar != null){
-            actionBar.setDisplayShowTitleEnabled(false);
+        setSupportActionBar(dashboard_toolbar);
+        if(action_bar != null){
+            action_bar.setDisplayShowTitleEnabled(false);
         }
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, dashboardDrawer, dashboardToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        dashboardDrawer.addDrawerListener(toggle);
+        ll_logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAppVersion();
+            }
+        });
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, dashboard_drawer, dashboard_toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        dashboard_drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        dashboardNavigationView.setNavigationItemSelectedListener(this);
+        dashboard_nav_view.setNavigationItemSelectedListener(this);
 
-        menuApps.setClosedOnTouchOutside(true);
+        menu_apps.setClosedOnTouchOutside(true);
         Drawable menuAppsIcons[] = new Drawable[2];
         menuAppsIcons[0] = getDrawable(R.drawable.ic_apps_white_24dp);
         menuAppsIcons[1] = getDrawable(R.drawable.ic_add_white_24dp);
 
         final TransitionDrawable menuAppsCrossfader = new TransitionDrawable(menuAppsIcons);
         menuAppsCrossfader.setCrossFadeEnabled(true);
-        menuApps.getMenuIconView().setImageDrawable(menuAppsCrossfader);
-        menuApps.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+        menu_apps.getMenuIconView().setImageDrawable(menuAppsCrossfader);
+        menu_apps.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override
             public void onMenuToggle(boolean opened) {
                 if(opened){
@@ -284,9 +300,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             mActionBar.setDisplayShowCustomEnabled(true);
 
             if(userFactory.getActiveUsers().size() > 0){
-                companyList = companyFactory.getUserCompanys(userFactory.getUser(USERLOGINUNIQ).getCompanies());
+                company_list = companyFactory.getUserCompanys(userFactory.getUser(USERLOGINUNIQ).getCompanies());
             }else{
-                companyList = new ArrayList<Company>();
+                company_list = new ArrayList<Company>();
             }
         }
     }
@@ -295,7 +311,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         FragmentManager fragmentManager = getFragmentManager();
         CompanySelectFragment companySelectFragment = new CompanySelectFragment();
         Bundle args = new Bundle();
-        args.putSerializable("company_list", companyList);
+        args.putSerializable("company_list", company_list);
         companySelectFragment.setArguments(args);
         companySelectFragment.setCancelable(true);
         companySelectFragment.show(fragmentManager, getString(R.string.label_select_entity));
@@ -335,12 +351,20 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     private void goToActivity(Class<?> activityClass){
-        menuApps.close(false);
+        menu_apps.close(false);
         startActivity(new Intent(dashboardActivity, activityClass));
     }
 
     public void closeMenuApps(View view){
-        menuApps.close(true);
+        menu_apps.close(true);
+    }
+
+    public void showAppVersion(){
+        logo_touch_counter++;
+        if(logo_touch_counter==3){
+            Toast.makeText(dashboardActivity, dashboardActivity.getString(R.string.msg_version_date_1s, DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd")), Toast.LENGTH_SHORT).show();
+            logo_touch_counter = 0;
+        }
     }
 
     public void goToTimesheet(View view){
@@ -370,7 +394,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             try {
                 serverConnect = HttpUtility.testConnection();
                 gpsAllowed = ActivityCompat.checkSelfPermission( dashboardActivity, android.Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED;
-                gpsOn = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                gpsOn = location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
                 return true;
             } catch (Exception e) {

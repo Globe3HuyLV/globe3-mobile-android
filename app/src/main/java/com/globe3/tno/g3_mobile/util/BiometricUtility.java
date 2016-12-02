@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.EnumSet;
 
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
+import static com.globe3.tno.g3_mobile.globals.Globals.DEVICES_LICENSE_OBTAINED;
+import static com.globe3.tno.g3_mobile.globals.Globals.EXTRACT_LICENSE_OBTAINED;
+import static com.globe3.tno.g3_mobile.globals.Globals.MATCHER_LICENSE_OBTAINED;
 
 public class BiometricUtility {
     public static NSubject createSubject(Activity activity, Uri uri) throws IOException {
@@ -85,5 +88,9 @@ public class BiometricUtility {
         }
 
         return true;
+    }
+
+    public static boolean licenseObtained(){
+        return (EXTRACT_LICENSE_OBTAINED && MATCHER_LICENSE_OBTAINED && DEVICES_LICENSE_OBTAINED);
     }
 }

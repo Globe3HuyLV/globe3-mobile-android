@@ -42,8 +42,6 @@ public class AppUpdate extends AsyncTask<Void, Void, Boolean>
         this.activity = activity;
         this.ignoreUpdate = ignoreUpdate;
     }
-
-    @Override
     protected Boolean doInBackground(Void... param) {
         try {
             JSONObject json = HttpUtility.requestJSON(web_func, "");

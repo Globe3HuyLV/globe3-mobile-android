@@ -133,6 +133,7 @@
     <string name="msg_camera_thread">Camera Thread</string>
     <string name="msg_searching">Searching</string>
     <string name="msg_scan_again">Scan again</string>
+    <string name="msg_version_date_1s">VERSION DATE %1s</string>
     <plurals name="msg_item">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
