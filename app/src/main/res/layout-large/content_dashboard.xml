@@ -469,7 +469,7 @@
                                     android:textColor="@color/colorBlackLight"
                                     android:textSize="14sp"
                                     android:textAllCaps="true"
-                                    android:text="@string/label_locaiton_check"/>
+                                    android:text="@string/label_location_check"/>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -815,7 +815,7 @@
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccentDark"
             fab:fab_colorRipple="@color/colorAccentLight"
-            fab:fab_label="@string/label_locaiton_check"
+            fab:fab_label="@string/label_location_check"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton

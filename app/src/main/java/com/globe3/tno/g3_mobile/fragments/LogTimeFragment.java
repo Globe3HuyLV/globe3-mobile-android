@@ -419,6 +419,7 @@ public class LogTimeFragment extends DialogFragment {
         logTimeProjectFragment = new LogTimeProjectFragment();
         logTimeProjectFragment.setCancelable(false);
         logTimeProjectFragment.setStaff(staff);
+        logTimeProjectFragment.setLog_type(log_type);
         logTimeProjectFragment.setLogTimeFragment(this);
         logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
@@ -490,9 +491,6 @@ public class LogTimeFragment extends DialogFragment {
         }
     }
 
-    public String getLog_type() {
-        return log_type;
-    }
     public void setStaff(Staff staff) {
         this.staff = staff;
     }

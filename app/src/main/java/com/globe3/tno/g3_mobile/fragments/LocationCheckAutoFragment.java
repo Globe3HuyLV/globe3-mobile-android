@@ -3,14 +3,9 @@ package com.globe3.tno.g3_mobile.fragments;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +14,17 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.DailyTime;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
-import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.TimeLog;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.async.TimeLogSingleUploadTask;
-import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
-import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.neurotec.biometrics.NBiometricOperation;
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NBiometricTask;
@@ -41,7 +33,6 @@ import com.neurotec.biometrics.NMatchingResult;
 import com.neurotec.biometrics.NSubject;
 import com.neurotec.biometrics.NTemplateSize;
 import com.neurotec.biometrics.client.NBiometricClient;
-import com.neurotec.devices.NDevice;
 import com.neurotec.devices.NDeviceManager;
 import com.neurotec.devices.NDeviceType;
 import com.neurotec.util.concurrent.CompletionHandler;
@@ -49,10 +40,9 @@ import com.neurotec.util.concurrent.CompletionHandler;
 import java.util.Calendar;
 import java.util.EnumSet;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
-public class LogTimeAutoFragment extends DialogFragment {
+public class LocationCheckAutoFragment extends DialogFragment {
     Context parentContext;
 
     Project project;
@@ -64,12 +54,9 @@ public class LogTimeAutoFragment extends DialogFragment {
     NBiometricClient mBiometricClient;
     boolean scanner_found;
 
-    String log_type = TagTableUsage.TIMELOG_IN;
+    String log_type = TagTableUsage.LOCATION_CHECK;
 
     LinearLayout ll_main_container;
-
-    TextView tv_time_in;
-    TextView tv_time_out;
 
     TextView tv_prompt;
     ImageView iv_loader;
@@ -166,46 +153,17 @@ public class LogTimeAutoFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        View logTimeFragment = inflater.inflate(R.layout.fragment_log_time_auto, viewGroup, false);
+        View logTimeFragment = inflater.inflate(R.layout.fragment_location_check_auto, viewGroup, false);
         parentContext = logTimeFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         ll_main_container = (LinearLayout) logTimeFragment.findViewById(R.id.ll_main_container);
-
-        tv_time_in = (TextView) logTimeFragment.findViewById(R.id.tv_time_in);
-        tv_time_out = (TextView) logTimeFragment.findViewById(R.id.tv_time_out);
 
         tv_prompt = (TextView) logTimeFragment.findViewById(R.id.tv_prompt);
         iv_loader = (ImageView) logTimeFragment.findViewById(R.id.iv_loader);
         iv_finger = (ImageView) logTimeFragment.findViewById(R.id.iv_finger);
         tv_action_button = (TextView) logTimeFragment.findViewById(R.id.tv_action_button);
         tv_cancel = (TextView) logTimeFragment.findViewById(R.id.tv_cancel);
-
-        tv_time_in.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tv_time_in.setBackground(ResourcesCompat.getDrawable(getActivity().getResources(), R.drawable.background_button_group_first_full_green, null));
-                tv_time_in.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorWhite, null));
-                tv_time_in.setTypeface(null, Typeface.BOLD);
-                tv_time_out.setBackground(ResourcesCompat.getDrawable(getActivity().getResources(), R.drawable.background_button_group_last_stroke_green, null));
-                tv_time_out.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorOrangeLight, null));
-                tv_time_out.setTypeface(null, Typeface.NORMAL);
-                log_type = TagTableUsage.TIMELOG_IN;
-            }
-        });
-
-        tv_time_out.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tv_time_out.setBackground(ResourcesCompat.getDrawable(getActivity().getResources(), R.drawable.background_button_group_last_full_amber, null));
-                tv_time_out.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorWhite, null));
-                tv_time_out.setTypeface(null, Typeface.BOLD);
-                tv_time_in.setBackground(ResourcesCompat.getDrawable(getActivity().getResources(), R.drawable.background_button_group_first_stroke_amber, null));
-                tv_time_in.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorGreenLight, null));
-                tv_time_in.setTypeface(null, Typeface.NORMAL);
-                log_type = TagTableUsage.TIMELOG_OUT;
-            }
-        });
 
         tv_cancel.setOnClickListener(cancel);
 
@@ -265,7 +223,7 @@ public class LogTimeAutoFragment extends DialogFragment {
                                 }
                             }
                             if(single_staff){
-                                if(project==null && log_type.equals(TagTableUsage.TIMELOG_IN)){
+                                if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
                                     selectProject(new StaffFactory(getActivity()).getStaff(staff_unique));
                                 }else{
                                     showSummary(new StaffFactory(getActivity()).getStaff(staff_unique));
@@ -385,7 +343,7 @@ public class LogTimeAutoFragment extends DialogFragment {
         logTimeProjectFragment.setCancelable(false);
         logTimeProjectFragment.setStaff(staff);
         logTimeProjectFragment.setLog_type(log_type);
-        logTimeProjectFragment.setLogTimeAutoFragment(this);
+        logTimeProjectFragment.setLocationCheckAutoFragment(this);
         logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
 
@@ -408,7 +366,7 @@ public class LogTimeAutoFragment extends DialogFragment {
         logTimeSummaryFragment = new LogTimeSummaryFragment();
         logTimeSummaryFragment.setCancelable(false);
         logTimeSummaryFragment.setTimeLog(timeLog);
-        logTimeSummaryFragment.setLogTimeAutoFragment(this);
+        logTimeSummaryFragment.setLocationCheckAutoFragment(this);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override

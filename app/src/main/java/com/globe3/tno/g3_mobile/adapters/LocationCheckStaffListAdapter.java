@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
+
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
 public class LocationCheckStaffListAdapter extends RecyclerView.Adapter<LocationCheckStaffListAdapter.ViewHolder> {
     Context parentContext;
@@ -32,6 +35,7 @@ public class LocationCheckStaffListAdapter extends RecyclerView.Adapter<Location
         public ImageView iv_staff_photo;
         public TextView tv_staff_id;
         public TextView tv_staff_name;
+        public View v_bottom_spacer;
 
         public ViewHolder(View view) {
             super(view);
@@ -39,6 +43,7 @@ public class LocationCheckStaffListAdapter extends RecyclerView.Adapter<Location
             iv_staff_photo = (ImageView) view.findViewById(R.id.iv_staff_photo);
             tv_staff_id = (TextView) view.findViewById(R.id.tv_staff_id);
             tv_staff_name = (TextView) view.findViewById(R.id.tv_staff_name);
+            v_bottom_spacer = view.findViewById(R.id.v_bottom_spacer);
         }
     }
 
@@ -71,6 +76,8 @@ public class LocationCheckStaffListAdapter extends RecyclerView.Adapter<Location
         }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
+
+        viewHolder.v_bottom_spacer.setVisibility(rowStaff.isDisplayBottomSpacer() ? View.VISIBLE : View.GONE);
     }
 
     @Override

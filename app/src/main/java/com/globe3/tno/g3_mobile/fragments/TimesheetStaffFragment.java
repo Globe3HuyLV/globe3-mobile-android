@@ -62,6 +62,7 @@ public class TimesheetStaffFragment extends Fragment {
         View staffFragment = inflater.inflate(R.layout.fragment_timesheet_staff_list, viewGroup, false);
 
         fab_auto_screening = (FloatingActionButton) staffFragment.findViewById(R.id.fab_auto_screening);
+        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recycler_staff_list = (RecyclerView) staffFragment.findViewById(R.id.recycler_staff_list);
         rl_search_loader = (RelativeLayout) staffFragment.findViewById(R.id.rl_search_loader);
         iv_search_loader = (ImageView) staffFragment.findViewById(R.id.iv_search_loader);
@@ -168,7 +169,6 @@ public class TimesheetStaffFragment extends Fragment {
         protected void onPostExecute(Void result) {
             recycler_staff_list.setHasFixedSize(true);
 
-            recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
             recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
 
             recyclerViewAdapter = new TimesheetStaffListAdapter(staff_list, getActivity());

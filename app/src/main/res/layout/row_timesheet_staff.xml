@@ -32,14 +32,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:textColor="@color/colorBlackLight"
-                android:textSize="16sp"
-                android:text="0001"/>
+                android:textSize="16sp"/>
             <TextView
                 android:id="@+id/tv_staff_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="Staff Name"/>
+                android:textSize="12sp"/>
         </LinearLayout>
         <View
             android:layout_width="match_parent"

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -36,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICES_LICENSE_OBTAINED;
 import static com.globe3.tno.g3_mobile.globals.Globals.EXTRACT_LICENSE_OBTAINED;
@@ -51,8 +53,6 @@ public class LoginActivity extends BaseActivity{
     Button btn_login;
     LinearLayout ll_login_loader;
     ImageView iv_login_loader;
-
-    boolean license_obtained = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,44 +113,18 @@ public class LoginActivity extends BaseActivity{
         }
 
         NCore.setContext(this);
-        ObtainLicenses obtainLicenses = new ObtainLicenses();
         try {
-            obtainLicenses.get(30000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+            EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
+            MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
+            DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        obtainLicenses.execute();
     }
 
     public void onActivityReady(){
-        if(!license_obtained){
-            Snackbar licenseSnackbar = Snackbar.make(layout_main, getString(R.string.neurotec_msg_licenses_not_obtained), Snackbar.LENGTH_LONG);
-            TextView licenseSnackbarText = (TextView) licenseSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-            licenseSnackbarText.setTextColor(ContextCompat.getColor(loginActivity, R.color.colorFailed));
-            licenseSnackbar.show();
-        }
         iv_login_loader.setAnimation(AnimationUtils.loadAnimation(loginActivity, R.anim.animate_rotate_clockwise));
-    }
-
-    private class ObtainLicenses extends AsyncTask<Void, Void, Boolean> {
-        protected Boolean doInBackground(Void... params) {
-            try{
-                EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
-                MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
-                DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
-                return true;
-            }catch (Exception e){
-                e.printStackTrace();
-                return false;
-            }
-        }
-        protected void onPostExecute(Boolean licenseObtained) {
-            license_obtained = licenseObtained;
-        }
     }
 
     public void doLogin(View view){

@@ -45,6 +45,8 @@ public class LogTimeProjectFragment extends DialogFragment {
 
     LogTimeFragment logTimeFragment;
     LogTimeAutoFragment logTimeAutoFragment;
+    LocationCheckAutoFragment locationCheckAutoFragment;
+    LogTimeSummaryFragment logTimeSummaryFragment;
 
     RecyclerView recycler_project_list;
     RecyclerView.Adapter recyclerViewAdapter;
@@ -61,9 +63,9 @@ public class LogTimeProjectFragment extends DialogFragment {
     TextView tv_action_button;
     TextView tv_cancel;
 
-    LogTimeSummaryFragment logTimeSummaryFragment;
-
     ArrayList<RowProject> project_list;
+
+    String log_type;
 
     TimeLog timeLog;
 
@@ -90,7 +92,7 @@ public class LogTimeProjectFragment extends DialogFragment {
 
         timeLog = new TimeLog();
         timeLog.setDate(Calendar.getInstance().getTime());
-        timeLog.setType(logTimeFragment!=null?logTimeFragment.getLog_type() : logTimeAutoFragment.getLog_type());
+        timeLog.setType(log_type);
         timeLog.setStaff(staff);
 
         if(staff!=null){
@@ -154,6 +156,9 @@ public class LogTimeProjectFragment extends DialogFragment {
                 if(logTimeAutoFragment!=null){
                     logTimeAutoFragment.startExtract();
                 }
+                if(locationCheckAutoFragment!=null){
+                    locationCheckAutoFragment.startExtract();
+                }
                 dismiss();
             }
         });
@@ -190,20 +195,26 @@ public class LogTimeProjectFragment extends DialogFragment {
         logTimeSummaryFragment.setTimeLog(timeLog);
         logTimeSummaryFragment.setLogTimeAutoFragment(logTimeAutoFragment);
         logTimeSummaryFragment.setLogTimeFragment(logTimeFragment);
+        logTimeSummaryFragment.setLocationCheckAutoFragment(locationCheckAutoFragment);
 
         dismiss();
         logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
     }
 
+    public void setLog_type(String log_type) {
+        this.log_type = log_type;
+    }
     public void setStaff(Staff staff) {
         this.staff = staff;
     }
-
     public void setLogTimeFragment(LogTimeFragment logTimeFragment) {
         this.logTimeFragment = logTimeFragment;
     }
     public void setLogTimeAutoFragment(LogTimeAutoFragment logTimeAutoFragment) {
         this.logTimeAutoFragment = logTimeAutoFragment;
+    }
+    public void setLocationCheckAutoFragment(LocationCheckAutoFragment locationCheckAutoFragment) {
+        this.locationCheckAutoFragment = locationCheckAutoFragment;
     }
 
     public void searchProject(String searchTerm) {

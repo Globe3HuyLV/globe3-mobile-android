@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.TimeLog;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.DateUtility;
@@ -25,6 +26,7 @@ public class LogTimeSummaryFragment extends DialogFragment {
 
     LogTimeFragment logTimeFragment;
     LogTimeAutoFragment logTimeAutoFragment;
+    LocationCheckAutoFragment locationCheckAutoFragment;
 
     ImageView iv_staff_photo;
     TextView tv_staff_id;
@@ -38,7 +40,7 @@ public class LogTimeSummaryFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        View logTimeSummaryFragment = inflater.inflate(R.layout.fragment_log_time_summary, viewGroup, false);
+        final View logTimeSummaryFragment = inflater.inflate(R.layout.fragment_log_time_summary, viewGroup, false);
         parentContext = logTimeSummaryFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
@@ -100,6 +102,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
                 if(logTimeAutoFragment!=null){
                     logTimeAutoFragment.startExtract();
                 }
+                if(locationCheckAutoFragment!=null){
+                    locationCheckAutoFragment.startExtract();
+                }
                 dismiss();
             }
         });
@@ -113,6 +118,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
                 }
                 if(logTimeAutoFragment!=null){
                     logTimeAutoFragment.dismiss();
+                }
+                if(locationCheckAutoFragment!=null){
+                    locationCheckAutoFragment.dismiss();
                 }
                 dismiss();
             }
@@ -128,5 +136,8 @@ public class LogTimeSummaryFragment extends DialogFragment {
     }
     public void setLogTimeAutoFragment(LogTimeAutoFragment logTimeAutoFragment) {
         this.logTimeAutoFragment = logTimeAutoFragment;
+    }
+    public void setLocationCheckAutoFragment(LocationCheckAutoFragment locationCheckAutoFragment) {
+        this.locationCheckAutoFragment = locationCheckAutoFragment;
     }
 }

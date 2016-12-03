@@ -39,7 +39,7 @@
     <string name="label_log_time_summary">Log Time Summary</string>
     <string name="label_add_project_photo">Add Project Photo</string>
     <string name="label_register_face">Register Face</string>
-    <string name="label_locaiton_check">Location Check</string>
+    <string name="label_location_check">Location Check</string>
     <string name="label_photos">Photos</string>
     <string name="label_tasks_update">Tasks Update</string>
     <string name="label_logout">Logout</string>

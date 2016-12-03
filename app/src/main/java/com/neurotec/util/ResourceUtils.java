@@ -46,7 +46,6 @@ public final class ResourceUtils {
 			try {
 				in = manager.open(src);
 				out = new FileOutputStream(dest);
-				Log.i(TAG, "Copying asset " + src + " to " + dest);
 				IOUtils.copy(in, out);
 				paths.add(dest);
 			} catch (FileNotFoundException e) {

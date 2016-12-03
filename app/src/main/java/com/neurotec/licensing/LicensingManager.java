@@ -265,22 +265,18 @@ public final class LicensingManager {
 		if (components == null) throw new NullPointerException("components");
 		if (components.isEmpty()) throw new IllegalArgumentException("List of components is empty");
 
-		Log.i(TAG, String.format("Obtaining licenses from server %s:%s", address, port));
-
 		boolean result = false;
 		mComponents.addAll(components);
 		for (String component : components) {
 			boolean available = false;
 			available = NLicense.obtainComponents(address, port, component);
 			result |= available;
-			Log.i(TAG, String.format("Obtaining '%s' license %s.", component, available ? "succeeded" : "failed"));
 		}
 		return result;
 	}
 
 	public void release(List<String> components) throws IOException {
 		if (components != null && !components.isEmpty()) {
-			Log.i(TAG, "Releasing licenses: " + components);
 			NLicense.releaseComponents(components.toString().replace("[", "").replace("]", "").replace(" ", ""));
 			mComponents.removeAll(components);
 		}
