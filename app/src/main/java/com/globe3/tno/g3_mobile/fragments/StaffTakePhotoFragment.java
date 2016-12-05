@@ -701,7 +701,7 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
                     matrix.postRotate(90);
                 }
 
-                Bitmap newBitmap = Bitmap.createScaledBitmap(Bitmap.createBitmap(staffPhoto , 0, 0, newSize, newSize, matrix, true), 512, 512, false);;
+                Bitmap newBitmap = Bitmap.createScaledBitmap(Bitmap.createBitmap(staffPhoto , 0, 0, newSize, newSize, matrix, true), 512, 512, false);
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);

@@ -1,6 +1,10 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.util.BiometricUtility;
@@ -22,6 +26,8 @@ import com.globe3.tno.g3_mobile.model.entities.tabledata;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.FileUtility;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -41,20 +47,20 @@ import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
 public class StaffFactory {
-    private Activity _activity;
+    private Context context;
     ProjectFactory project_factory;
     ScanimageRepo scanimage_repo;
     DailytimeRepo dailytime_repo;
     StaffdataRepo staffdata_repo;
     TabledataRepo tabledata_repo;
 
-    public StaffFactory(Activity activity) {
-        _activity = activity;
-        staffdata_repo = new StaffdataRepo(activity);
-        scanimage_repo = new ScanimageRepo(activity);
-        dailytime_repo = new DailytimeRepo(activity);
-        tabledata_repo = new TabledataRepo(activity);
-        project_factory = new ProjectFactory(activity);
+    public StaffFactory(Context context) {
+        this.context = context;
+        staffdata_repo = new StaffdataRepo(context);
+        scanimage_repo = new ScanimageRepo(context);
+        dailytime_repo = new DailytimeRepo(context);
+        tabledata_repo = new TabledataRepo(context);
+        project_factory = new ProjectFactory(context);
     }
 
     public void createStaff(Staff staff) {
@@ -89,21 +95,44 @@ public class StaffFactory {
             staff.fingerprint_image4 = FileUtility.getImage(staffJson.getString("fingerprint_image4"));
             staff.fingerprint_image5 = FileUtility.getImage(staffJson.getString("fingerprint_image5"));
 
-            staff.photo1 = FileUtility.getImage(staffJson.getString("photo1"));
+            if (!staffJson.getString("photo1").equals("")) {
+                byte[] photo = FileUtility.getImage(staffJson.getString("photo1"));
 
-            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_1");
-            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_2");
-            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_3");
-            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_4");
-            BIOMETRIC_DATA.delete(staff.uniquenum_pri + "_5");
+                Bitmap staffPhoto = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+
+                int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
+
+                Matrix matrix = new Matrix();
+
+                if (staffPhoto.getWidth() > staffPhoto.getHeight()) {
+                    matrix.postRotate(90);
+                }
+
+                Bitmap newBitmap = Bitmap.createScaledBitmap(Bitmap.createBitmap(staffPhoto, 0, 0, newSize, newSize, matrix, true), 512, 512, false);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                staff.photo1 = stream.toByteArray();
+            } else {
+                staff.photo1 = null;
+            }
+
+            new Thread().sleep(100);
+
+            BiometricUtility.deleteFinger(staff.uniquenum_pri + "_1");
+            BiometricUtility.deleteFinger(staff.uniquenum_pri + "_2");
+            BiometricUtility.deleteFinger(staff.uniquenum_pri + "_3");
+            BiometricUtility.deleteFinger(staff.uniquenum_pri + "_4");
+            BiometricUtility.deleteFinger(staff.uniquenum_pri + "_5");
 
             BiometricUtility.enrollFinger(staff.fingerprint_image1, staff.uniquenum_pri + "_1");
             BiometricUtility.enrollFinger(staff.fingerprint_image2, staff.uniquenum_pri + "_2");
             BiometricUtility.enrollFinger(staff.fingerprint_image3, staff.uniquenum_pri + "_3");
             BiometricUtility.enrollFinger(staff.fingerprint_image4, staff.uniquenum_pri + "_4");
             BiometricUtility.enrollFinger(staff.fingerprint_image5, staff.uniquenum_pri + "_5");
-
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

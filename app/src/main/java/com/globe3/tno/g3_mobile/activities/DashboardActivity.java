@@ -297,7 +297,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             mActionBar.setDisplayShowCustomEnabled(true);
 
             if(user_factory.getActiveUsers().size() > 0){
-                company_list = company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
+                company_list = USERLOGINID.equals("m8") ? company_factory.getActiveCompanys() : company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
             }else{
                 company_list = new ArrayList<Company>();
             }
@@ -359,7 +359,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     public void showAppVersion(){
         logo_touch_counter++;
         if(logo_touch_counter==3){
-            Toast.makeText(dashboard_activity, dashboard_activity.getString(R.string.msg_version_date_1s, DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd")), Toast.LENGTH_SHORT).show();
+            Toast.makeText(dashboard_activity, dashboard_activity.getString(R.string.msg_version_date_1s, DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd HH:mm:ss")), Toast.LENGTH_SHORT).show();
             logo_touch_counter = 0;
         }
     }

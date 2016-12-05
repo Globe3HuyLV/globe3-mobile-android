@@ -57,6 +57,8 @@ public class LoginActivity extends BaseActivity{
 
         login_activity = this;
 
+        new ObtainLicenses().execute();
+
         tv_company = (EditText) findViewById(R.id.tv_company);
         tv_user = (EditText) findViewById(R.id.tv_userid);
         tv_password = (EditText) findViewById(R.id.tv_password);
@@ -109,24 +111,10 @@ public class LoginActivity extends BaseActivity{
         }
 
         NCore.setContext(this);
-        license_obtained = getLicense();
     }
 
     public void onActivityReady(){
         iv_login_loader.setAnimation(AnimationUtils.loadAnimation(login_activity, R.anim.animate_rotate_clockwise));
-    }
-
-    private boolean getLicense(){
-        try {
-            EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
-            MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
-            DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
-
-            return EXTRACT_LICENSE_OBTAINED && MATCHER_LICENSE_OBTAINED && DEVICES_LICENSE_OBTAINED;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     public void doLogin(View view){
@@ -196,6 +184,25 @@ public class LoginActivity extends BaseActivity{
             }else{
                 onActivityError();
             }
+        }
+    }
+
+    private class ObtainLicenses extends AsyncTask<Void, Void, Boolean> {
+
+        protected Boolean doInBackground(Void... params) {
+            try {
+                EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
+                MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
+                DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
+
+                return EXTRACT_LICENSE_OBTAINED && MATCHER_LICENSE_OBTAINED && DEVICES_LICENSE_OBTAINED;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        protected void onPostExecute(Boolean licenseObtained) {
+            license_obtained = licenseObtained;
         }
     }
 }

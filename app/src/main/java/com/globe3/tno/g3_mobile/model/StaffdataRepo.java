@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.model.entities.staffdata;
 import com.globe3.tno.g3_mobile.util.DateUtility;
@@ -13,6 +14,7 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 
 public class StaffdataRepo {
@@ -133,10 +135,15 @@ public class StaffdataRepo {
         values.put(Globe3Db.COLUMN_PROJECT_NAME, staffdata.project_name);
         values.put(Globe3Db.COLUMN_PROJECT_UNIQUE, staffdata.project_unique);
         long insertId = database.insert(Globe3Db.TABLE_WDATA, null, values);
+
         Cursor cursor = database.query(Globe3Db.TABLE_WDATA, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
-        staffdata new_staffdata = cursorToObject(cursor);
+
+        staffdata new_staffdata;
+        new_staffdata = (cursor.getCount() > 0 ? cursorToObject(cursor) : null);
+
         cursor.close();
+
         return new_staffdata;
     }
 

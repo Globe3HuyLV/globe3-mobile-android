@@ -429,7 +429,7 @@ public class LogTimeFragment extends DialogFragment {
 
         DailyTime dailyTime = staffFactory.logTime(staff, project, log_type);
 
-        LogItem logItem = new AuditFactory(getActivity()).Log(log_type);
+        LogItem logItem = new AuditFactory(getActivity()).Log(log_type, staff.getUniquenumPri());
 
         new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
 

@@ -343,12 +343,11 @@ public class RegisterFingerFragment extends DialogFragment {
 
                         staff_factory.updateStaff(staff);
 
-                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER);
+                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
 
-                        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
+                        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
 
                         staff_factory.registerFingerprint(staff);
-                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER);
 
                         BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
 

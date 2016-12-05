@@ -90,6 +90,16 @@ public class BiometricUtility {
         return true;
     }
 
+    public static boolean deleteFinger(String fingerId){
+        try {
+            BIOMETRIC_DATA.delete(fingerId);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static boolean licenseObtained(){
         return (EXTRACT_LICENSE_OBTAINED && MATCHER_LICENSE_OBTAINED && DEVICES_LICENSE_OBTAINED);
     }

@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.model.entities.auditlog;
+import com.globe3.tno.g3_mobile.model.entities.staffdata;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 
 import java.util.ArrayList;
@@ -159,6 +161,26 @@ public class AuditlogRepo {
 
         cursor.close();
         return auditlogs;
+    }
+
+    public ArrayList<auditlog> get_staff_recent_activity(){
+        ArrayList<auditlog> auditlogs = new ArrayList<>();
+
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "tag_table_usage=?", new String[]{TagTableUsage.TIMELOG_IN, TagTableUsage.TIMELOG_OUT, TagTableUsage.LOCATION_CHECK, TagTableUsage.FINGERPRINT_REGISTER}, null, null, "idcode DESC", "5");
+
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                auditlogs.add(cursorToObject(cursor));
+                cursor.moveToNext();
+            }
+
+            cursor.close();
+
+            return auditlogs;
+        }else{
+            return null;
+        }
     }
 
     public auditlog get_auditlog_latest_sync(String pUsage){

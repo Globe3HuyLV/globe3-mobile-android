@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.globe3.tno.g3_mobile.BuildConfig;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.R;
@@ -64,15 +65,10 @@ public class AppUpdate extends AsyncTask<Void, Void, Boolean>
     protected void onPostExecute(Boolean success) {
         if(success){
             try{
-                ApplicationInfo appInfo = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), 0);
-                String appFile = appInfo.sourceDir;
-                long time = new File(appFile).lastModified();
+                final String buildDate = DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd HH:mm:ss");
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                final String buildDate = formatter.format(time);
-
-                Date appCurVersion = DateUtility.getStringDate(buildDate, "yyyy-MM-dd");
-                Date appLatestVersion = DateUtility.getStringDate(latest_version, "yyyy-MM-dd");
+                Date appCurVersion = DateUtility.getStringDate(buildDate, "yyyy-MM-dd HH:mm:ss");
+                Date appLatestVersion = DateUtility.getStringDate(latest_version, "yyyy-MM-dd HH:mm:ss");
 
                 if(appCurVersion.getTime() < appLatestVersion.getTime()){
                     final Runnable doUpdate = new Runnable() {
