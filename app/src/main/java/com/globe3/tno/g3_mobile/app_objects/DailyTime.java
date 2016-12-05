@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class DailyTime implements Serializable{
     private long idcode;
-    private String uniquenum_pri;
+    private String uniquenumPri;
     private Staff Staff;
     private Date DateSync;
     private String SyncUnique;
@@ -34,12 +34,12 @@ public class DailyTime implements Serializable{
         this.idcode = idcode;
     }
 
-    public String getUniquenum_pri() {
-        return uniquenum_pri;
+    public String getUniquenumPri() {
+        return uniquenumPri;
     }
 
-    public void setUniquenum_pri(String uniquenum_pri) {
-        this.uniquenum_pri = uniquenum_pri;
+    public void setUniquenumPri(String uniquenum_pri) {
+        this.uniquenumPri = uniquenum_pri;
     }
 
     public com.globe3.tno.g3_mobile.app_objects.Staff getStaff() {

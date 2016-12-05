@@ -1,27 +1,20 @@
 package com.globe3.tno.g3_mobile.activities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.R;
-import com.neurotec.biometrics.client.NBiometricClient;
-import com.neurotec.devices.NDeviceManager;
-import com.neurotec.lang.NCore;
-import com.neurotec.licensing.NLicense;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    public BaseActivity baseActivity;
+    public BaseActivity base_activity;
 
     public RelativeLayout layout_base_loader;
     public ImageView image_loader;
@@ -29,7 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public BaseActivity(){
         super();
-        baseActivity = this;
+        base_activity = this;
     }
 
     @Override
@@ -49,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void onActivityPostLoading(){
         layout_base_loader.setVisibility(View.INVISIBLE);
-        layout_main.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_fade_in));
+        layout_main.setAnimation(AnimationUtils.loadAnimation(base_activity, R.anim.animate_fade_in));
         layout_main.getAnimation().setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -67,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
         layout_main.startAnimation(layout_main.getAnimation());
-        baseActivity.runOnUiThread(new Runnable() {
+        base_activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -83,8 +76,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onActivityError(){
         AlertDialog.Builder alertDialogBuilder =
                 new AlertDialog.Builder(this)
-                        .setMessage(baseActivity.getString(R.string.msg_an_error_has_occured))
-                        .setNegativeButton(baseActivity.getString(R.string.label_exit), new DialogInterface.OnClickListener() {
+                        .setMessage(base_activity.getString(R.string.msg_an_error_has_occured))
+                        .setNegativeButton(base_activity.getString(R.string.label_exit), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                                 finish();
@@ -96,7 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private class LoaderTask extends AsyncTask<Void, Void, Boolean> {
         protected void onPreExecute(){
             layout_base_loader.setVisibility(View.VISIBLE);
-            image_loader.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_rotate_clockwise));
+            image_loader.setAnimation(AnimationUtils.loadAnimation(base_activity, R.anim.animate_rotate_clockwise));
             layout_main.setVisibility(View.INVISIBLE);
         }
 

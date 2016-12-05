@@ -18,13 +18,13 @@ import com.globe3.tno.g3_mobile.constants.App;
 import java.util.ArrayList;
 
 public class RegisterFingerStaffListAdapter extends RecyclerView.Adapter<RegisterFingerStaffListAdapter.ViewHolder> {
-    Context parentContext;
+    Context parent_context;
 
-    private ArrayList<RowStaff> staffList;
+    private ArrayList<RowStaff> staff_list;
 
     public RegisterFingerStaffListAdapter(ArrayList<RowStaff> staffList, Context parentContext) {
-        this.parentContext = parentContext;
-        this.staffList = staffList;
+        this.parent_context = parentContext;
+        this.staff_list = staffList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -47,13 +47,13 @@ public class RegisterFingerStaffListAdapter extends RecyclerView.Adapter<Registe
     }
 
     public void add(int position, RowStaff staff) {
-        staffList.add(position, staff);
+        staff_list.add(position, staff);
         notifyItemInserted(position);
     }
 
     public void remove(RowStaff staff) {
-        int position = staffList.indexOf(staff);
-        staffList.remove(position);
+        int position = staff_list.indexOf(staff);
+        staff_list.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -66,7 +66,7 @@ public class RegisterFingerStaffListAdapter extends RecyclerView.Adapter<Registe
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        RowStaff rowStaff = staffList.get(position);
+        RowStaff rowStaff = staff_list.get(position);
         viewHolder.rl_row_staff.setOnClickListener(rowStaff.getOnClickListener());
         if(rowStaff.getStaffPhoto()!=null){
             viewHolder.iv_staff_photo.setImageBitmap(rowStaff.getStaffPhoto());
@@ -75,13 +75,13 @@ public class RegisterFingerStaffListAdapter extends RecyclerView.Adapter<Registe
         }
         viewHolder.tv_staff_id.setText(rowStaff.getStaffCode());
         viewHolder.tv_staff_name.setText(rowStaff.getStaffName());
-        viewHolder.iv_staff_finger.setColorFilter(ContextCompat.getColor(parentContext, (rowStaff.getStaffFingerCount() > 0 ? R.color.colorSuccess : R.color.colorMenuLight)));
-        viewHolder.iv_staff_finger_count.setImageDrawable(ResourcesCompat.getDrawable(parentContext.getResources(), App.FINGER_COUNTER[rowStaff.getStaffFingerCount()], null));
+        viewHolder.iv_staff_finger.setColorFilter(ContextCompat.getColor(parent_context, (rowStaff.getStaffFingerCount() > 0 ? R.color.colorSuccess : R.color.colorMenuLight)));
+        viewHolder.iv_staff_finger_count.setImageDrawable(ResourcesCompat.getDrawable(parent_context.getResources(), App.FINGER_COUNTER[rowStaff.getStaffFingerCount()], null));
         viewHolder.iv_staff_finger_count.setVisibility(rowStaff.getStaffFingerCount() > 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public int getItemCount() {
-        return staffList.size();
+        return staff_list.size();
     }
 }

@@ -24,8 +24,8 @@ import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 
 public class StaffPhotoPreview extends DialogFragment {
 
-    AuditFactory auditFactory;
-    StaffFactory staffFactory;
+    AuditFactory audit_factory;
+    StaffFactory staff_factory;
 
     Staff staff;
 
@@ -47,8 +47,8 @@ public class StaffPhotoPreview extends DialogFragment {
     private View.OnClickListener save_photo = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            staffFactory.updateStaff(staff);
-            new StaffSingleUploadTask(staffFactory, staff, auditFactory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
+            staff_factory.updateStaff(staff);
+            new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
             ((PhotosActivity) getActivity()).finishStaffTakePhoto();
             dismiss();
         }
@@ -106,17 +106,17 @@ public class StaffPhotoPreview extends DialogFragment {
         StaffTakePhotoFragment staffTakePhotoFragment = new StaffTakePhotoFragment();
         staffTakePhotoFragment.setCancelable(false);
         staffTakePhotoFragment.setStaff(staff);
-        staffTakePhotoFragment.setStaffFactory(staffFactory);
-        staffTakePhotoFragment.setAuditFactory(auditFactory);
+        staffTakePhotoFragment.setStaffFactory(staff_factory);
+        staffTakePhotoFragment.setAuditFactory(audit_factory);
         staffTakePhotoFragment.setStaffPhotoPreview(this);
         staffTakePhotoFragment.show(fragmentManager, getString(R.string.label_take_photo));
     }
 
     public void setAuditFactory(AuditFactory auditFactory){
-        this.auditFactory = auditFactory;
+        this.audit_factory = auditFactory;
     }
     public void setStaffFactory(StaffFactory staffFactory){
-        this.staffFactory = staffFactory;
+        this.staff_factory = staffFactory;
     }
     public void setStaff(Staff staff){
         this.staff = staff;

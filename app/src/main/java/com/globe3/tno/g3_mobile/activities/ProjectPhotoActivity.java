@@ -25,32 +25,32 @@ import java.util.ArrayList;
 import static com.globe3.tno.g3_mobile.constants.App.ACTIVITY_RESULT_SELECT_PHOTOS;
 
 public class ProjectPhotoActivity extends BaseActivity {
-    ProjectPhotoActivity projectPhotoActivity;
-    ArrayList<GridItemProjectPhoto> projectPhotoList;
+    ProjectPhotoActivity project_photo_activity;
+    ArrayList<GridItemProjectPhoto> project_photo_list;
 
-    ProjectPhotoAddFragment projectPhotoAddFragment;
+    ProjectPhotoAddFragment project_photo_add_fragment;
 
-    ActionBar actionBar;
-    Drawable upArrow;
+    ActionBar action_bar;
+    Drawable up_arrow;
 
     GridView gv_project_photos;
     FloatingActionButton fab_project_photo_add;
 
-    ArrayList<String> selectedPhotos;
+    ArrayList<String> selected_photos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_project_photo);
         super.onCreate(savedInstanceState);
 
-        projectPhotoActivity = this;
+        project_photo_activity = this;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(data!= null && requestCode == ACTIVITY_RESULT_SELECT_PHOTOS){
-            selectedPhotos = data.getStringArrayListExtra("selected_photos");
-            projectPhotoAddFragment.showPhotosCount(selectedPhotos.size());
+            selected_photos = data.getStringArrayListExtra("selected_photos");
+            project_photo_add_fragment.showPhotosCount(selected_photos.size());
         }
     }
 
@@ -68,9 +68,9 @@ public class ProjectPhotoActivity extends BaseActivity {
         gv_project_photos = (GridView) findViewById(R.id.gv_project_photos);
         fab_project_photo_add = (FloatingActionButton) findViewById(R.id.fab_project_photo_add);
 
-        actionBar = getSupportActionBar();
+        action_bar = getSupportActionBar();
 
-        projectPhotoList = new ArrayList<>();
+        project_photo_list = new ArrayList<>();
         for(int i=2001; i<2009; i++){
             GridItemProjectPhoto gridItemProjectPhoto = new GridItemProjectPhoto();
             gridItemProjectPhoto.setReference("REF"+String.valueOf(i));
@@ -93,50 +93,50 @@ public class ProjectPhotoActivity extends BaseActivity {
                     break;
             }
 
-            Bitmap thumbnailRaw = BitmapFactory.decodeResource(projectPhotoActivity.getResources(), rawResource);
+            Bitmap thumbnailRaw = BitmapFactory.decodeResource(project_photo_activity.getResources(), rawResource);
 
             int newSize = thumbnailRaw.getWidth() < thumbnailRaw.getHeight() ? thumbnailRaw.getWidth() : thumbnailRaw.getHeight();
 
             gridItemProjectPhoto.setThumbnail(Bitmap.createBitmap(thumbnailRaw, 0, 0, newSize, newSize));
 
-            projectPhotoList.add(gridItemProjectPhoto);
+            project_photo_list.add(gridItemProjectPhoto);
         }
 
-        if(selectedPhotos == null){
-            selectedPhotos = new ArrayList<>();
+        if(selected_photos == null){
+            selected_photos = new ArrayList<>();
         }
     }
 
     public void onActivityReady(){
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if(action_bar != null){
+            action_bar.setDisplayHomeAsUpEnabled(true);
             if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
-                upArrow = ContextCompat.getDrawable(projectPhotoActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-                upArrow.setColorFilter(ContextCompat.getColor(projectPhotoActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                actionBar.setTitle("PRJ1001");
-                actionBar.setHomeAsUpIndicator(upArrow);
+                up_arrow = ContextCompat.getDrawable(project_photo_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                up_arrow.setColorFilter(ContextCompat.getColor(project_photo_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                action_bar.setTitle("PRJ1001");
+                action_bar.setHomeAsUpIndicator(up_arrow);
             }
         }
 
-        gv_project_photos.setAdapter(new ProjectPhotoGridAdapter(projectPhotoActivity, projectPhotoList));
+        gv_project_photos.setAdapter(new ProjectPhotoGridAdapter(project_photo_activity, project_photo_list));
         gv_project_photos.setOnScrollListener(new gridViewOnScrollListener());
         fab_project_photo_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getFragmentManager();
-                projectPhotoAddFragment = new ProjectPhotoAddFragment();
-                projectPhotoAddFragment.setCancelable(false);
-                projectPhotoAddFragment.show(fragmentManager, getString(R.string.label_add_project_photo));
+                project_photo_add_fragment = new ProjectPhotoAddFragment();
+                project_photo_add_fragment.setCancelable(false);
+                project_photo_add_fragment.show(fragmentManager, getString(R.string.label_add_project_photo));
             }
         });
     }
 
     public void goToProjectPhotoItem(View view){
-        startActivity(new Intent(projectPhotoActivity, ProjectPhotoItemViewActivity.class));
+        startActivity(new Intent(project_photo_activity, ProjectPhotoItemViewActivity.class));
     }
 
     public void finishProjectPhotoAdd(View view){
-        projectPhotoAddFragment.finishProjectPhotoAdd();
+        project_photo_add_fragment.finishProjectPhotoAdd();
         if(!fab_project_photo_add.isShown()){
             fab_project_photo_add.show();
         }
@@ -147,8 +147,8 @@ public class ProjectPhotoActivity extends BaseActivity {
     }
 
     public void goToSelectPhotos(View view){
-        Intent selePhotosIntent = new Intent(projectPhotoActivity, ProjectPhotoSelectActivity.class);
-        selePhotosIntent.putStringArrayListExtra("selected_photos", selectedPhotos);
+        Intent selePhotosIntent = new Intent(project_photo_activity, ProjectPhotoSelectActivity.class);
+        selePhotosIntent.putStringArrayListExtra("selected_photos", selected_photos);
         startActivityForResult(selePhotosIntent, ACTIVITY_RESULT_SELECT_PHOTOS);
     }
 

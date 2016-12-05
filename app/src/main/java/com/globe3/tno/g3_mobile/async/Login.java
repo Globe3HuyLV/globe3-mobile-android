@@ -2,13 +2,11 @@ package com.globe3.tno.g3_mobile.async;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.globe3.tno.g3_mobile.activities.DashboardActivity;
 import com.globe3.tno.g3_mobile.activities.LoginActivity;
 import com.globe3.tno.g3_mobile.app_objects.User;
 import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
-import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.constants.ConnectionStatus;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.app_objects.LoginDetails;
@@ -16,7 +14,6 @@ import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 
 import org.json.JSONObject;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.CFSQLFILENAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
@@ -27,30 +24,30 @@ import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 
 public class Login extends AsyncTask<Void, Void, Boolean>  {
-    private CompanyFactory companyFactory;
-    private UserFactory userFactory;
+    private CompanyFactory company_factory;
+    private UserFactory user_factory;
 
-    private LoginActivity loginActivity;
-    private LoginDetails loginDetails;
+    private LoginActivity login_activity;
+    private LoginDetails login_details;
 
     private int server_status = ConnectionStatus.SERVER_CONNECTED;
 
     int activeUsers;
 
     public Login(LoginActivity loginActivity, LoginDetails loginDetails){
-        userFactory = new UserFactory(loginActivity);
-        companyFactory = new CompanyFactory(loginActivity);
-        this.loginActivity = loginActivity;
-        this.loginDetails = loginDetails;
+        user_factory = new UserFactory(loginActivity);
+        company_factory = new CompanyFactory(loginActivity);
+        this.login_activity = loginActivity;
+        this.login_details = loginDetails;
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
 
         try {
-            activeUsers = userFactory.getActiveUsers().size();
+            activeUsers = user_factory.getActiveUsers().size();
             if(activeUsers == 0){
-                JSONObject loginResultJSON = HttpUtility.requestJSON("login", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&company="+loginDetails.getCompany()+"&userloginid="+loginDetails.getUserid()+"&password="+loginDetails.getPassword());
+                JSONObject loginResultJSON = HttpUtility.requestJSON("login", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&company="+ login_details.getCompany()+"&userloginid="+ login_details.getUserid()+"&password="+ login_details.getPassword());
 
                 server_status = ConnectionStatus.SERVER_CONNECTED;
                 if(loginResultJSON.getBoolean("login_valid")){
@@ -66,19 +63,19 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
                 }
             }else{
                 User user = new User();
-                user.setCompany(loginDetails.getCompany());
-                user.setUserid(loginDetails.getUserid());
-                user.setPassword(loginDetails.getPassword());
+                user.setCompany(login_details.getCompany());
+                user.setUserid(login_details.getUserid());
+                user.setPassword(login_details.getPassword());
 
-                if(userFactory.authenticate(user)){
+                if(user_factory.authenticate(user)){
                     JSONObject macResultJSON = HttpUtility.requestJSON("user_mac", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+user.getUserid());
                     if(macResultJSON!=null){
                         user.setMAC(macResultJSON.getString("items"));
-                        userFactory.updateUser(user);
+                        user_factory.updateUser(user);
                     }
 
-                    if(companyFactory.getCompany(COMPANYFN) != null){
-                        COMPANY_NAME = companyFactory.getCompany(COMPANYFN).getName();
+                    if(company_factory.getCompany(COMPANYFN) != null){
+                        COMPANY_NAME = company_factory.getCompany(COMPANYFN).getName();
                     }else{
                         COMPANY_NAME = "";
                     }
@@ -99,12 +96,12 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
     protected void onPostExecute(Boolean loginSuccess) {
         if(loginSuccess){
             if(activeUsers > 0){
-                new MacUpdate(loginActivity, userFactory).execute();
+                new MacUpdate(login_activity, user_factory).execute();
             }else{
-                loginActivity.startActivity(new Intent(loginActivity, DashboardActivity.class));
+                login_activity.startActivity(new Intent(login_activity, DashboardActivity.class));
             }
         }else{
-            loginActivity.onLoginFailed(server_status);
+            login_activity.onLoginFailed(server_status);
         }
     }
 }

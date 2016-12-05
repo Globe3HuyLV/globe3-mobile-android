@@ -14,14 +14,14 @@ import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 
 public class AuditFactory {
-    AuditlogRepo auditlog_data;
+    AuditlogRepo auditlog_repo;
     public AuditFactory(Context context) {
-        auditlog_data = new AuditlogRepo(context);
+        auditlog_repo = new AuditlogRepo(context);
     }
 
     public LogItem Log(String tableUsage){
         Date now = new Date();
-        auditlog_data.open();
+        auditlog_repo.open();
         auditlog auditlog = new auditlog();
 
         auditlog.uniquenum_pri = Uniquenum.Generate();
@@ -34,9 +34,9 @@ public class AuditFactory {
         auditlog.companyfn = COMPANYFN;
         auditlog.userid = USERLOGINID;
 
-        auditlog_data.create_auditlog(auditlog);
+        auditlog_repo.create_auditlog(auditlog);
 
-        auditlog_data.close();
+        auditlog_repo.close();
 
         LogItem logItem = new LogItem();
         logItem.setTableUsage(auditlog.tag_table_usage);
@@ -48,9 +48,9 @@ public class AuditFactory {
 
     public Date getLastSync(String usage){
         auditlog auditlog;
-        auditlog_data.open();
-        auditlog = auditlog_data.get_auditlog_latest_sync(usage);
-        auditlog_data.close();
+        auditlog_repo.open();
+        auditlog = auditlog_repo.get_auditlog_latest_sync(usage);
+        auditlog_repo.close();
         if(auditlog != null){
             return auditlog.date_post;
         }else{
@@ -59,10 +59,10 @@ public class AuditFactory {
     }
 
     public void deleteEverything(){
-        auditlog_data.open();
+        auditlog_repo.open();
 
-        auditlog_data.database_truncate();
+        auditlog_repo.database_truncate();
 
-        auditlog_data.close();
+        auditlog_repo.close();
     }
 }

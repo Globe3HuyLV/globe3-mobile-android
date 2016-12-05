@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -51,8 +50,6 @@ import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
@@ -68,11 +65,11 @@ import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 import static com.globe3.tno.g3_mobile.globals.Globals.GPS_UTILITY;
 
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
-    DashboardActivity dashboardActivity;
+    DashboardActivity dashboard_activity;
 
-    AuditFactory auditFactory;
-    UserFactory userFactory;
-    CompanyFactory companyFactory;
+    AuditFactory audit_factory;
+    UserFactory user_factory;
+    CompanyFactory company_factory;
 
     ActionBar action_bar;
     ActionBarDrawerToggle toggle;
@@ -113,7 +110,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         setContentView(R.layout.activity_dashboard);
         super.onCreate(savedInstanceState);
 
-        dashboardActivity = this;
+        dashboard_activity = this;
     }
 
     @Override
@@ -138,9 +135,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             case REQUEST_GPS: {
                 if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                    PermissionUtility.requestLocationServices(dashboardActivity, false);
+                    PermissionUtility.requestLocationServices(dashboard_activity, false);
                 }else{
-                    GPS_UTILITY = new GPSUtility(dashboardActivity);
+                    GPS_UTILITY = new GPSUtility(dashboard_activity);
                     GPS_LOCATION = GPS_UTILITY.getGPSLocation();
                 }
             }
@@ -148,9 +145,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void onActivityLoading(){
-        auditFactory = new AuditFactory(dashboardActivity);
-        userFactory = new UserFactory(dashboardActivity);
-        companyFactory = new CompanyFactory(dashboardActivity);
+        audit_factory = new AuditFactory(dashboard_activity);
+        user_factory = new UserFactory(dashboard_activity);
+        company_factory = new CompanyFactory(dashboard_activity);
 
         dashboard_toolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
         dashboard_drawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
@@ -175,7 +172,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
         navigation_drawer_logout = (NavigationView) findViewById(R.id.navigation_drawer_logout);
 
-        DEVICE_ID = Settings.Secure.getString(dashboardActivity.getContentResolver(), Settings.Secure.ANDROID_ID);
+        DEVICE_ID = Settings.Secure.getString(dashboard_activity.getContentResolver(), Settings.Secure.ANDROID_ID);
         DEVICE_MODEL = android.os.Build.MODEL;
         DEVICE_NAME = BluetoothAdapter.getDefaultAdapter().getName();
 
@@ -225,10 +222,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             public void onMenuToggle(boolean opened) {
                 if(opened){
                     rl_blocker.setVisibility(View.VISIBLE);
-                    rl_blocker.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_fade_in));
+                    rl_blocker.setAnimation(AnimationUtils.loadAnimation(base_activity, R.anim.animate_fade_in));
                     menuAppsCrossfader.startTransition(150);
                 }else{
-                    rl_blocker.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_fade_out));
+                    rl_blocker.setAnimation(AnimationUtils.loadAnimation(base_activity, R.anim.animate_fade_out));
                     menuAppsCrossfader.reverseTransition(150);
                     rl_blocker.setVisibility(View.GONE);
                 }
@@ -249,17 +246,17 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             fab_task_update.setVisibility(MAC.substring(5,6).equals("n")?View.GONE:View.VISIBLE);
         }
 
-        if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
-            PermissionUtility.requestLocationServices(dashboardActivity, false);
+        if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboard_activity, Manifest.permission.ACCESS_FINE_LOCATION)){
+            PermissionUtility.requestLocationServices(dashboard_activity, false);
         }else{
-            GPS_UTILITY = new GPSUtility(dashboardActivity);
+            GPS_UTILITY = new GPSUtility(dashboard_activity);
             GPS_LOCATION = GPS_UTILITY.getGPSLocation();
         }
 
         navigation_drawer_logout.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                dashboardActivity.finish();
+                dashboard_activity.finish();
                 return true;
             }
         });
@@ -290,7 +287,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             ActionBar mActionBar = getSupportActionBar();
             mActionBar.setDisplayShowHomeEnabled(false);
             mActionBar.setDisplayShowTitleEnabled(false);
-            LayoutInflater mInflater = LayoutInflater.from(dashboardActivity);
+            LayoutInflater mInflater = LayoutInflater.from(dashboard_activity);
 
             View mCustomView = mInflater.inflate(R.layout.actionbar_dashboard, null);
             TextView mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
@@ -299,8 +296,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             mActionBar.setCustomView(mCustomView, new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
             mActionBar.setDisplayShowCustomEnabled(true);
 
-            if(userFactory.getActiveUsers().size() > 0){
-                company_list = companyFactory.getUserCompanys(userFactory.getUser(USERLOGINUNIQ).getCompanies());
+            if(user_factory.getActiveUsers().size() > 0){
+                company_list = company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
             }else{
                 company_list = new ArrayList<Company>();
             }
@@ -322,15 +319,15 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void showLastSync(){
-        Date lastSync = auditFactory.getLastSync(TagTableUsage.DATA_SYNC_DOWN);
+        Date lastSync = audit_factory.getLastSync(TagTableUsage.DATA_SYNC_DOWN);
         if(lastSync==null){
             tv_last_sync.setText(getString(R.string.msg_never));
             tv_last_sync.setAllCaps(true);
-            tv_last_sync.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorFailed));
+            tv_last_sync.setTextColor(ActivityCompat.getColor(dashboard_activity, R.color.colorFailed));
         }else{
             tv_last_sync.setText(DateUtility.getDateString(lastSync, "HH:mm MMM dd"));
             tv_last_sync.setAllCaps(false);
-            tv_last_sync.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorBlackLight));
+            tv_last_sync.setTextColor(ActivityCompat.getColor(dashboard_activity, R.color.colorBlackLight));
         }
     }
 
@@ -342,17 +339,17 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void requestGPS(View view){
-        if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboardActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
-            PermissionUtility.requestLocationServices(dashboardActivity, false);
+        if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboard_activity, Manifest.permission.ACCESS_FINE_LOCATION)){
+            PermissionUtility.requestLocationServices(dashboard_activity, false);
         }else{
-            GPS_UTILITY = new GPSUtility(dashboardActivity);
+            GPS_UTILITY = new GPSUtility(dashboard_activity);
             GPS_LOCATION = GPS_UTILITY.getGPSLocation();
         }
     }
 
     private void goToActivity(Class<?> activityClass){
         menu_apps.close(false);
-        startActivity(new Intent(dashboardActivity, activityClass));
+        startActivity(new Intent(dashboard_activity, activityClass));
     }
 
     public void closeMenuApps(View view){
@@ -362,7 +359,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     public void showAppVersion(){
         logo_touch_counter++;
         if(logo_touch_counter==3){
-            Toast.makeText(dashboardActivity, dashboardActivity.getString(R.string.msg_version_date_1s, DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd")), Toast.LENGTH_SHORT).show();
+            Toast.makeText(dashboard_activity, dashboard_activity.getString(R.string.msg_version_date_1s, DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd")), Toast.LENGTH_SHORT).show();
             logo_touch_counter = 0;
         }
     }
@@ -393,7 +390,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         protected Boolean doInBackground(Void... param) {
             try {
                 serverConnect = HttpUtility.testConnection();
-                gpsAllowed = ActivityCompat.checkSelfPermission( dashboardActivity, android.Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED;
+                gpsAllowed = ActivityCompat.checkSelfPermission(dashboard_activity, android.Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED;
                 gpsOn = location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
                 return true;
@@ -409,11 +406,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             if(gpsAllowed){
                 tv_gps.setText(getString(gpsOn?R.string.msg_on:R.string.msg_off));
                 tv_gps.setAllCaps(false);
-                tv_gps.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorBlackLight));
+                tv_gps.setTextColor(ActivityCompat.getColor(dashboard_activity, R.color.colorBlackLight));
             }else{
                 tv_gps.setText(getString(R.string.msg_denied));
                 tv_gps.setAllCaps(true);
-                tv_gps.setTextColor(ActivityCompat.getColor(dashboardActivity, R.color.colorFailed));
+                tv_gps.setTextColor(ActivityCompat.getColor(dashboard_activity, R.color.colorFailed));
             }
         }
     }

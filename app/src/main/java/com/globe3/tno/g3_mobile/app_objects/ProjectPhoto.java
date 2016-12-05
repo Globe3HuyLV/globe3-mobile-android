@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ProjectPhoto {
     private Project project;
-    private String unique;
+    private String uniquenumPri;
     private String reference;
     private String remarks;
     private ArrayList<String> photos;
@@ -17,12 +17,12 @@ public class ProjectPhoto {
         this.project = project;
     }
 
-    public String getUnique() {
-        return unique;
+    public String getUniquenumPri() {
+        return uniquenumPri;
     }
 
-    public void setUnique(String unique) {
-        this.unique = unique;
+    public void setUniquenumPri(String uniquenumPri) {
+        this.uniquenumPri = uniquenumPri;
     }
 
     public String getReference() {

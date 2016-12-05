@@ -208,20 +208,20 @@ public class GPSUtility extends Service implements LocationListener {
             try {
                 geocoder = new Geocoder(mContext, Locale.getDefault());
 
-                gpsLocation.Latitude = getLatitude();
-                gpsLocation.Longitude = getLongitude();
+                gpsLocation.latitude = getLatitude();
+                gpsLocation.longitude = getLongitude();
 
-                addresses = geocoder.getFromLocation(gpsLocation.Latitude, gpsLocation.Longitude, 1);
+                addresses = geocoder.getFromLocation(gpsLocation.latitude, gpsLocation.longitude, 1);
 
 
                 if(addresses.size()>0){
                     if(addresses.get(0) != null){
-                        gpsLocation.Address = addresses.get(0).getAddressLine(0)!=null?addresses.get(0).getAddressLine(0):"";
-                        gpsLocation.City = addresses.get(0).getLocality()!=null?addresses.get(0).getLocality():"";
-                        gpsLocation.State = addresses.get(0).getAdminArea()!=null?addresses.get(0).getAdminArea():"";
-                        gpsLocation.Country = addresses.get(0).getCountryName()!=null?addresses.get(0).getCountryName():"";
-                        gpsLocation.PostalCode = addresses.get(0).getPostalCode()!=null?addresses.get(0).getPostalCode():"";
-                        gpsLocation.KnownName = addresses.get(0).getFeatureName()!=null?addresses.get(0).getFeatureName():"";
+                        gpsLocation.address = addresses.get(0).getAddressLine(0)!=null?addresses.get(0).getAddressLine(0):"";
+                        gpsLocation.city = addresses.get(0).getLocality()!=null?addresses.get(0).getLocality():"";
+                        gpsLocation.state = addresses.get(0).getAdminArea()!=null?addresses.get(0).getAdminArea():"";
+                        gpsLocation.country = addresses.get(0).getCountryName()!=null?addresses.get(0).getCountryName():"";
+                        gpsLocation.postal_code = addresses.get(0).getPostalCode()!=null?addresses.get(0).getPostalCode():"";
+                        gpsLocation.known_name = addresses.get(0).getFeatureName()!=null?addresses.get(0).getFeatureName():"";
                     }
                 }
 

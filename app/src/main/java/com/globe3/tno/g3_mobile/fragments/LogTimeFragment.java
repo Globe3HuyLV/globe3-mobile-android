@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.app_objects.DailyTime;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
@@ -37,11 +35,9 @@ import com.neurotec.biometrics.NBiometricOperation;
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NBiometricTask;
 import com.neurotec.biometrics.NFinger;
-import com.neurotec.biometrics.NMatchingResult;
 import com.neurotec.biometrics.NSubject;
 import com.neurotec.biometrics.NTemplateSize;
 import com.neurotec.biometrics.client.NBiometricClient;
-import com.neurotec.devices.NDevice;
 import com.neurotec.devices.NDeviceManager;
 import com.neurotec.devices.NDeviceType;
 import com.neurotec.util.concurrent.CompletionHandler;
@@ -49,10 +45,8 @@ import com.neurotec.util.concurrent.CompletionHandler;
 import java.util.Calendar;
 import java.util.EnumSet;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-
 public class LogTimeFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
     Staff staff;
 
@@ -141,7 +135,7 @@ public class LogTimeFragment extends DialogFragment {
     private Runnable loaderAnimate = new Runnable() {
         @Override
         public void run() {
-            iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+            iv_loader.startAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.rotate));
         }
     };
 
@@ -177,7 +171,7 @@ public class LogTimeFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View logTimeFragment = inflater.inflate(R.layout.fragment_log_time, viewGroup, false);
-        parentContext = logTimeFragment.getContext();
+        parent_context = logTimeFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         ll_main_container = (LinearLayout) logTimeFragment.findViewById(R.id.ll_main_container);
@@ -197,11 +191,11 @@ public class LogTimeFragment extends DialogFragment {
         tv_cancel = (TextView) logTimeFragment.findViewById(R.id.tv_cancel);
 
         mBiometricData = new NBiometricClient();
-        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image1(), staff.getUniquenum() + "_1");
-        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image2(), staff.getUniquenum() + "_2");
-        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image3(), staff.getUniquenum() + "_3");
-        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image4(), staff.getUniquenum() + "_4");
-        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image5(), staff.getUniquenum() + "_5");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_1");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image2(), staff.getUniquenumPri() + "_2");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image3(), staff.getUniquenumPri() + "_3");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image4(), staff.getUniquenumPri() + "_4");
+        BiometricUtility.enrollFinger(mBiometricData, staff.getFingerprint_image5(), staff.getUniquenumPri() + "_5");
 
         if(staff!=null){
             if(staff.getPhoto1()!=null){
@@ -221,8 +215,8 @@ public class LogTimeFragment extends DialogFragment {
             staff_finger_count += (staff.getFingerprint_image4()==null?0:1);
             staff_finger_count += (staff.getFingerprint_image5()==null?0:1);
 
-            iv_staff_finger.setColorFilter(ContextCompat.getColor(parentContext, (staff_finger_count > 0 ? R.color.colorSuccess : R.color.colorMenuLight)));
-            iv_staff_finger_count.setImageDrawable(ResourcesCompat.getDrawable(parentContext.getResources(), App.FINGER_COUNTER[staff_finger_count], null));
+            iv_staff_finger.setColorFilter(ContextCompat.getColor(parent_context, (staff_finger_count > 0 ? R.color.colorSuccess : R.color.colorMenuLight)));
+            iv_staff_finger_count.setImageDrawable(ResourcesCompat.getDrawable(parent_context.getResources(), App.FINGER_COUNTER[staff_finger_count], null));
             iv_staff_finger_count.setVisibility(staff_finger_count > 0 ? View.VISIBLE : View.GONE);
 
             tv_staff_id.setText(staff.getStaff_num());
@@ -364,17 +358,17 @@ public class LogTimeFragment extends DialogFragment {
                 @Override
                 public void run() {
                     tv_prompt.setText(getText(PROMPT_TEXT[status]));
-                    tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
+                    tv_prompt.setTextColor(ContextCompat.getColor(parent_context, PROMPT_TEXT_COLOR[status]));
                     iv_loader.setVisibility(LOADER_DISPLAY[status]);
-                    iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
+                    iv_loader.setColorFilter(ContextCompat.getColor(parent_context, LOADER_COLOR[status]));
                     iv_finger.setVisibility(FINGER_DISPLAY[status]);
-                    iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
+                    iv_finger.setColorFilter(ContextCompat.getColor(parent_context, FINGER_COLOR[status]));
                     LOADER_ANIMATION[status].run();
                     tv_action_button.setText(ACTION_TEXT[status]);
-                    tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
+                    tv_action_button.setTextColor(ContextCompat.getColor(parent_context, ACTION_TEXT_COLOR[status]));
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
-                    tv_cancel.setTextColor(ContextCompat.getColor(parentContext, CANCEL_TEXT_COLOR[status]));
+                    tv_cancel.setTextColor(ContextCompat.getColor(parent_context, CANCEL_TEXT_COLOR[status]));
                     tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
                     tv_cancel.setOnClickListener(ONCLICK_CANCEL[status]);
                 }

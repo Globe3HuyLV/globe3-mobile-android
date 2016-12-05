@@ -61,12 +61,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.activities.PhotosActivity;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
-import com.globe3.tno.g3_mobile.async.StaffSingleUploadTask;
-import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.custom_views.AutoFitTextureView;
 
 import java.io.ByteArrayOutputStream;
@@ -82,10 +79,10 @@ import java.util.concurrent.TimeUnit;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_CAMERA;
 
 public class StaffTakePhotoFragment extends DialogFragment implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
-    StaffPhotoPreview staffPhotoPreview;
+    StaffPhotoPreview staff_photo_preview;
 
-    AuditFactory auditFactory;
-    StaffFactory staffFactory;
+    AuditFactory audit_factory;
+    StaffFactory staff_factory;
 
     Staff staff;
 
@@ -177,7 +174,7 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-            mBackgroundHandler.post(new ImageSaver(staffFactory, auditFactory, reader.acquireNextImage(), staff));
+            mBackgroundHandler.post(new ImageSaver(staff_factory, audit_factory, reader.acquireNextImage(), staff));
         }
 
     };
@@ -646,8 +643,8 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
             }
             case R.id.rl_close: {
                 closeCamera();
-                if(staffPhotoPreview!=null){
-                    staffPhotoPreview.show(staff, false);
+                if(staff_photo_preview !=null){
+                    staff_photo_preview.show(staff, false);
                 }
                 dismiss();
                 break;
@@ -662,10 +659,10 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
     }
 
     public void setStaffFactory(StaffFactory staffFactory){
-        this.staffFactory = staffFactory;
+        this.staff_factory = staffFactory;
     }
     public void setAuditFactory(AuditFactory auditFactory){
-        this.auditFactory = auditFactory;
+        this.audit_factory = auditFactory;
     }
 
     public void setStaff(Staff staff){
@@ -713,8 +710,8 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
 
                 closeCamera();
 
-                if(staffPhotoPreview!=null){
-                    staffPhotoPreview.show(staff, true);
+                if(staff_photo_preview !=null){
+                    staff_photo_preview.show(staff, true);
                 }
 
                 dismiss();
@@ -792,6 +789,6 @@ public class StaffTakePhotoFragment extends DialogFragment implements View.OnCli
     }
 
     public void setStaffPhotoPreview(StaffPhotoPreview staffPhotoPreview) {
-        this.staffPhotoPreview = staffPhotoPreview;
+        this.staff_photo_preview = staffPhotoPreview;
     }
 }

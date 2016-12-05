@@ -36,7 +36,6 @@ import com.neurotec.biometrics.client.NBiometricClient;
 import com.neurotec.devices.NDeviceManager;
 import com.neurotec.devices.NDeviceType;
 import com.neurotec.lang.NCore;
-import com.neurotec.util.NImageUtils;
 import com.neurotec.util.concurrent.CompletionHandler;
 
 import java.io.File;
@@ -48,21 +47,21 @@ import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
 public class RegisterFingerFragment extends DialogFragment {
-    SelectFingerFragment selectFingerFragment;
+    SelectFingerFragment select_finger_fragment;
 
-    AuditFactory auditFactory;
-    StaffFactory staffFactory;
+    AuditFactory audit_factory;
+    StaffFactory staff_factory;
 
     private Staff staff;
 
     int step_num = 1;
     int finger_selected = 1;
-    String pathFingerRef;
-    String pathFingerCan;
+    String path_finger_ref;
+    String path_finger_can;
 
-    Context parentContext;
+    Context parent_context;
 
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
     boolean scanner_found;
 
     ImageView iv_staff_photo;
@@ -119,8 +118,8 @@ public class RegisterFingerFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             step_num = 1;
-            FileUtility.fileDelete(pathFingerRef);
-            FileUtility.fileDelete(pathFingerCan);
+            FileUtility.fileDelete(path_finger_ref);
+            FileUtility.fileDelete(path_finger_can);
             startExtract();
         }
     };
@@ -128,13 +127,13 @@ public class RegisterFingerFragment extends DialogFragment {
     private View.OnClickListener finish = new  View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(mBiometricClient!=null){
-                mBiometricClient.cancel();
+            if(biometric_client !=null){
+                biometric_client.cancel();
             }
-            mBiometricClient = null;
+            biometric_client = null;
             ((RegisterFingerActivity) getActivity()).finishRegistration();
-            if(selectFingerFragment!=null){
-                selectFingerFragment.dismiss();
+            if(select_finger_fragment !=null){
+                select_finger_fragment.dismiss();
             }
             dismiss();
         }
@@ -143,12 +142,12 @@ public class RegisterFingerFragment extends DialogFragment {
     private View.OnClickListener cancel = new  View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(mBiometricClient!=null){
-                mBiometricClient.cancel();
+            if(biometric_client !=null){
+                biometric_client.cancel();
             }
-            mBiometricClient = null;
-            if(selectFingerFragment!=null){
-                selectFingerFragment.show(staff);
+            biometric_client = null;
+            if(select_finger_fragment !=null){
+                select_finger_fragment.show(staff);
             }
             dismiss();
         }
@@ -157,7 +156,7 @@ public class RegisterFingerFragment extends DialogFragment {
     private Runnable loaderAnimate = new Runnable() {
         @Override
         public void run() {
-            iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+            iv_loader.startAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.rotate));
         }
     };
 
@@ -205,11 +204,11 @@ public class RegisterFingerFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        pathFingerRef = GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg";
-        pathFingerCan = GLOBE3_DATA_DIR + staff.getUniquenum() + "_c.jpeg";
+        path_finger_ref = GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg";
+        path_finger_can = GLOBE3_DATA_DIR + staff.getUniquenumPri() + "_c.jpeg";
 
         View registerFragment = inflater.inflate(R.layout.fragment_regsiter_finger, viewGroup, false);
-        parentContext = registerFragment.getContext();
+        parent_context = registerFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         iv_staff_photo = (ImageView) registerFragment.findViewById(R.id.iv_staff_photo);
@@ -239,7 +238,7 @@ public class RegisterFingerFragment extends DialogFragment {
 
         tv_cancel.setOnClickListener(cancel);
 
-        iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+        iv_loader.startAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.rotate));
 
         NCore.setContext(getActivity());
 
@@ -261,7 +260,7 @@ public class RegisterFingerFragment extends DialogFragment {
                 try {
                     String sPrefix = step_num == 1 ? "" : "_c";
 
-                    File outputFile = new File(GLOBE3_DATA_DIR, staff.getUniquenum() + sPrefix + ".jpeg");
+                    File outputFile = new File(GLOBE3_DATA_DIR, staff.getUniquenumPri() + sPrefix + ".jpeg");
                     subject.getFingers().get(0).getImage().save(outputFile.getAbsolutePath());
 
                     if(step_num == 1){
@@ -291,14 +290,14 @@ public class RegisterFingerFragment extends DialogFragment {
     };
 
     private void capture() {
-        mBiometricClient = new NBiometricClient();
+        biometric_client = new NBiometricClient();
         NSubject subject = new NSubject();
         NFinger finger = new NFinger();
 
-        mBiometricClient.setUseDeviceManager(true);
-        NDeviceManager deviceManager = mBiometricClient.getDeviceManager();
+        biometric_client.setUseDeviceManager(true);
+        NDeviceManager deviceManager = biometric_client.getDeviceManager();
         deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
-        mBiometricClient.initialize();
+        biometric_client.initialize();
 
         NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
         scanner_found = devices.size() > 0;
@@ -309,15 +308,15 @@ public class RegisterFingerFragment extends DialogFragment {
 
         subject.getFingers().add(finger);
 
-        mBiometricClient.setFingersTemplateSize(NTemplateSize.LARGE);
-        mBiometricClient.createTemplate(subject, subject, completionHandler);
+        biometric_client.setFingersTemplateSize(NTemplateSize.LARGE);
+        biometric_client.createTemplate(subject, subject, completionHandler);
     }
 
     private void verify() throws IOException {
-        NSubject fingerReference = BiometricUtility.createSubject(getActivity(), Uri.parse(pathFingerRef));
-        NSubject fingerCandidate = BiometricUtility.createSubject(getActivity(), Uri.parse(pathFingerCan));
+        NSubject fingerReference = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_ref));
+        NSubject fingerCandidate = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_can));
 
-        mBiometricClient.verify(fingerReference, fingerCandidate, null, new CompletionHandler<NBiometricStatus, Void>() {
+        biometric_client.verify(fingerReference, fingerCandidate, null, new CompletionHandler<NBiometricStatus, Void>() {
             @Override
             public void completed(NBiometricStatus result, Void attachment) {
                 try {
@@ -326,32 +325,32 @@ public class RegisterFingerFragment extends DialogFragment {
 
                         switch (finger_selected){
                             case 1:
-                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
                                 break;
                             case 2:
-                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
                                 break;
                             case 3:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
                                 break;
                             case 4:
-                                staff.setFingerprint_image4(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image4(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
                                 break;
                             case 5:
-                                staff.setFingerprint_image5(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg"));
+                                staff.setFingerprint_image5(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
                                 break;
                         }
 
-                        staffFactory.updateStaff(staff);
+                        staff_factory.updateStaff(staff);
 
-                        auditFactory.Log(TagTableUsage.FINGERPRINT_REGISTER);
+                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER);
 
-                        new StaffSingleUploadTask(staffFactory, staff, auditFactory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
+                        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP)).execute();
 
-                        staffFactory.registerFingerprint(staff);
-                        auditFactory.Log(TagTableUsage.FINGERPRINT_REGISTER);
+                        staff_factory.registerFingerprint(staff);
+                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER);
 
-                        BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenum() + "_" + String.valueOf(finger_selected));
+                        BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
 
                         verifyStatus(NODE_SUCCESS);
                     } else {
@@ -363,8 +362,8 @@ public class RegisterFingerFragment extends DialogFragment {
                     e.printStackTrace();
                     setPrompt(PROMPT_ERROR_OCCURRED);
                 } finally {
-                    FileUtility.fileDelete(pathFingerRef);
-                    FileUtility.fileDelete(pathFingerCan);
+                    FileUtility.fileDelete(path_finger_ref);
+                    FileUtility.fileDelete(path_finger_can);
                 }
             }
 
@@ -418,17 +417,17 @@ public class RegisterFingerFragment extends DialogFragment {
                 @Override
                 public void run() {
                     tv_prompt.setText(getText(PROMPT_TEXT[status]));
-                    tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
+                    tv_prompt.setTextColor(ContextCompat.getColor(parent_context, PROMPT_TEXT_COLOR[status]));
                     iv_loader.setVisibility(LOADER_DISPLAY[status]);
-                    iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
+                    iv_loader.setColorFilter(ContextCompat.getColor(parent_context, LOADER_COLOR[status]));
                     iv_finger.setVisibility(FINGER_DISPLAY[status]);
-                    iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
+                    iv_finger.setColorFilter(ContextCompat.getColor(parent_context, FINGER_COLOR[status]));
                     LOADER_ANIMATION[status].run();
                     tv_action_button.setText(getText(ACTION_TEXT[status]));
-                    tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
+                    tv_action_button.setTextColor(ContextCompat.getColor(parent_context, ACTION_TEXT_COLOR[status]));
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
-                    tv_cancel.setTextColor(ContextCompat.getColor(parentContext, CANCEL_TEXT_COLOR[status]));
+                    tv_cancel.setTextColor(ContextCompat.getColor(parent_context, CANCEL_TEXT_COLOR[status]));
                     tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
                 }
             });
@@ -440,7 +439,7 @@ public class RegisterFingerFragment extends DialogFragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ll_extract_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
+                    ll_extract_node.setBackground(ContextCompat.getDrawable(parent_context, NODE_BACKGROUND[status]));
                     tv_extract_node_num.setVisibility(NODE_NUM_DISPLAY[status]);
                     iv_extract_node_check.setVisibility(NODE_CHECK_DISPLAY[status]);
                     line_step_1.setVisibility(LINE_DISPLAY[status]);
@@ -483,7 +482,7 @@ public class RegisterFingerFragment extends DialogFragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ll_verify_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
+                    ll_verify_node.setBackground(ContextCompat.getDrawable(parent_context, NODE_BACKGROUND[status]));
                     tv_verify_node_num.setVisibility(NODE_NUM_DISPLAY[status]);
                     iv_verify_node_check.setVisibility(NODE_CHECK_DISPLAY[status]);
                     line_step_2.setVisibility(LINE_DISPLAY[status]);
@@ -525,7 +524,7 @@ public class RegisterFingerFragment extends DialogFragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ll_registration_node.setBackground(ContextCompat.getDrawable(parentContext, NODE_BACKGROUND[status]));
+                    ll_registration_node.setBackground(ContextCompat.getDrawable(parent_context, NODE_BACKGROUND[status]));
                 }
             });
         }
@@ -585,14 +584,14 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     public void setAuditFactory(AuditFactory auditFactory){
-        this.auditFactory = auditFactory;
+        this.audit_factory = auditFactory;
     }
 
     public void setStaffFactory(StaffFactory staffFactory){
-        this.staffFactory = staffFactory;
+        this.staff_factory = staffFactory;
     }
 
     public void setSelectFingerFragment(SelectFingerFragment selectFingerFragment) {
-        this.selectFingerFragment = selectFingerFragment;
+        this.select_finger_fragment = selectFingerFragment;
     }
 }

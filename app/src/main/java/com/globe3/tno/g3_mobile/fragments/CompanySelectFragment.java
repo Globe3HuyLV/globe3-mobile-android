@@ -24,20 +24,20 @@ import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
 
 public class CompanySelectFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
     RecyclerView recycler_company_list;
     RelativeLayout layout_base_loader;
 
-    RecyclerView.Adapter recyclerViewAdapter;
-    RecyclerView.LayoutManager recyclerViewLayoutManager;
+    RecyclerView.Adapter recycler_view_adapter;
+    RecyclerView.LayoutManager recycler_view_layout_manager;
 
     ArrayList<RowCompany> company_list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View companySelectFragment = inflater.inflate(R.layout.fragment_company_select, viewGroup, false);
-        parentContext = companySelectFragment.getContext();
+        parent_context = companySelectFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         recycler_company_list = (RecyclerView) companySelectFragment.findViewById(R.id.recycler_company_list);
@@ -61,7 +61,7 @@ public class CompanySelectFragment extends DialogFragment {
                     rowCompany.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            COMPANYFN = company.getUniquenum();
+                            COMPANYFN = company.getUniquenumPri();
                             COMPANY_NAME = company.getName();
                             ((DashboardActivity) getActivity()).resetCompanyName();
                             dismiss();
@@ -82,11 +82,11 @@ public class CompanySelectFragment extends DialogFragment {
             if(success){
                 recycler_company_list.setHasFixedSize(true);
 
-                recyclerViewLayoutManager = new LinearLayoutManager(parentContext);
-                recycler_company_list.setLayoutManager(recyclerViewLayoutManager);
+                recycler_view_layout_manager = new LinearLayoutManager(parent_context);
+                recycler_company_list.setLayoutManager(recycler_view_layout_manager);
 
-                recyclerViewAdapter = new CompanyListAdapter(company_list, parentContext);
-                recycler_company_list.setAdapter(recyclerViewAdapter);
+                recycler_view_adapter = new CompanyListAdapter(company_list, parent_context);
+                recycler_company_list.setAdapter(recycler_view_adapter);
 
                 layout_base_loader.setVisibility(View.GONE);
                 recycler_company_list.setVisibility(View.VISIBLE);

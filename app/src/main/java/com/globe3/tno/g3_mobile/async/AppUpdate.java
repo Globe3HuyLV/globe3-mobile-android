@@ -30,26 +30,26 @@ import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_WEBSERVICE_PATH;
 public class AppUpdate extends AsyncTask<Void, Void, Boolean>
 {
     private Activity activity;
-    private Runnable ignoreUpdate;
+    private Runnable ignore_update;
 
-    private String latestVersion;
-    private String apkDirectory;
-    private String apkFilename;
+    private String latest_version;
+    private String apk_directory;
+    private String apk_filename;
     private String web_func;
 
     public AppUpdate(Activity activity, Runnable ignoreUpdate){
         web_func = "app_update";
         this.activity = activity;
-        this.ignoreUpdate = ignoreUpdate;
+        this.ignore_update = ignoreUpdate;
     }
     protected Boolean doInBackground(Void... param) {
         try {
             JSONObject json = HttpUtility.requestJSON(web_func, "");
 
             if(json!=null){
-                latestVersion = json.getString("latest_version");
-                apkDirectory = json.getString("apk_path");
-                apkFilename = json.getString("apk_filename");
+                latest_version = json.getString("latest_version");
+                apk_directory = json.getString("apk_path");
+                apk_filename = json.getString("apk_filename");
                 return true;
             }else{
                 return false;
@@ -72,14 +72,14 @@ public class AppUpdate extends AsyncTask<Void, Void, Boolean>
                 final String buildDate = formatter.format(time);
 
                 Date appCurVersion = DateUtility.getStringDate(buildDate, "yyyy-MM-dd");
-                Date appLatestVersion = DateUtility.getStringDate(latestVersion, "yyyy-MM-dd");
+                Date appLatestVersion = DateUtility.getStringDate(latest_version, "yyyy-MM-dd");
 
                 if(appCurVersion.getTime() < appLatestVersion.getTime()){
                     final Runnable doUpdate = new Runnable() {
                         @Override
                         public void run() {
                             String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
-                            String appFileName = apkFilename;
+                            String appFileName = apk_filename;
                             destination += appFileName;
                             final Uri uri = Uri.parse("file://" + destination);
 
@@ -88,7 +88,7 @@ public class AppUpdate extends AsyncTask<Void, Void, Boolean>
                             {
                                 file.delete();
                             }
-                            String url = GLOBE3_WEBSERVICE_ADDR.replace("/"+GLOBE3_WEBSERVICE_PATH, "") + apkDirectory + appFileName;
+                            String url = GLOBE3_WEBSERVICE_ADDR.replace("/"+GLOBE3_WEBSERVICE_PATH, "") + apk_directory + appFileName;
 
                             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
                             request.setDescription(activity.getString(R.string.app_name));
@@ -133,20 +133,20 @@ public class AppUpdate extends AsyncTask<Void, Void, Boolean>
                                 .setNegativeButton(activity.getString(R.string.label_ignore), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ignoreUpdate.run();
+                                        ignore_update.run();
                                     }
                                 })
                                 .show();
                         }
                     });
                 }else{
-                    ignoreUpdate.run();
+                    ignore_update.run();
                 }
             }catch (Exception e){
                 e.printStackTrace();
             }
         }else{
-            ignoreUpdate.run();
+            ignore_update.run();
         }
     }
 }

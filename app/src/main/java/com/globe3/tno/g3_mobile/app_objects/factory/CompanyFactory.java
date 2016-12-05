@@ -15,57 +15,57 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class CompanyFactory {
-    EntityRepo entity_data;
+    EntityRepo entity_repo;
 
     public CompanyFactory(Context context){
-        entity_data = new EntityRepo(context);
+        entity_repo = new EntityRepo(context);
     }
 
     public Company getCompany(String pUniquenum){
         entity entity;
-        entity_data.open();
-        entity = entity_data.get_entity(pUniquenum);
-        entity_data.close();
+        entity_repo.open();
+        entity = entity_repo.get_entity(pUniquenum);
+        entity_repo.close();
 
         return entity != null ? convertEntity(entity) : null;
     }
 
     public ArrayList<Company> getActiveCompanys() {
-        entity_data.open();
+        entity_repo.open();
 
         ArrayList<Company> companys = new ArrayList<Company>();
 
-        for(entity entity : entity_data.get_active_entitys()){
+        for(entity entity : entity_repo.get_active_entitys()){
             companys.add(convertEntity(entity));
         }
 
-        entity_data.close();
+        entity_repo.close();
         return companys;
     }
 
     public ArrayList<Company> getUserCompanys(String userCompanies) {
-        entity_data.open();
+        entity_repo.open();
 
         ArrayList<Company> companys = new ArrayList<Company>();
 
         if(Globals.USERLOGINID.equals("m8")){
-            for(entity entity : entity_data.get_active_entitys()){
+            for(entity entity : entity_repo.get_active_entitys()){
                 companys.add(convertEntity(entity));
             }
         }else{
-            for(entity entity : entity_data.get_user_entitys(userCompanies)){
+            for(entity entity : entity_repo.get_user_entitys(userCompanies)){
                 companys.add(convertEntity(entity));
             }
         }
 
-        entity_data.close();
+        entity_repo.close();
         return companys;
     }
 
     public void deleteAll(){
-        entity_data.open();
-        entity_data.delete_entity_all();
-        entity_data.close();
+        entity_repo.open();
+        entity_repo.delete_entity_all();
+        entity_repo.close();
     }
 
     public void createCompany(JSONObject entityJson, LogItem logItem){
@@ -86,15 +86,15 @@ public class CompanyFactory {
             e.printStackTrace();
         }
 
-        entity_data.open();
-        entity_data.create_entity(entity);
-        entity_data.close();
+        entity_repo.open();
+        entity_repo.create_entity(entity);
+        entity_repo.close();
     }
 
     private Company convertEntity(entity entity){
         Company company = new Company();
         company.setIdcode(entity.idcode);
-        company.setUniquenum(entity.uniquenum_pri);
+        company.setUniquenumPri(entity.uniquenum_pri);
         company.setName(entity.co_name);
         company.setCode(entity.co_code);
         company.setActive(entity.active_yn=="y");

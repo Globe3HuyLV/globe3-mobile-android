@@ -14,13 +14,13 @@ import com.globe3.tno.g3_mobile.R;
 import java.util.ArrayList;
 
 public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.ViewHolder> {
-    Context parentContext;
+    Context parent_context;
 
-    private ArrayList<RowProject> projectList;
+    private ArrayList<RowProject> project_list;
 
     public ProjectListAdapter(ArrayList<RowProject> projectList, Context parentContext) {
-        this.parentContext = parentContext;
-        this.projectList = projectList;
+        this.parent_context = parentContext;
+        this.project_list = projectList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -37,13 +37,13 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     }
 
     public void add(int position, RowProject project) {
-        projectList.add(position, project);
+        project_list.add(position, project);
         notifyItemInserted(position);
     }
 
     public void remove(RowProject project) {
-        int position = projectList.indexOf(project);
-        projectList.remove(position);
+        int position = project_list.indexOf(project);
+        project_list.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -56,7 +56,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        RowProject rowProject = projectList.get(position);
+        RowProject rowProject = project_list.get(position);
         viewHolder.rl_row_project.setOnClickListener(rowProject.getOnClickListener());
         viewHolder.tv_project_code.setText(rowProject.getProjectCode());
         viewHolder.tv_project_name.setText(rowProject.getProjectName());
@@ -65,6 +65,6 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public int getItemCount() {
-        return projectList.size();
+        return project_list.size();
     }
 }

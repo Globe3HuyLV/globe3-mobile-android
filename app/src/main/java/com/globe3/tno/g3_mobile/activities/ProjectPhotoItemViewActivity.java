@@ -1,6 +1,5 @@
 package com.globe3.tno.g3_mobile.activities;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -19,11 +18,11 @@ import com.globe3.tno.g3_mobile.view_objects.GridItemProjectPhotoItem;
 import java.util.ArrayList;
 
 public class ProjectPhotoItemViewActivity extends BaseActivity {
-    ProjectPhotoItemViewActivity projectPhotoItemViewActivity;
-    ArrayList<GridItemProjectPhotoItem> projectPhotoItemList;
+    ProjectPhotoItemViewActivity project_photo_item_view_activity;
+    ArrayList<GridItemProjectPhotoItem> project_photo_item_list;
 
-    ActionBar actionBar;
-    Drawable upArrow;
+    ActionBar action_bar;
+    Drawable up_arrow;
 
     GridView gv_project_photo_items;
     FloatingActionButton fab_project_photo_item_add;
@@ -32,7 +31,7 @@ public class ProjectPhotoItemViewActivity extends BaseActivity {
         setContentView(R.layout.activity_project_photo_item_view);
         super.onCreate(savedInstanceState);
 
-        projectPhotoItemViewActivity = this;
+        project_photo_item_view_activity = this;
     }
 
     @Override
@@ -49,9 +48,9 @@ public class ProjectPhotoItemViewActivity extends BaseActivity {
         gv_project_photo_items = (GridView) findViewById(R.id.gv_project_photo_items);
         fab_project_photo_item_add = (FloatingActionButton) findViewById(R.id.fab_project_photo_item_add);
 
-        actionBar = getSupportActionBar();
+        action_bar = getSupportActionBar();
 
-        projectPhotoItemList = new ArrayList<>();
+        project_photo_item_list = new ArrayList<>();
         for(int i=2001; i<2016; i++){
             GridItemProjectPhotoItem gridItemProjectPhotoItem = new GridItemProjectPhotoItem();
 
@@ -71,31 +70,31 @@ public class ProjectPhotoItemViewActivity extends BaseActivity {
                     break;
             }
 
-            Bitmap thumbnailRaw = BitmapFactory.decodeResource(projectPhotoItemViewActivity.getResources(), rawResource);
+            Bitmap thumbnailRaw = BitmapFactory.decodeResource(project_photo_item_view_activity.getResources(), rawResource);
 
             int newSize = thumbnailRaw.getWidth() < thumbnailRaw.getHeight() ? thumbnailRaw.getWidth() : thumbnailRaw.getHeight();
 
             gridItemProjectPhotoItem.setThumbnail(Bitmap.createBitmap(thumbnailRaw, 0, 0, newSize, newSize));
 
-            projectPhotoItemList.add(gridItemProjectPhotoItem);
+            project_photo_item_list.add(gridItemProjectPhotoItem);
         }
 
-        projectPhotoItemViewActivity.runOnUiThread(new Runnable() {
+        project_photo_item_view_activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                gv_project_photo_items.setAdapter(new ProjectPhotoItemViewGridAdapter(projectPhotoItemViewActivity, projectPhotoItemList));
+                gv_project_photo_items.setAdapter(new ProjectPhotoItemViewGridAdapter(project_photo_item_view_activity, project_photo_item_list));
             }
         });
     }
 
     public void onActivityReady(){
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if(action_bar != null){
+            action_bar.setDisplayHomeAsUpEnabled(true);
             if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
-                upArrow = ContextCompat.getDrawable(projectPhotoItemViewActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-                upArrow.setColorFilter(ContextCompat.getColor(projectPhotoItemViewActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                actionBar.setTitle("REF1001");
-                actionBar.setHomeAsUpIndicator(upArrow);
+                up_arrow = ContextCompat.getDrawable(project_photo_item_view_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                up_arrow.setColorFilter(ContextCompat.getColor(project_photo_item_view_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                action_bar.setTitle("REF1001");
+                action_bar.setHomeAsUpIndicator(up_arrow);
             }
         }
     }

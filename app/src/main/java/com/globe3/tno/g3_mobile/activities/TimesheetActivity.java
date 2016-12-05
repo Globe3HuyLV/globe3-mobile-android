@@ -24,14 +24,14 @@ import com.globe3.tno.g3_mobile.fragments.TimesheetProjectFragment;
 import com.globe3.tno.g3_mobile.fragments.TimesheetStaffFragment;
 
 public class TimesheetActivity extends BaseActivity {
-    TimesheetActivity timsheetActivity;
+    TimesheetActivity timsheet_activity;
 
-    ActionBar actionBar;
-    Drawable upArrow;
+    ActionBar action_bar;
+    Drawable up_arrow;
 
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    TimesheetTabAdapter tabAdapter;
+    TabLayout tab_layout;
+    ViewPager view_pager;
+    TimesheetTabAdapter tab_adapter;
 
     SearchView.SearchAutoComplete search_box;
 
@@ -42,7 +42,7 @@ public class TimesheetActivity extends BaseActivity {
         setContentView(R.layout.activity_timesheet);
         super.onCreate(savedInstanceState);
 
-        timsheetActivity = this;
+        timsheet_activity = this;
     }
 
     @Override
@@ -55,10 +55,10 @@ public class TimesheetActivity extends BaseActivity {
         search_box = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
         ImageView search_close_btn = (ImageView) searchView.findViewById(R.id.search_close_btn);
 
-        search_box.setHintTextColor(ActivityCompat.getColor(timsheetActivity, R.color.colorActionBarHint));
+        search_box.setHintTextColor(ActivityCompat.getColor(timsheet_activity, R.color.colorActionBarHint));
         search_box.setHint(getString(R.string.hint_search));
-        search_box.setTextColor(ActivityCompat.getColor(timsheetActivity, R.color.colorBlackLight));
-        search_close_btn.setColorFilter(ActivityCompat.getColor(timsheetActivity, R.color.colorBlackLight));
+        search_box.setTextColor(ActivityCompat.getColor(timsheet_activity, R.color.colorBlackLight));
+        search_close_btn.setColorFilter(ActivityCompat.getColor(timsheet_activity, R.color.colorBlackLight));
 
         search_box.addTextChangedListener(new TextWatcher() {
             @Override
@@ -89,34 +89,34 @@ public class TimesheetActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
-        actionBar = getSupportActionBar();
+        action_bar = getSupportActionBar();
 
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tab_layout = (TabLayout) findViewById(R.id.tab_layout);
 
-        viewPager = (ViewPager) findViewById(R.id.tab_layout_pager);
-        tabAdapter = new TimesheetTabAdapter(getSupportFragmentManager());
+        view_pager = (ViewPager) findViewById(R.id.tab_layout_pager);
+        tab_adapter = new TimesheetTabAdapter(getSupportFragmentManager());
     }
 
     public void onActivityReady(){
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            upArrow = ContextCompat.getDrawable(timsheetActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-            upArrow.setColorFilter(ContextCompat.getColor(timsheetActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-            actionBar.setHomeAsUpIndicator(upArrow);
+        if(action_bar != null){
+            action_bar.setDisplayHomeAsUpEnabled(true);
+            up_arrow = ContextCompat.getDrawable(timsheet_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            up_arrow.setColorFilter(ContextCompat.getColor(timsheet_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+            action_bar.setHomeAsUpIndicator(up_arrow);
         }
 
-        tabLayout.removeAllTabs();
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_staff)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_project)));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tab_layout.removeAllTabs();
+        tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_staff)));
+        tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_project)));
+        tab_layout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        viewPager.setAdapter(tabAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        view_pager.setAdapter(tab_adapter);
+        view_pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab_layout));
+        tab_layout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 search_box.setHint(getString(search_box_hint[tab.getPosition()]));
-                viewPager.setCurrentItem(tab.getPosition());
+                view_pager.setCurrentItem(tab.getPosition());
                 doSearch(search_box.getText().toString());
             }
 
@@ -133,13 +133,13 @@ public class TimesheetActivity extends BaseActivity {
     }
 
     public void doSearch(String searchTerm){
-        Fragment selectedFragment = tabAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+        Fragment selectedFragment = tab_adapter.getRegisteredFragment(view_pager.getCurrentItem());
 
-        if (viewPager.getCurrentItem() == 0 && selectedFragment != null) {
+        if (view_pager.getCurrentItem() == 0 && selectedFragment != null) {
             ((TimesheetStaffFragment)selectedFragment).searchStaff(searchTerm.toString());
         }
 
-        if (viewPager.getCurrentItem() == 1 && selectedFragment != null) {
+        if (view_pager.getCurrentItem() == 1 && selectedFragment != null) {
             ((TimesheetProjectFragment)selectedFragment).searchProject(searchTerm.toString());
         }
     }

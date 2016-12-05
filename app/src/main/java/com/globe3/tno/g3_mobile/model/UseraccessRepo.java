@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class UseraccessRepo {
 
     private SQLiteDatabase database;
-    private Globe3Db dbHelper;
+    private Globe3Db db_helper;
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -44,17 +44,17 @@ public class UseraccessRepo {
     };
 
     public UseraccessRepo(Context context) {
-        dbHelper = new Globe3Db(context);
+        db_helper = new Globe3Db(context);
     }
 
 
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        database = db_helper.getWritableDatabase();
     }
 
 
     public void close() {
-        dbHelper.close();
+        db_helper.close();
     }
 
 

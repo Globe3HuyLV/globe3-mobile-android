@@ -1,34 +1,27 @@
 package com.globe3.tno.g3_mobile.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-
 public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetStaffListAdapter.ViewHolder> {
-    Context parentContext;
+    Context parent_context;
 
-    private ArrayList<RowStaff> staffList;
+    private ArrayList<RowStaff> staff_list;
 
     public TimesheetStaffListAdapter(ArrayList<RowStaff> staffList, Context parentContext) {
-        this.parentContext = parentContext;
-        this.staffList = staffList;
+        this.parent_context = parentContext;
+        this.staff_list = staffList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -49,13 +42,13 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
     }
 
     public void add(int position, RowStaff staff) {
-        staffList.add(position, staff);
+        staff_list.add(position, staff);
         notifyItemInserted(position);
     }
 
     public void remove(RowStaff staff) {
-        int position = staffList.indexOf(staff);
-        staffList.remove(position);
+        int position = staff_list.indexOf(staff);
+        staff_list.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -68,7 +61,7 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        RowStaff rowStaff = staffList.get(position);
+        RowStaff rowStaff = staff_list.get(position);
         viewHolder.rl_row_staff.setOnClickListener(rowStaff.getOnClickListener());
         if(rowStaff.getStaffPhoto()!=null){
             viewHolder.iv_staff_photo.setImageBitmap(rowStaff.getStaffPhoto());
@@ -82,6 +75,6 @@ public class TimesheetStaffListAdapter extends RecyclerView.Adapter<TimesheetSta
 
     @Override
     public int getItemCount() {
-        return staffList.size();
+        return staff_list.size();
     }
 }

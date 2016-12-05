@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.constants.ConnectionStatus;
 import com.globe3.tno.g3_mobile.util.ConfigUtility;
@@ -33,18 +31,14 @@ import com.neurotec.licensing.LicensingManager;
 import com.neurotec.licensing.NLicense;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_WRITE_EXTERNAL_STORAGE;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICES_LICENSE_OBTAINED;
 import static com.globe3.tno.g3_mobile.globals.Globals.EXTRACT_LICENSE_OBTAINED;
 import static com.globe3.tno.g3_mobile.globals.Globals.MATCHER_LICENSE_OBTAINED;
 
 public class LoginActivity extends BaseActivity{
-    LoginActivity loginActivity;
+    LoginActivity login_activity;
 
     EditText tv_company;
     EditText tv_user;
@@ -54,12 +48,14 @@ public class LoginActivity extends BaseActivity{
     LinearLayout ll_login_loader;
     ImageView iv_login_loader;
 
+    boolean license_obtained;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
         super.onCreate(savedInstanceState);
 
-        loginActivity = this;
+        login_activity = this;
 
         tv_company = (EditText) findViewById(R.id.tv_company);
         tv_user = (EditText) findViewById(R.id.tv_userid);
@@ -85,9 +81,9 @@ public class LoginActivity extends BaseActivity{
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                    PermissionUtility.requestWriteStorage(loginActivity);
+                    PermissionUtility.requestWriteStorage(login_activity);
                 }else{
-                    if(FileUtility.createAppFolders(loginActivity)){
+                    if(FileUtility.createAppFolders(login_activity)){
                         new LoadConfig().execute();
                     }else{
                         onActivityError();
@@ -99,32 +95,38 @@ public class LoginActivity extends BaseActivity{
 
     public void onActivityLoading(){
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            if(PackageManager.PERMISSION_GRANTED== ActivityCompat.checkSelfPermission(loginActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                if(FileUtility.createAppFolders(loginActivity)){
-                    if(!ConfigUtility.loadConfig(loginActivity)){
+            if(PackageManager.PERMISSION_GRANTED== ActivityCompat.checkSelfPermission(login_activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                if(FileUtility.createAppFolders(login_activity)){
+                    if(!ConfigUtility.loadConfig(login_activity)){
                         onActivityError();
                     }
                 }else{
                     onActivityError();
                 }
             }else{
-                PermissionUtility.requestWriteStorage(loginActivity);
+                PermissionUtility.requestWriteStorage(login_activity);
             }
         }
 
         NCore.setContext(this);
+        license_obtained = getLicense();
+    }
+
+    public void onActivityReady(){
+        iv_login_loader.setAnimation(AnimationUtils.loadAnimation(login_activity, R.anim.animate_rotate_clockwise));
+    }
+
+    private boolean getLicense(){
         try {
             EXTRACT_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_EXTRACTION);
             MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
             DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
 
+            return EXTRACT_LICENSE_OBTAINED && MATCHER_LICENSE_OBTAINED && DEVICES_LICENSE_OBTAINED;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-    }
-
-    public void onActivityReady(){
-        iv_login_loader.setAnimation(AnimationUtils.loadAnimation(loginActivity, R.anim.animate_rotate_clockwise));
     }
 
     public void doLogin(View view){
@@ -136,18 +138,18 @@ public class LoginActivity extends BaseActivity{
                 loginDetails.setCompany(tv_company.getText().toString());
                 loginDetails.setUserid(tv_user.getText().toString());
                 loginDetails.setPassword(tv_password.getText().toString());
-                Login login = new Login(loginActivity, loginDetails);
+                Login login = new Login(login_activity, loginDetails);
                 login.execute();
             }
         };
 
-        new AppUpdate(loginActivity, loginProcess).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new AppUpdate(login_activity, loginProcess).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void onLoginFailed(int server_status){
         Snackbar loginSnackbar = Snackbar.make(layout_main, getString(server_status== ConnectionStatus.SERVER_CONNECTED?R.string.msg_authentication_failed:R.string.msg_cannot_connect_to_server), Snackbar.LENGTH_LONG);
         TextView loginSnackbarText = (TextView) loginSnackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-        loginSnackbarText.setTextColor(ContextCompat.getColor(loginActivity, R.color.colorFailed));
+        loginSnackbarText.setTextColor(ContextCompat.getColor(login_activity, R.color.colorFailed));
         loginSnackbar.show();
         enableLogin(true);
     }
@@ -163,17 +165,17 @@ public class LoginActivity extends BaseActivity{
     private class LoadConfig extends AsyncTask<Void, Void, Boolean> {
         protected void onPreExecute(){
             layout_base_loader.setVisibility(View.VISIBLE);
-            image_loader.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_rotate_clockwise));
+            image_loader.setAnimation(AnimationUtils.loadAnimation(base_activity, R.anim.animate_rotate_clockwise));
             layout_main.setVisibility(View.INVISIBLE);
         }
 
         protected Boolean doInBackground(Void... params) {
-            return ConfigUtility.loadConfig(loginActivity);
+            return ConfigUtility.loadConfig(login_activity);
         }
         protected void onPostExecute(Boolean loadSuccess) {
             if(loadSuccess){
                 layout_base_loader.setVisibility(View.INVISIBLE);
-                layout_main.setAnimation(AnimationUtils.loadAnimation(baseActivity, R.anim.animate_fade_in));
+                layout_main.setAnimation(AnimationUtils.loadAnimation(base_activity, R.anim.animate_fade_in));
                 layout_main.getAnimation().setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {

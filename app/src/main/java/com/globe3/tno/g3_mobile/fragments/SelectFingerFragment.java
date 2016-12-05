@@ -23,8 +23,8 @@ import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 
 public class SelectFingerFragment extends DialogFragment {
 
-    AuditFactory auditFactory;
-    StaffFactory staffFactory;
+    AuditFactory audit_factory;
+    StaffFactory staff_factory;
 
     Staff staff;
 
@@ -168,8 +168,8 @@ public class SelectFingerFragment extends DialogFragment {
         RegisterFingerFragment registerFingerFragment = new RegisterFingerFragment();
         registerFingerFragment.setCancelable(false);
         registerFingerFragment.setStaff(staff);
-        registerFingerFragment.setAuditFactory(auditFactory);
-        registerFingerFragment.setStaffFactory(staffFactory);
+        registerFingerFragment.setAuditFactory(audit_factory);
+        registerFingerFragment.setStaffFactory(staff_factory);
         registerFingerFragment.setFingerSelected(finger_num);
         registerFingerFragment.setSelectFingerFragment(this);
         registerFingerFragment.show(fragmentManager, getString(R.string.label_register_finger));
@@ -177,10 +177,10 @@ public class SelectFingerFragment extends DialogFragment {
     }
 
     public void setAuditFactory(AuditFactory auditFactory){
-        this.auditFactory = auditFactory;
+        this.audit_factory = auditFactory;
     }
     public void setStaffFactory(StaffFactory staffFactory){
-        this.staffFactory = staffFactory;
+        this.staff_factory = staffFactory;
     }
     public void setStaff(Staff staff){
         this.staff = staff;

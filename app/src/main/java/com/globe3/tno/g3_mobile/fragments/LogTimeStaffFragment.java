@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,24 +28,21 @@ import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.neurotec.biometrics.client.NBiometricClient;
-import com.neurotec.biometrics.standards.ANFPrintPosition;
 
 import java.util.ArrayList;
-
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
 public class LogTimeStaffFragment extends DialogFragment {
     Context parentContext;
 
     Project project;
 
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
 
     LinearLayout ll_main_container;
 
     RecyclerView recycler_staff_list;
-    RecyclerView.Adapter recyclerViewAdapter;
-    RecyclerView.LayoutManager recyclerViewLayoutManager;
+    RecyclerView.Adapter recycler_view_adapter;
+    RecyclerView.LayoutManager recycler_view_layout_manager;
 
     TextView tv_search_staff;
     RelativeLayout rl_search_loader;
@@ -58,12 +54,12 @@ public class LogTimeStaffFragment extends DialogFragment {
     TextView tv_auto_screening;
     TextView tv_cancel;
 
-    LogTimeAutoFragment logTimeAutoFragment;
-    LogTimeFragment logTimeFragment;
+    LogTimeAutoFragment log_time_auto_fragment;
+    LogTimeFragment log_time_fragment;
 
     ArrayList<RowStaff> staff_list;
 
-    SearchStaff searchStaff;
+    SearchStaff search_staff;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -95,11 +91,11 @@ public class LogTimeStaffFragment extends DialogFragment {
 
         recycler_staff_list.setHasFixedSize(true);
 
-        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-        recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
+        recycler_view_layout_manager = new LinearLayoutManager(getActivity());
+        recycler_staff_list.setLayoutManager(recycler_view_layout_manager);
 
-        recyclerViewAdapter = new LogTimeStaffListAdapter(staff_list, getActivity());
-        recycler_staff_list.setAdapter(recyclerViewAdapter);
+        recycler_view_adapter = new LogTimeStaffListAdapter(staff_list, getActivity());
+        recycler_staff_list.setAdapter(recycler_view_adapter);
 
         tv_search_staff.addTextChangedListener(new TextWatcher() {
             @Override
@@ -123,14 +119,14 @@ public class LogTimeStaffFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 ll_main_container.setVisibility(View.GONE);
-                mBiometricClient = new NBiometricClient();
+                biometric_client = new NBiometricClient();
                 FragmentManager fragmentManager = getActivity().getFragmentManager();
-                logTimeAutoFragment = new LogTimeAutoFragment();
-                logTimeAutoFragment.setCancelable(false);
-                logTimeAutoFragment.setProject(project);
-                logTimeAutoFragment.setLogTimeStaffFragment(LogTimeStaffFragment.this);
-                logTimeAutoFragment.setmBiometricClient(mBiometricClient);
-                logTimeAutoFragment.show(fragmentManager, getString(R.string.label_log_time_auto));
+                log_time_auto_fragment = new LogTimeAutoFragment();
+                log_time_auto_fragment.setCancelable(false);
+                log_time_auto_fragment.setProject(project);
+                log_time_auto_fragment.setLogTimeStaffFragment(LogTimeStaffFragment.this);
+                log_time_auto_fragment.setmBiometricClient(biometric_client);
+                log_time_auto_fragment.show(fragmentManager, getString(R.string.label_log_time_auto));
             }
         });
 
@@ -172,15 +168,15 @@ public class LogTimeStaffFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 ll_main_container.setVisibility(View.GONE);
-                mBiometricClient = new NBiometricClient();
+                biometric_client = new NBiometricClient();
                 FragmentManager fragmentManager = getActivity().getFragmentManager();
-                logTimeFragment = new LogTimeFragment();
-                logTimeFragment.setCancelable(false);
-                logTimeFragment.setStaff(staff);
-                logTimeFragment.setProject(project);
-                logTimeFragment.setLogTimeStaffFragment(LogTimeStaffFragment.this);
-                logTimeFragment.setmBiometricClient(mBiometricClient);
-                logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));
+                log_time_fragment = new LogTimeFragment();
+                log_time_fragment.setCancelable(false);
+                log_time_fragment.setStaff(staff);
+                log_time_fragment.setProject(project);
+                log_time_fragment.setLogTimeStaffFragment(LogTimeStaffFragment.this);
+                log_time_fragment.setmBiometricClient(biometric_client);
+                log_time_fragment.show(fragmentManager, getString(R.string.label_log_time));
             }
         });
 
@@ -201,13 +197,13 @@ public class LogTimeStaffFragment extends DialogFragment {
     }
 
     public void searchStaff(String searchTerm) {
-        if(searchStaff != null){
-            searchStaff.cancel(true);
+        if(search_staff != null){
+            search_staff.cancel(true);
         }
 
-        searchStaff = new SearchStaff(searchTerm);
+        search_staff = new SearchStaff(searchTerm);
 
-        searchStaff.execute();
+        search_staff.execute();
     }
 
     public class SearchStaff extends AsyncTask<Void, Void, Void>
@@ -241,11 +237,11 @@ public class LogTimeStaffFragment extends DialogFragment {
         protected void onPostExecute(Void result) {
             recycler_staff_list.setHasFixedSize(true);
 
-            recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-            recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
+            recycler_view_layout_manager = new LinearLayoutManager(getActivity());
+            recycler_staff_list.setLayoutManager(recycler_view_layout_manager);
 
-            recyclerViewAdapter = new TimesheetStaffListAdapter(staff_list, getActivity());
-            recycler_staff_list.setAdapter(recyclerViewAdapter);
+            recycler_view_adapter = new TimesheetStaffListAdapter(staff_list, getActivity());
+            recycler_staff_list.setAdapter(recycler_view_adapter);
 
             recycler_staff_list.setVisibility(staff_list.size()==0?View.GONE:View.VISIBLE);
             tv_auto_screening.setClickable(true);

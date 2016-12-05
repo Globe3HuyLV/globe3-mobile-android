@@ -1,7 +1,6 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.util.BiometricUtility;
@@ -29,7 +28,6 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
@@ -44,7 +42,7 @@ import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
 public class StaffFactory {
     private Activity _activity;
-    ProjectFactory projectFactory;
+    ProjectFactory project_factory;
     ScanimageRepo scanimage_repo;
     DailytimeRepo dailytime_repo;
     StaffdataRepo staffdata_repo;
@@ -56,7 +54,7 @@ public class StaffFactory {
         scanimage_repo = new ScanimageRepo(activity);
         dailytime_repo = new DailytimeRepo(activity);
         tabledata_repo = new TabledataRepo(activity);
-        projectFactory = new ProjectFactory(activity);
+        project_factory = new ProjectFactory(activity);
     }
 
     public void createStaff(Staff staff) {
@@ -273,11 +271,11 @@ public class StaffFactory {
         scanimage.userid_creator = USERLOGINID;
         scanimage.masterfn = MASTERFN;
         scanimage.companyfn = COMPANYFN;
-        scanimage.staff_unique = staff.getUniquenum();
+        scanimage.staff_unique = staff.getUniquenumPri();
         scanimage.staff_id = staff.getStaff_num();
         scanimage.staff_fullname = staff.getStaff_desc();
-        scanimage.photo1 = FileUtility.getFileBlob(GLOBE3_IMAGE_DIR + staff.getUniquenum() + ".jpeg");
-        scanimage.fingerprint_image1 = FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenum() + ".jpeg");
+        scanimage.photo1 = FileUtility.getFileBlob(GLOBE3_IMAGE_DIR + staff.getUniquenumPri() + ".jpeg");
+        scanimage.fingerprint_image1 = FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg");
         scanimage.date_register = new Date();
 
         scanimage_repo.create_scanimage(scanimage);
@@ -304,7 +302,7 @@ public class StaffFactory {
             }
 
             timeLog.setDate(timeStamp);
-            timeLog.setUniquenum_pri(dailytime.uniquenum_pri);
+            timeLog.setUniquenumPri(dailytime.uniquenum_pri);
             timeLog.setType(dailytime.type_in_out);
         }else{
             return null;
@@ -342,11 +340,11 @@ public class StaffFactory {
             dailytime.userid_creator = USERLOGINID;
             dailytime.masterfn = MASTERFN;
             dailytime.companyfn = COMPANYFN;
-            dailytime.staff_unique = staff.getUniquenum();
+            dailytime.staff_unique = staff.getUniquenumPri();
             dailytime.staff_id = staff.getStaff_num();
             dailytime.staff_fullname = staff.getStaff_desc();
             dailytime.type_in_out = tableUsage;
-            dailytime.project_unique = project == null ? "" : project.getUniquenum();
+            dailytime.project_unique = project == null ? "" : project.getUniquenumPri();
             dailytime.project_code = project == null ? "" : project.getCode();
             dailytime.project_name = project == null ? "" : project.getDesc();
 
@@ -354,7 +352,7 @@ public class StaffFactory {
 
         }else if(tableUsage.equals(TagTableUsage.TIMELOG_OUT)){
 
-            dailytime dailytime = dailytime_repo.get_staff_time_in_dailytimes(staff.getUniquenum());
+            dailytime dailytime = dailytime_repo.get_staff_time_in_dailytimes(staff.getUniquenumPri());
 
             if(dailytime == null){
                 dailytime = new dailytime();
@@ -379,11 +377,11 @@ public class StaffFactory {
                 dailytime.userid_creator = USERLOGINID;
                 dailytime.masterfn = MASTERFN;
                 dailytime.companyfn = COMPANYFN;
-                dailytime.staff_unique = staff.getUniquenum();
+                dailytime.staff_unique = staff.getUniquenumPri();
                 dailytime.staff_id = staff.getStaff_num();
                 dailytime.staff_fullname = staff.getStaff_desc();
                 dailytime.type_in_out = tableUsage;
-                dailytime.project_unique = project == null ? "" : project.getUniquenum();
+                dailytime.project_unique = project == null ? "" : project.getUniquenumPri();
                 dailytime.project_code = project == null ? "" : project.getCode();
                 dailytime.project_name = project == null ? "" : project.getDesc();
 
@@ -428,11 +426,11 @@ public class StaffFactory {
             dailytime.userid_creator = USERLOGINID;
             dailytime.masterfn = MASTERFN;
             dailytime.companyfn = COMPANYFN;
-            dailytime.staff_unique = staff.getUniquenum();
+            dailytime.staff_unique = staff.getUniquenumPri();
             dailytime.staff_id = staff.getStaff_num();
             dailytime.staff_fullname = staff.getStaff_desc();
             dailytime.type_in_out = tableUsage;
-            dailytime.project_unique = project == null ? "" : project.getUniquenum();
+            dailytime.project_unique = project == null ? "" : project.getUniquenumPri();
             dailytime.project_code = project == null ? "" : project.getCode();
             dailytime.project_name = project == null ? "" : project.getDesc();
 
@@ -470,11 +468,11 @@ public class StaffFactory {
         dailytime.userid_creator = USERLOGINID;
         dailytime.masterfn = MASTERFN;
         dailytime.companyfn = COMPANYFN;
-        dailytime.staff_unique = staff.getUniquenum();
+        dailytime.staff_unique = staff.getUniquenumPri();
         dailytime.staff_id = staff.getStaff_num();
         dailytime.staff_fullname = staff.getStaff_desc();
         dailytime.type_in_out = TagTableUsage.TIMELOG_OUT;
-        dailytime.project_unique = project.getUniquenum();
+        dailytime.project_unique = project.getUniquenumPri();
         dailytime.project_code = project.getCode();
         dailytime.project_name = project.getDesc();
 
@@ -489,8 +487,8 @@ public class StaffFactory {
 
         dailytime_repo.open();
 
-        dailytime dailytime = dailytime_repo.get_dailytime(dailyTime.getUniquenum_pri());
-        dailytime.project_unique = dailyTime.getProject().getUniquenum();
+        dailytime dailytime = dailytime_repo.get_dailytime(dailyTime.getUniquenumPri());
+        dailytime.project_unique = dailyTime.getProject().getUniquenumPri();
         dailytime.project_code = dailyTime.getProject().getCode();
         dailytime.project_name = dailyTime.getProject().getDesc();
 
@@ -508,13 +506,13 @@ public class StaffFactory {
             TimeLog timeLog = new TimeLog();
 
             timeLog.setIdcode(dailytime.idcode);
-            timeLog.setUniquenum_pri(dailytime.uniquenum_pri);
+            timeLog.setUniquenumPri(dailytime.uniquenum_pri);
             timeLog.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
             timeLog.setDate(dailytime.date_post);
             timeLog.setType(dailytime.type_in_out);
 
             timeLog.setProject(new Project());
-            timeLog.getProject().setUniquenum(dailytime.project_unique);
+            timeLog.getProject().setUniquenumPri(dailytime.project_unique);
             timeLog.getProject().setCode(dailytime.project_code);
             timeLog.getProject().setDesc(dailytime.project_name);
 
@@ -537,13 +535,13 @@ public class StaffFactory {
             TimeLog timeLog = new TimeLog();
 
             timeLog.setIdcode(dailytime.idcode);
-            timeLog.setUniquenum_pri(dailytime.uniquenum_pri);
+            timeLog.setUniquenumPri(dailytime.uniquenum_pri);
             timeLog.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
             timeLog.setDate(dailytime.date_post);
             timeLog.setType(dailytime.type_in_out);
 
             timeLog.setProject(new Project());
-            timeLog.getProject().setUniquenum(dailytime.project_unique);
+            timeLog.getProject().setUniquenumPri(dailytime.project_unique);
             timeLog.getProject().setCode(dailytime.project_code);
             timeLog.getProject().setDesc(dailytime.project_name);
 
@@ -566,7 +564,7 @@ public class StaffFactory {
             DailyTime dailyTime = new DailyTime();
 
             dailyTime.setIdcode(dailytime.idcode);
-            dailyTime.setUniquenum_pri(dailytime.uniquenum_pri);
+            dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
             dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
             dailyTime.setDateTimePost(dailytime.date_post);
 
@@ -591,7 +589,7 @@ public class StaffFactory {
             dailyTime.setLogType(dailytime.type_in_out);
 
             dailyTime.setProject(new Project());
-            dailyTime.getProject().setUniquenum(dailytime.project_unique);
+            dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
             dailyTime.getProject().setCode(dailytime.project_code);
             dailyTime.getProject().setDesc(dailytime.project_name);
 
@@ -635,7 +633,7 @@ public class StaffFactory {
             DailyTime dailyTime = new DailyTime();
 
             dailyTime.setIdcode(dailytime.idcode);
-            dailyTime.setUniquenum_pri(dailytime.uniquenum_pri);
+            dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
             dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
             dailyTime.setDateTimePost(dailytime.date_post);
 
@@ -660,7 +658,7 @@ public class StaffFactory {
             dailyTime.setLogType(dailytime.type_in_out);
 
             dailyTime.setProject(new Project());
-            dailyTime.getProject().setUniquenum(dailytime.project_unique);
+            dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
             dailyTime.getProject().setCode(dailytime.project_code);
             dailyTime.getProject().setDesc(dailytime.project_name);
 
@@ -683,7 +681,7 @@ public class StaffFactory {
             DailyTime dailyTime = new DailyTime();
 
             dailyTime.setIdcode(dailytime.idcode);
-            dailyTime.setUniquenum_pri(dailytime.uniquenum_pri);
+            dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
             dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
             dailyTime.setDateTimePost(dailytime.date_post);
 
@@ -708,7 +706,7 @@ public class StaffFactory {
             dailyTime.setLogType(dailytime.type_in_out);
 
             dailyTime.setProject(new Project());
-            dailyTime.getProject().setUniquenum(dailytime.project_unique);
+            dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
             dailyTime.getProject().setCode(dailytime.project_code);
             dailyTime.getProject().setDesc(dailytime.project_name);
 
@@ -760,7 +758,7 @@ public class StaffFactory {
         DailyTime dailyTime = new DailyTime();
 
         dailyTime.setIdcode(dailytime.idcode);
-        dailyTime.setUniquenum_pri(dailytime.uniquenum_pri);
+        dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
         dailyTime.setStaff(staff);
         dailyTime.setDateTimePost(dailytime.date_post);
 
@@ -785,7 +783,7 @@ public class StaffFactory {
         dailyTime.setLogType(dailytime.type_in_out);
 
         dailyTime.setProject(new Project());
-        dailyTime.getProject().setUniquenum(dailytime.project_unique);
+        dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
         dailyTime.getProject().setCode(dailytime.project_code);
         dailyTime.getProject().setDesc(dailytime.project_name);
 
@@ -797,7 +795,7 @@ public class StaffFactory {
     private Staff convertEntity(staffdata staffdata){
         Staff staff = new Staff();
         staff.setIdcode(staffdata.idcode);
-        staff.setUniquenum(staffdata.uniquenum_pri);
+        staff.setUniquenumPri(staffdata.uniquenum_pri);
         staff.setStaff_desc(staffdata.staff_fullname);
         staff.setStaff_num(staffdata.staff_id);
         staff.setJob_title(staffdata.job_title);
@@ -805,7 +803,7 @@ public class StaffFactory {
 
         if(staff.getRegistered()){
             scanimage_repo.open();
-            scanimage scanimage = scanimage_repo.get_scanimage_staff_reg(staff.getUniquenum());
+            scanimage scanimage = scanimage_repo.get_scanimage_staff_reg(staff.getUniquenumPri());
             if(scanimage != null){
                 staff.setRegisteration(scanimage.date_register);
             }
@@ -836,7 +834,7 @@ public class StaffFactory {
 
         staffdata staffdata = new staffdata();
         staffdata.idcode = staff.getIdcode();
-        staffdata.uniquenum_pri = staff.getUniquenum();
+        staffdata.uniquenum_pri = staff.getUniquenumPri();
         staffdata.masterfn = MASTERFN;
         staffdata.companyfn = COMPANYFN;
         staffdata.staff_fullname = staff.getStaff_desc();

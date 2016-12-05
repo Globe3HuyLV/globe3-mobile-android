@@ -27,16 +27,12 @@ import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
-import com.neurotec.biometrics.NBiometricOperation;
-import com.neurotec.biometrics.NBiometricStatus;
-import com.neurotec.biometrics.NBiometricTask;
-import com.neurotec.util.concurrent.CompletionHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SyncDownFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
     ImageView iv_icon_sync_down;
     TextView tv_sync_down_progress;
@@ -44,13 +40,13 @@ public class SyncDownFragment extends DialogFragment {
     LinearLayout ll_done;
     TextView tv_done;
 
-    int syncTotal = 0;
-    int syncProgress = 0;
+    int sync_total = 0;
+    int sync_progress = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View syncDownFragment = inflater.inflate(R.layout.fragment_sync_down, viewGroup, false);
-        parentContext = syncDownFragment.getContext();
+        parent_context = syncDownFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         iv_icon_sync_down = (ImageView) syncDownFragment.findViewById(R.id.iv_icon_sync_down);
@@ -59,7 +55,7 @@ public class SyncDownFragment extends DialogFragment {
         ll_done = (LinearLayout) syncDownFragment.findViewById(R.id.ll_done);
         tv_done = (TextView) syncDownFragment.findViewById(R.id.tv_done);
 
-        iv_icon_sync_down.setAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.animate_rotate_counter_clockwise));
+        iv_icon_sync_down.setAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.animate_rotate_counter_clockwise));
         tv_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,11 +68,11 @@ public class SyncDownFragment extends DialogFragment {
     }
 
     private void updateProgress(){
-        syncProgress++;
+        sync_progress++;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tv_sync_down_progress.setText(String.valueOf((int)Math.floor(((float)syncProgress/(float)syncTotal)*100)) + "%");
+                tv_sync_down_progress.setText(String.valueOf((int)Math.floor(((float) sync_progress /(float) sync_total)*100)) + "%");
             }
         });
     }
@@ -113,7 +109,7 @@ public class SyncDownFragment extends DialogFragment {
                 JSONArray staffProjects = staffProjectResultJSON.getJSONArray("items");
 
                 if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
-                    syncTotal = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
+                    sync_total = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
 
                     userFactory.deleteAll();
                     companyFactory.deleteAll();
@@ -169,14 +165,14 @@ public class SyncDownFragment extends DialogFragment {
         @Override
         protected void onPostExecute(Boolean syncSuccess) {
             if(syncSuccess){
-                tv_sync_down_progress.setTextColor(ContextCompat.getColor(parentContext, R.color.colorBlackLight));
-                tv_sync_down_desc.setText(parentContext.getString(R.string.msg_sync_down_complete));
+                tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorBlackLight));
+                tv_sync_down_desc.setText(parent_context.getString(R.string.msg_sync_down_complete));
                 tv_sync_down_desc.setVisibility(View.VISIBLE);
-                tv_done.setText(parentContext.getString(R.string.label_done));
+                tv_done.setText(parent_context.getString(R.string.label_done));
             }else{
-                tv_sync_down_progress.setText(parentContext.getString(R.string.msg_sync_failed));
-                tv_sync_down_progress.setTextColor(ContextCompat.getColor(parentContext, R.color.colorFailed));
-                tv_done.setText(parentContext.getString(R.string.label_cancel));
+                tv_sync_down_progress.setText(parent_context.getString(R.string.msg_sync_failed));
+                tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorFailed));
+                tv_done.setText(parent_context.getString(R.string.label_cancel));
                 tv_sync_down_desc.setVisibility(View.GONE);
             }
             iv_icon_sync_down.setAnimation(null);

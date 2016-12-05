@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.globe3.tno.g3_mobile.activities.ProjectPhotoActivity;
-import com.globe3.tno.g3_mobile.activities.ProjectPhotoSelectActivity;
 import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
@@ -25,11 +24,11 @@ import com.globe3.tno.g3_mobile.adapters.PhotosProjectListAdapter;
 import java.util.ArrayList;
 
 public class PhotosProjectFragment extends Fragment {
-    ProjectFactory projectFactory;
+    ProjectFactory project_factory;
 
     RecyclerView recycler_project_list;
-    RecyclerView.Adapter recyclerViewAdapter;
-    RecyclerView.LayoutManager recyclerViewLayoutManager;
+    RecyclerView.Adapter recycler_view_adapter;
+    RecyclerView.LayoutManager recycler_view_layout_manager;
 
     RelativeLayout rl_search_loader;
     ImageView iv_search_loader;
@@ -37,12 +36,12 @@ public class PhotosProjectFragment extends Fragment {
 
     ArrayList<RowProject> project_list;
 
-    SearchProject searchProject;
+    SearchProject search_project;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        projectFactory = new ProjectFactory(getActivity());
+        project_factory = new ProjectFactory(getActivity());
     }
 
     @Override
@@ -57,17 +56,17 @@ public class PhotosProjectFragment extends Fragment {
         iv_search_loader.setAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animate_rotate_clockwise));
 
         project_list = new ArrayList<>();
-        for(Project project : projectFactory.getActiveProjects()){
+        for(Project project : project_factory.getActiveProjects()){
             project_list.add(createRowProject(project));
         }
 
         recycler_project_list.setHasFixedSize(true);
 
-        recyclerViewLayoutManager = new LinearLayoutManager(viewGroup.getContext());
-        recycler_project_list.setLayoutManager(recyclerViewLayoutManager);
+        recycler_view_layout_manager = new LinearLayoutManager(viewGroup.getContext());
+        recycler_project_list.setLayoutManager(recycler_view_layout_manager);
 
-        recyclerViewAdapter = new PhotosProjectListAdapter(project_list, viewGroup.getContext());
-        recycler_project_list.setAdapter(recyclerViewAdapter);
+        recycler_view_adapter = new PhotosProjectListAdapter(project_list, viewGroup.getContext());
+        recycler_project_list.setAdapter(recycler_view_adapter);
 
         return projectFragment;
     }
@@ -87,11 +86,11 @@ public class PhotosProjectFragment extends Fragment {
         return rowProject;
     }
     public void searchProject(String searchTerm){
-        if(searchProject!=null){
-            searchProject.cancel(true);
+        if(search_project !=null){
+            search_project.cancel(true);
         }
-        searchProject = new SearchProject(searchTerm);
-        searchProject.execute();
+        search_project = new SearchProject(searchTerm);
+        search_project.execute();
     }
 
     public class SearchProject extends AsyncTask<Void, Void, Void>
@@ -112,7 +111,7 @@ public class PhotosProjectFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(Project project : (searchTerm.equals("")?projectFactory.getActiveProjects():projectFactory.searchProject(searchTerm))){
+            for(Project project : (searchTerm.equals("")? project_factory.getActiveProjects(): project_factory.searchProject(searchTerm))){
                 project_list.add(createRowProject(project));
             }
             return null;
@@ -122,11 +121,11 @@ public class PhotosProjectFragment extends Fragment {
         protected void onPostExecute(Void result) {
             recycler_project_list.setHasFixedSize(true);
 
-            recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-            recycler_project_list.setLayoutManager(recyclerViewLayoutManager);
+            recycler_view_layout_manager = new LinearLayoutManager(getActivity());
+            recycler_project_list.setLayoutManager(recycler_view_layout_manager);
 
-            recyclerViewAdapter = new ProjectListAdapter(project_list, getActivity());
-            recycler_project_list.setAdapter(recyclerViewAdapter);
+            recycler_view_adapter = new ProjectListAdapter(project_list, getActivity());
+            recycler_project_list.setAdapter(recycler_view_adapter);
 
             recycler_project_list.setVisibility(project_list.size()==0?View.GONE:View.VISIBLE);
             rl_search_loader.setVisibility(View.GONE);

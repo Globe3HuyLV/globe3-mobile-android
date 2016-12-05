@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.globe3.tno.g3_mobile.R;
 
 public class ProjectPhotoAddFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
     TextView tv_project_code;
     TextView tv_project_desc;
@@ -26,7 +26,7 @@ public class ProjectPhotoAddFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View projectPhotoAddFragment = inflater.inflate(R.layout.fragment_project_photo_add, viewGroup, false);
-        parentContext = projectPhotoAddFragment.getContext();
+        parent_context = projectPhotoAddFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         tv_project_code = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_project_code);

@@ -19,8 +19,6 @@ public class App {
     public static final String GLOBE3_IMAGE_DIR = GLOBE3_DIR + "images/";
     public static final String GLOBE3_DB = GLOBE3_DIR + "db/globe3.db";
 
-    public static char[] aAlphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-
     public static int HTTP_READ_TIMEOUT = 10000;
     public static int HTTP_CONNECT_TIMEOUT = 15000;
 

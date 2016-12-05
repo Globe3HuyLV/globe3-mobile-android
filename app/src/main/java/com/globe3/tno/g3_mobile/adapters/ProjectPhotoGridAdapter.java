@@ -15,16 +15,16 @@ import com.globe3.tno.g3_mobile.view_objects.GridItemProjectPhoto;
 import java.util.ArrayList;
 
 public class ProjectPhotoGridAdapter extends BaseAdapter {
-    private Activity parentActivity;
-    private final ArrayList<GridItemProjectPhoto> projectPhotoList;
+    private Activity parent_activity;
+    private final ArrayList<GridItemProjectPhoto> project_photo_list;
 
     public ProjectPhotoGridAdapter(Activity parentActivity, ArrayList<GridItemProjectPhoto> projectPhotoList) {
-        this.parentActivity = parentActivity;
-        this.projectPhotoList = projectPhotoList;
+        this.parent_activity = parentActivity;
+        this.project_photo_list = projectPhotoList;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) parentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) parent_activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = (convertView == null ? inflater.inflate(R.layout.grid_item_project_photo, null) : convertView);
 
         ImageView grid_item_image = (ImageView) convertView.findViewById(R.id.grid_item_image);
@@ -32,16 +32,16 @@ public class ProjectPhotoGridAdapter extends BaseAdapter {
         TextView tv_remarks = (TextView) convertView.findViewById(R.id.tv_remarks);
         TextView tv_photos_count = (TextView) convertView.findViewById(R.id.tv_photos_count);
 
-        grid_item_image.setImageBitmap(projectPhotoList.get(position).getThumbnail());
-        tv_reference.setText(projectPhotoList.get(position).getReference());
-        tv_remarks.setText(projectPhotoList.get(position).getRemarks());
-        tv_photos_count.setText(String.valueOf(projectPhotoList.get(position).getPhotosCount()));
+        grid_item_image.setImageBitmap(project_photo_list.get(position).getThumbnail());
+        tv_reference.setText(project_photo_list.get(position).getReference());
+        tv_remarks.setText(project_photo_list.get(position).getRemarks());
+        tv_photos_count.setText(String.valueOf(project_photo_list.get(position).getPhotosCount()));
         return convertView;
     }
 
     @Override
     public int getCount() {
-        return projectPhotoList.size();
+        return project_photo_list.size();
     }
 
     @Override

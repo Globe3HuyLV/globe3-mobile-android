@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Staff implements Serializable{
     private long idcode;
-    private String uniquenum;
+    private String uniquenumPri;
     private String staff_desc;
     private String staff_num;
     private String job_title;
@@ -47,12 +47,12 @@ public class Staff implements Serializable{
         this.job_title = job_title;
     }
 
-    public void setUniquenum(String pUniquenum){
-        this.uniquenum = pUniquenum;
+    public void setUniquenumPri(String pUniquenum){
+        this.uniquenumPri = pUniquenum;
     }
 
-    public String getUniquenum(){
-        return uniquenum;
+    public String getUniquenumPri(){
+        return uniquenumPri;
     }
 
     public void setStaff_desc(String pName){

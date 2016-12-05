@@ -14,19 +14,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.TimeLog;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 
 public class LogTimeSummaryFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
-    TimeLog timeLog;
+    TimeLog time_log;
 
-    LogTimeFragment logTimeFragment;
-    LogTimeAutoFragment logTimeAutoFragment;
-    LocationCheckAutoFragment locationCheckAutoFragment;
+    LogTimeFragment log_time_fragment;
+    LogTimeAutoFragment log_time_auto_fragment;
+    LocationCheckAutoFragment location_check_auto_fragment;
 
     ImageView iv_staff_photo;
     TextView tv_staff_id;
@@ -41,7 +40,7 @@ public class LogTimeSummaryFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         final View logTimeSummaryFragment = inflater.inflate(R.layout.fragment_log_time_summary, viewGroup, false);
-        parentContext = logTimeSummaryFragment.getContext();
+        parent_context = logTimeSummaryFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         iv_staff_photo = (ImageView) logTimeSummaryFragment.findViewById(R.id.iv_staff_photo);
@@ -51,10 +50,10 @@ public class LogTimeSummaryFragment extends DialogFragment {
         tv_log_date = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_date);
         tv_log_project = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_project);
 
-        if(timeLog != null){
-            if(timeLog.getStaff()!=null){
-                if(timeLog.getStaff().getPhoto1()!=null){
-                    Bitmap staffPhoto = BitmapFactory.decodeByteArray(timeLog.getStaff().getPhoto1(), 0, timeLog.getStaff().getPhoto1().length);
+        if(time_log != null){
+            if(time_log.getStaff()!=null){
+                if(time_log.getStaff().getPhoto1()!=null){
+                    Bitmap staffPhoto = BitmapFactory.decodeByteArray(time_log.getStaff().getPhoto1(), 0, time_log.getStaff().getPhoto1().length);
 
                     int newSize = staffPhoto.getWidth() < staffPhoto.getHeight() ? staffPhoto.getWidth() : staffPhoto.getHeight();
 
@@ -62,12 +61,12 @@ public class LogTimeSummaryFragment extends DialogFragment {
                 }else{
                     iv_staff_photo.setImageResource(R.drawable.ic_person_black_48dp);
                 }
-                tv_staff_id.setText(timeLog.getStaff().getStaff_num());
+                tv_staff_id.setText(time_log.getStaff().getStaff_num());
                 tv_staff_name = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_staff_name);
-                tv_staff_name.setText(timeLog.getStaff().getStaff_desc());
+                tv_staff_name.setText(time_log.getStaff().getStaff_desc());
             }
 
-            switch (timeLog.getType()){
+            switch (time_log.getType()){
                 case TagTableUsage.TIMELOG_IN:
                     tv_log_type.setText(getString(R.string.label_time_in));
                     tv_log_type.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorGreen, null));
@@ -82,11 +81,11 @@ public class LogTimeSummaryFragment extends DialogFragment {
                     break;
             }
 
-            tv_log_time.setText(DateUtility.getDateString(timeLog.getDate(), "HH:mm"));
-            tv_log_date.setText(DateUtility.getDateString(timeLog.getDate(), "dd MMM yyyy"));
+            tv_log_time.setText(DateUtility.getDateString(time_log.getDate(), "HH:mm"));
+            tv_log_date.setText(DateUtility.getDateString(time_log.getDate(), "dd MMM yyyy"));
 
-            if(timeLog.getProject()!=null){
-                tv_log_project.setText(timeLog.getProject().getCode());
+            if(time_log.getProject()!=null){
+                tv_log_project.setText(time_log.getProject().getCode());
             }else{
                 tv_log_project.setText("-");
             }
@@ -96,14 +95,14 @@ public class LogTimeSummaryFragment extends DialogFragment {
         tv_next_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(logTimeFragment!=null){
-                    logTimeFragment.startExtract();
+                if(log_time_fragment !=null){
+                    log_time_fragment.startExtract();
                 }
-                if(logTimeAutoFragment!=null){
-                    logTimeAutoFragment.startExtract();
+                if(log_time_auto_fragment !=null){
+                    log_time_auto_fragment.startExtract();
                 }
-                if(locationCheckAutoFragment!=null){
-                    locationCheckAutoFragment.startExtract();
+                if(location_check_auto_fragment !=null){
+                    location_check_auto_fragment.startExtract();
                 }
                 dismiss();
             }
@@ -113,14 +112,14 @@ public class LogTimeSummaryFragment extends DialogFragment {
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(logTimeFragment!=null){
-                    logTimeFragment.dismiss();
+                if(log_time_fragment !=null){
+                    log_time_fragment.dismiss();
                 }
-                if(logTimeAutoFragment!=null){
-                    logTimeAutoFragment.dismiss();
+                if(log_time_auto_fragment !=null){
+                    log_time_auto_fragment.dismiss();
                 }
-                if(locationCheckAutoFragment!=null){
-                    locationCheckAutoFragment.dismiss();
+                if(location_check_auto_fragment !=null){
+                    location_check_auto_fragment.dismiss();
                 }
                 dismiss();
             }
@@ -129,15 +128,15 @@ public class LogTimeSummaryFragment extends DialogFragment {
     }
 
     public void setTimeLog(TimeLog timeLog) {
-        this.timeLog = timeLog;
+        this.time_log = timeLog;
     }
     public void setLogTimeFragment(LogTimeFragment logTimeFragment) {
-        this.logTimeFragment = logTimeFragment;
+        this.log_time_fragment = logTimeFragment;
     }
     public void setLogTimeAutoFragment(LogTimeAutoFragment logTimeAutoFragment) {
-        this.logTimeAutoFragment = logTimeAutoFragment;
+        this.log_time_auto_fragment = logTimeAutoFragment;
     }
     public void setLocationCheckAutoFragment(LocationCheckAutoFragment locationCheckAutoFragment) {
-        this.locationCheckAutoFragment = locationCheckAutoFragment;
+        this.location_check_auto_fragment = locationCheckAutoFragment;
     }
 }

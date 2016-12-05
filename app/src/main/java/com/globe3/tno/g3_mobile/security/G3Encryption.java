@@ -29,10 +29,10 @@ public class G3Encryption {
 
     private static final String TAG = "G3Encryption";
 
-    private final Builder mBuilder;
+    private final Builder builder;
 
     private G3Encryption(Builder builder) {
-        mBuilder = builder;
+        this.builder = builder;
     }
 
     public static G3Encryption getDefault(String key, String salt, byte[] iv) {
@@ -46,11 +46,11 @@ public class G3Encryption {
 
     public String encrypt(String data) throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException, BadPaddingException, IllegalBlockSizeException {
         if (data == null) return null;
-        SecretKey secretKey = getSecretKey(hashTheKey(mBuilder.getKey()));
-        byte[] dataBytes = data.getBytes(mBuilder.getCharsetName());
-        Cipher cipher = Cipher.getInstance(mBuilder.getAlgorithm());
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, mBuilder.getIvParameterSpec(), mBuilder.getSecureRandom());
-        return Base64.encodeToString(cipher.doFinal(dataBytes), mBuilder.getBase64Mode());
+        SecretKey secretKey = getSecretKey(hashTheKey(builder.getKey()));
+        byte[] dataBytes = data.getBytes(builder.getCharsetName());
+        Cipher cipher = Cipher.getInstance(builder.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, builder.getIvParameterSpec(), builder.getSecureRandom());
+        return Base64.encodeToString(cipher.doFinal(dataBytes), builder.getBase64Mode());
     }
 
     public String encryptOrNull(String data) {
@@ -91,10 +91,10 @@ public class G3Encryption {
 
     public String decrypt(String data) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         if (data == null) return null;
-        byte[] dataBytes = Base64.decode(data, mBuilder.getBase64Mode());
-        SecretKey secretKey = getSecretKey(hashTheKey(mBuilder.getKey()));
-        Cipher cipher = Cipher.getInstance(mBuilder.getAlgorithm());
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, mBuilder.getIvParameterSpec(), mBuilder.getSecureRandom());
+        byte[] dataBytes = Base64.decode(data, builder.getBase64Mode());
+        SecretKey secretKey = getSecretKey(hashTheKey(builder.getKey()));
+        Cipher cipher = Cipher.getInstance(builder.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, builder.getIvParameterSpec(), builder.getSecureRandom());
         byte[] dataBytesDecrypted = (cipher.doFinal(dataBytes));
         return new String(dataBytesDecrypted);
     }
@@ -136,15 +136,15 @@ public class G3Encryption {
     }
 
     private SecretKey getSecretKey(char[] key) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeySpecException {
-        SecretKeyFactory factory = SecretKeyFactory.getInstance(mBuilder.getSecretKeyType());
-        KeySpec spec = new PBEKeySpec(key, mBuilder.getSalt().getBytes(mBuilder.getCharsetName()), mBuilder.getIterationCount(), mBuilder.getKeyLength());
+        SecretKeyFactory factory = SecretKeyFactory.getInstance(builder.getSecretKeyType());
+        KeySpec spec = new PBEKeySpec(key, builder.getSalt().getBytes(builder.getCharsetName()), builder.getIterationCount(), builder.getKeyLength());
         SecretKey tmp = factory.generateSecret(spec);
-        return new SecretKeySpec(tmp.getEncoded(), mBuilder.getAlgorithm());
+        return new SecretKeySpec(tmp.getEncoded(), builder.getAlgorithm());
     }
 
     private char[] hashTheKey(String key) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance(mBuilder.getDigestAlgorithm());
-        messageDigest.update(key.getBytes(mBuilder.getCharsetName()));
+        MessageDigest messageDigest = MessageDigest.getInstance(builder.getDigestAlgorithm());
+        messageDigest.update(key.getBytes(builder.getCharsetName()));
         return Base64.encodeToString(messageDigest.digest(), Base64.NO_PADDING).toCharArray();
     }
 

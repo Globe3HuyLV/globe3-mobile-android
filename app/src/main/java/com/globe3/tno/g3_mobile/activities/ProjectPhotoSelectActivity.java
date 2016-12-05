@@ -10,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -23,7 +22,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -43,10 +41,10 @@ import java.util.ArrayList;
 import static com.globe3.tno.g3_mobile.constants.App.ACTIVITY_RESULT_SELECT_PHOTOS;
 
 public class ProjectPhotoSelectActivity extends BaseActivity {
-    ProjectPhotoSelectActivity projectPhotoSelectActivity;
+    ProjectPhotoSelectActivity project_photo_select_activity;
 
-    ActionBar actionBar;
-    Drawable upArrow;
+    ActionBar action_bar;
+    Drawable up_arrow;
     Menu menu;
 
     protected ImageLoader imageLoader = ImageLoader.getInstance();
@@ -65,7 +63,7 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_photo_select);
 
-        projectPhotoSelectActivity = this;
+        project_photo_select_activity = this;
     }
 
     @Override
@@ -94,7 +92,7 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
                 }else{
                     Intent resultIntent = new Intent();
                     resultIntent.putStringArrayListExtra("selected_photos", selectedItems);
-                    projectPhotoSelectActivity.setResult(ACTIVITY_RESULT_SELECT_PHOTOS, resultIntent);
+                    project_photo_select_activity.setResult(ACTIVITY_RESULT_SELECT_PHOTOS, resultIntent);
                     finish();
                 }
                 break;
@@ -103,7 +101,7 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
-        actionBar = getSupportActionBar();
+        action_bar = getSupportActionBar();
 
         if(selectedPhotos == null){
             selectedPhotos = new ArrayList<>();
@@ -129,7 +127,7 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
         final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
         final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
 
-        Cursor imagecursor = projectPhotoSelectActivity.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy + " DESC");
+        Cursor imagecursor = project_photo_select_activity.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy + " DESC");
 
         this.imageUrls = new ArrayList<>();
 
@@ -154,12 +152,12 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
     }
 
     public void onActivityReady(){
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if(action_bar != null){
+            action_bar.setDisplayHomeAsUpEnabled(true);
             if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
-                upArrow = ContextCompat.getDrawable(projectPhotoSelectActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-                upArrow.setColorFilter(ContextCompat.getColor(projectPhotoSelectActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                actionBar.setHomeAsUpIndicator(upArrow);
+                up_arrow = ContextCompat.getDrawable(project_photo_select_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                up_arrow.setColorFilter(ContextCompat.getColor(project_photo_select_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                action_bar.setHomeAsUpIndicator(up_arrow);
             }
         }
 
@@ -167,9 +165,9 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
     }
 
     private void promptLimitReached(){
-        android.app.AlertDialog.Builder alertBuilder = new AlertDialog.Builder(projectPhotoSelectActivity)
-                .setMessage(String.format(projectPhotoSelectActivity.getString(R.string.msg_selection_limit_photos_reached), String.valueOf(maxSelect)))
-                .setPositiveButton(projectPhotoSelectActivity.getString(R.string.label_return), new DialogInterface.OnClickListener() {
+        android.app.AlertDialog.Builder alertBuilder = new AlertDialog.Builder(project_photo_select_activity)
+                .setMessage(String.format(project_photo_select_activity.getString(R.string.msg_selection_limit_photos_reached), String.valueOf(maxSelect)))
+                .setPositiveButton(project_photo_select_activity.getString(R.string.label_return), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
@@ -253,7 +251,7 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
             imageLoader.displayImage("file://" + imageUrls.get(position), iv_photo, options, new SimpleImageLoadingListener() {
                 @Override
                 public void onLoadingComplete(Bitmap loadedImage) {
-                    Animation anim = AnimationUtils.loadAnimation(projectPhotoSelectActivity, R.anim.animate_fade_in);
+                    Animation anim = AnimationUtils.loadAnimation(project_photo_select_activity, R.anim.animate_fade_in);
                     iv_photo.setAnimation(anim);
                     anim.start();
                 }
@@ -266,22 +264,22 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
                         mSparseBooleanArray.put((Integer) buttonView.getTag(), isChecked);
-                        iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_black_24dp));
-                        iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
-                        iv_photo.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
-                        rl_wrapper.setBackgroundColor(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
+                        iv_check_box.setImageDrawable(ActivityCompat.getDrawable(project_photo_select_activity, R.drawable.ic_check_box_black_24dp));
+                        iv_check_box.setColorFilter(ActivityCompat.getColor(project_photo_select_activity, R.color.colorAccentLight));
+                        iv_photo.setColorFilter(ActivityCompat.getColor(project_photo_select_activity, R.color.colorBlueTransparent));
+                        rl_wrapper.setBackgroundColor(ActivityCompat.getColor(project_photo_select_activity, R.color.colorBlueTransparent));
                     }else{
                         mSparseBooleanArray.delete((Integer) buttonView.getTag());
-                        iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_outline_blank_black_24dp));
-                        iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
+                        iv_check_box.setImageDrawable(ActivityCompat.getDrawable(project_photo_select_activity, R.drawable.ic_check_box_outline_blank_black_24dp));
+                        iv_check_box.setColorFilter(ActivityCompat.getColor(project_photo_select_activity, R.color.colorAccentLight));
                         iv_photo.setColorFilter(null);
-                        rl_wrapper.setBackground(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.border_blue));
+                        rl_wrapper.setBackground(ActivityCompat.getDrawable(project_photo_select_activity, R.drawable.border_blue));
                     }
                     menu.clear();
                     if(mSparseBooleanArray.size() > 0){
                         getMenuInflater().inflate(R.menu.actionbar_add_photos, menu);
                         MenuItem photos_count = menu.findItem(R.id.display_photos_count);
-                        photos_count.setTitle(String.format(projectPhotoSelectActivity.getString(R.string.msg_num_photos_selected), String.valueOf(mSparseBooleanArray.size())));
+                        photos_count.setTitle(String.format(project_photo_select_activity.getString(R.string.msg_num_photos_selected), String.valueOf(mSparseBooleanArray.size())));
                     }
                 }
             });
@@ -290,16 +288,16 @@ public class ProjectPhotoSelectActivity extends BaseActivity {
 
             if(chk_photo.isChecked()){
                 mSparseBooleanArray.put((Integer) chk_photo.getTag(), chk_photo.isChecked());
-                iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_black_24dp));
-                iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
-                iv_photo.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
-                rl_wrapper.setBackgroundColor(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorBlueTransparent));
+                iv_check_box.setImageDrawable(ActivityCompat.getDrawable(project_photo_select_activity, R.drawable.ic_check_box_black_24dp));
+                iv_check_box.setColorFilter(ActivityCompat.getColor(project_photo_select_activity, R.color.colorAccentLight));
+                iv_photo.setColorFilter(ActivityCompat.getColor(project_photo_select_activity, R.color.colorBlueTransparent));
+                rl_wrapper.setBackgroundColor(ActivityCompat.getColor(project_photo_select_activity, R.color.colorBlueTransparent));
             }else{
                 mSparseBooleanArray.delete((Integer) chk_photo.getTag());
-                iv_check_box.setImageDrawable(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.ic_check_box_outline_blank_black_24dp));
-                iv_check_box.setColorFilter(ActivityCompat.getColor(projectPhotoSelectActivity, R.color.colorAccentLight));
+                iv_check_box.setImageDrawable(ActivityCompat.getDrawable(project_photo_select_activity, R.drawable.ic_check_box_outline_blank_black_24dp));
+                iv_check_box.setColorFilter(ActivityCompat.getColor(project_photo_select_activity, R.color.colorAccentLight));
                 iv_photo.setColorFilter(null);
-                rl_wrapper.setBackground(ActivityCompat.getDrawable(projectPhotoSelectActivity, R.drawable.border_blue));
+                rl_wrapper.setBackground(ActivityCompat.getDrawable(project_photo_select_activity, R.drawable.border_blue));
             }
 
             return convertView;

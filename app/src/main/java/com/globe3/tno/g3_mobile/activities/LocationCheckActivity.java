@@ -1,6 +1,5 @@
 package com.globe3.tno.g3_mobile.activities;
 
-import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,31 +26,25 @@ import android.widget.RelativeLayout;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.LocationCheckStaffListAdapter;
-import com.globe3.tno.g3_mobile.adapters.LogTimeStaffListAdapter;
-import com.globe3.tno.g3_mobile.adapters.RegisterFingerStaffListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.fragments.LocationCheckAutoFragment;
-import com.globe3.tno.g3_mobile.fragments.LogTimeAutoFragment;
-import com.globe3.tno.g3_mobile.fragments.LogTimeFragment;
-import com.globe3.tno.g3_mobile.fragments.RegisterFingerFragment;
-import com.globe3.tno.g3_mobile.fragments.TimesheetStaffFragment;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 
 public class LocationCheckActivity extends BaseActivity {
-    LocationCheckActivity locationCheckActivity;
+    LocationCheckActivity location_check_activity;
 
-    StaffFactory staffFactory;
+    StaffFactory staff_factory;
 
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
 
-    LocationCheckAutoFragment locationCheckAutoFragment;
+    LocationCheckAutoFragment location_check_auto_fragment;
 
-    ActionBar actionBar;
-    Drawable upArrow;
+    ActionBar action_bar;
+    Drawable up_arrow;
 
     FloatingActionButton fab_auto_screening;
     RecyclerView recycler_staff_list;
@@ -63,14 +56,14 @@ public class LocationCheckActivity extends BaseActivity {
 
     ArrayList<RowStaff> staff_list;
 
-    SearchStaff searchStaff;
+    SearchStaff search_staff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_location_check);
         super.onCreate(savedInstanceState);
 
-        locationCheckActivity = this;
+        location_check_activity = this;
     }
 
     @Override
@@ -83,15 +76,15 @@ public class LocationCheckActivity extends BaseActivity {
         SearchView.SearchAutoComplete search_box = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
         ImageView search_close_btn = (ImageView) searchView.findViewById(R.id.search_close_btn);
 
-        search_box.setHintTextColor(ActivityCompat.getColor(locationCheckActivity, R.color.colorActionBarHint));
+        search_box.setHintTextColor(ActivityCompat.getColor(location_check_activity, R.color.colorActionBarHint));
         search_box.setHint(getString(R.string.hint_search));
-        search_box.setTextColor(ActivityCompat.getColor(locationCheckActivity, R.color.colorBlackLight));
-        search_close_btn.setColorFilter(ActivityCompat.getColor(locationCheckActivity, R.color.colorBlackLight));
+        search_box.setTextColor(ActivityCompat.getColor(location_check_activity, R.color.colorBlackLight));
+        search_close_btn.setColorFilter(ActivityCompat.getColor(location_check_activity, R.color.colorBlackLight));
 
         search_box.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(final Editable searchTerm) {
-                locationCheckActivity.runOnUiThread(new Runnable() {
+                location_check_activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         searchStaff(searchTerm.toString());
@@ -122,40 +115,40 @@ public class LocationCheckActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
-        staffFactory = new StaffFactory(locationCheckActivity);
+        staff_factory = new StaffFactory(location_check_activity);
 
         fab_auto_screening = (FloatingActionButton) findViewById(R.id.fab_auto_screening);
-        recyclerViewLayoutManager = new LinearLayoutManager(locationCheckActivity);
+        recyclerViewLayoutManager = new LinearLayoutManager(location_check_activity);
         recycler_staff_list = (RecyclerView) findViewById(R.id.recycler_staff_list);
         rl_search_loader = (RelativeLayout) findViewById(R.id.rl_search_loader);
         iv_search_loader = (ImageView) findViewById(R.id.iv_search_loader);
 
-        actionBar = getSupportActionBar();
+        action_bar = getSupportActionBar();
 
         staff_list = new ArrayList<>();
         searchStaff("");
     }
 
     public void onActivityReady(){
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if(action_bar != null){
+            action_bar.setDisplayHomeAsUpEnabled(true);
             if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
-                upArrow = ContextCompat.getDrawable(locationCheckActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-                upArrow.setColorFilter(ContextCompat.getColor(locationCheckActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                actionBar.setHomeAsUpIndicator(upArrow);
+                up_arrow = ContextCompat.getDrawable(location_check_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                up_arrow.setColorFilter(ContextCompat.getColor(location_check_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+                action_bar.setHomeAsUpIndicator(up_arrow);
             }
         }
 
-        iv_search_loader.setAnimation(AnimationUtils.loadAnimation(locationCheckActivity, R.anim.animate_rotate_clockwise));
+        iv_search_loader.setAnimation(AnimationUtils.loadAnimation(location_check_activity, R.anim.animate_rotate_clockwise));
 
         fab_auto_screening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBiometricClient = new NBiometricClient();
-                locationCheckAutoFragment = new LocationCheckAutoFragment();
-                locationCheckAutoFragment.setCancelable(false);
-                locationCheckAutoFragment.setmBiometricClient(mBiometricClient);
-                locationCheckAutoFragment.show(getFragmentManager(), getString(R.string.label_log_time_auto));
+                biometric_client = new NBiometricClient();
+                location_check_auto_fragment = new LocationCheckAutoFragment();
+                location_check_auto_fragment.setCancelable(false);
+                location_check_auto_fragment.setBiometricClient(biometric_client);
+                location_check_auto_fragment.show(getFragmentManager(), getString(R.string.label_log_time_auto));
             }
         });
 
@@ -163,7 +156,7 @@ public class LocationCheckActivity extends BaseActivity {
 
         recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
 
-        recyclerViewAdapter = new LocationCheckStaffListAdapter(staff_list, locationCheckActivity);
+        recyclerViewAdapter = new LocationCheckStaffListAdapter(staff_list, location_check_activity);
         recycler_staff_list.setAdapter(recyclerViewAdapter);
     }
 
@@ -202,11 +195,11 @@ public class LocationCheckActivity extends BaseActivity {
     }
 
     public void searchStaff(String searchTerm) {
-        if(searchStaff != null){
-            searchStaff.cancel(true);
+        if(search_staff != null){
+            search_staff.cancel(true);
         }
-        searchStaff = new SearchStaff(searchTerm);
-        searchStaff.execute();
+        search_staff = new SearchStaff(searchTerm);
+        search_staff.execute();
     }
 
     public class SearchStaff extends AsyncTask<Void, Void, Void>
@@ -232,7 +225,7 @@ public class LocationCheckActivity extends BaseActivity {
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(Staff staff : (searchTerm.equals("")?staffFactory.getActiveStaffs():staffFactory.searchStaffs(searchTerm))){
+            for(Staff staff : (searchTerm.equals("")? staff_factory.getActiveStaffs(): staff_factory.searchStaffs(searchTerm))){
                 staff_list.add(createRowStaff(staff));
             }
             staff_list.get(staff_list.size()-1).setDisplayBottomSpacer(true);
@@ -245,7 +238,7 @@ public class LocationCheckActivity extends BaseActivity {
 
             recycler_staff_list.setLayoutManager(recyclerViewLayoutManager);
 
-            recyclerViewAdapter = new LocationCheckStaffListAdapter(staff_list, locationCheckActivity);
+            recyclerViewAdapter = new LocationCheckStaffListAdapter(staff_list, location_check_activity);
             recycler_staff_list.setAdapter(recyclerViewAdapter);
 
             recycler_staff_list.setVisibility(View.VISIBLE);

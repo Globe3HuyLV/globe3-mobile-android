@@ -24,14 +24,14 @@ import com.globe3.tno.g3_mobile.fragments.PhotosProjectFragment;
 import com.globe3.tno.g3_mobile.fragments.PhotosStaffFragment;
 
 public class PhotosActivity extends BaseActivity {
-    PhotosActivity photosActivity;
+    PhotosActivity photos_activity;
 
-    ActionBar actionBar;
-    Drawable upArrow;
+    ActionBar action_bar;
+    Drawable up_arrow;
 
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    PhotosTabAdapter photosAdapter;
+    TabLayout tab_layout;
+    ViewPager view_pager;
+    PhotosTabAdapter photos_adapter;
 
     SearchView.SearchAutoComplete search_box;
 
@@ -40,7 +40,7 @@ public class PhotosActivity extends BaseActivity {
         setContentView(R.layout.activity_photos);
         super.onCreate(savedInstanceState);
 
-        photosActivity = this;
+        photos_activity = this;
     }
 
     @Override
@@ -53,10 +53,10 @@ public class PhotosActivity extends BaseActivity {
         search_box = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
         ImageView search_close_btn = (ImageView) searchView.findViewById(R.id.search_close_btn);
 
-        search_box.setHintTextColor(ActivityCompat.getColor(photosActivity, R.color.colorActionBarHint));
+        search_box.setHintTextColor(ActivityCompat.getColor(photos_activity, R.color.colorActionBarHint));
         search_box.setHint(getString(R.string.hint_search));
-        search_box.setTextColor(ActivityCompat.getColor(photosActivity, R.color.colorBlackLight));
-        search_close_btn.setColorFilter(ActivityCompat.getColor(photosActivity, R.color.colorBlackLight));
+        search_box.setTextColor(ActivityCompat.getColor(photos_activity, R.color.colorBlackLight));
+        search_close_btn.setColorFilter(ActivityCompat.getColor(photos_activity, R.color.colorBlackLight));
 
         search_box.addTextChangedListener(new TextWatcher() {
             @Override
@@ -87,30 +87,30 @@ public class PhotosActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
-        actionBar = getSupportActionBar();
-        upArrow = ContextCompat.getDrawable(photosActivity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        upArrow.setColorFilter(ContextCompat.getColor(photosActivity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
+        action_bar = getSupportActionBar();
+        up_arrow = ContextCompat.getDrawable(photos_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        up_arrow.setColorFilter(ContextCompat.getColor(photos_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
 
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        viewPager = (ViewPager) findViewById(R.id.tab_layout_pager);
-        photosAdapter = new PhotosTabAdapter(getSupportFragmentManager());
+        tab_layout = (TabLayout) findViewById(R.id.tab_layout);
+        view_pager = (ViewPager) findViewById(R.id.tab_layout_pager);
+        photos_adapter = new PhotosTabAdapter(getSupportFragmentManager());
     }
 
     public void onActivityReady(){
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(upArrow);
+        action_bar.setDisplayHomeAsUpEnabled(true);
+        action_bar.setHomeAsUpIndicator(up_arrow);
 
-        tabLayout.removeAllTabs();
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_project)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.label_staff)));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tab_layout.removeAllTabs();
+        tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_project)));
+        tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_staff)));
+        tab_layout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        viewPager.setAdapter(photosAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        view_pager.setAdapter(photos_adapter);
+        view_pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab_layout));
+        tab_layout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
+                view_pager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -126,7 +126,7 @@ public class PhotosActivity extends BaseActivity {
     }
 
     public void finishStaffTakePhoto(){
-        photosActivity.runOnUiThread(new Runnable() {
+        photos_activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 doSearch(search_box.getText().toString());
@@ -135,13 +135,13 @@ public class PhotosActivity extends BaseActivity {
     }
 
     public void doSearch(String searchTerm){
-        Fragment selectedFragment = photosAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+        Fragment selectedFragment = photos_adapter.getRegisteredFragment(view_pager.getCurrentItem());
 
-        if (viewPager.getCurrentItem() == 0 && selectedFragment != null) {
+        if (view_pager.getCurrentItem() == 0 && selectedFragment != null) {
             ((PhotosProjectFragment)selectedFragment).searchProject(searchTerm.toString());
         }
 
-        if (viewPager.getCurrentItem() == 1 && selectedFragment != null) {
+        if (view_pager.getCurrentItem() == 1 && selectedFragment != null) {
             ((PhotosStaffFragment)selectedFragment).searchStaff(searchTerm.toString());
         }
     }

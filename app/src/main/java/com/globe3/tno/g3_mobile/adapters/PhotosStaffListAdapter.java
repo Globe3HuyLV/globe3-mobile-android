@@ -15,13 +15,13 @@ import com.globe3.tno.g3_mobile.R;
 import java.util.ArrayList;
 
 public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffListAdapter.ViewHolder> {
-    Context parentContext;
+    Context parent_context;
 
-    private ArrayList<RowStaff> staffList;
+    private ArrayList<RowStaff> staff_list;
 
     public PhotosStaffListAdapter(ArrayList<RowStaff> staffList, Context parentContext) {
-        this.parentContext = parentContext;
-        this.staffList = staffList;
+        this.parent_context = parentContext;
+        this.staff_list = staffList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -40,13 +40,13 @@ public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffList
     }
 
     public void add(int position, RowStaff staff) {
-        staffList.add(position, staff);
+        staff_list.add(position, staff);
         notifyItemInserted(position);
     }
 
     public void remove(RowStaff staff) {
-        int position = staffList.indexOf(staff);
-        staffList.remove(position);
+        int position = staff_list.indexOf(staff);
+        staff_list.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -59,7 +59,7 @@ public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffList
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        RowStaff rowStaff = staffList.get(position);
+        RowStaff rowStaff = staff_list.get(position);
         viewHolder.rl_row_staff.setOnClickListener(rowStaff.getOnClickListener());
         if(rowStaff.getStaffPhoto()!=null){
             viewHolder.iv_staff_photo.setImageBitmap(rowStaff.getStaffPhoto());
@@ -73,6 +73,6 @@ public class PhotosStaffListAdapter extends RecyclerView.Adapter<PhotosStaffList
 
     @Override
     public int getItemCount() {
-        return staffList.size();
+        return staff_list.size();
     }
 }

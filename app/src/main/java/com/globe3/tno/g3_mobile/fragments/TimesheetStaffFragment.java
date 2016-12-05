@@ -9,16 +9,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.globe3.tno.g3_mobile.adapters.RegisterFingerStaffListAdapter;
 import com.globe3.tno.g3_mobile.adapters.TimesheetStaffListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
@@ -28,15 +25,13 @@ import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-
 public class TimesheetStaffFragment extends Fragment {
-    StaffFactory staffFactory;
+    StaffFactory staff_factory;
 
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
 
-    LogTimeAutoFragment logTimeAutoFragment;
-    LogTimeFragment logTimeFragment;
+    LogTimeAutoFragment log_time_auto_fragment;
+    LogTimeFragment log_time_fragment;
 
     FloatingActionButton fab_auto_screening;
     RecyclerView recycler_staff_list;
@@ -49,12 +44,12 @@ public class TimesheetStaffFragment extends Fragment {
 
     ArrayList<RowStaff> staff_list;
 
-    SearchStaff searchStaff;
+    SearchStaff search_staff;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        staffFactory = new StaffFactory(getActivity());
+        staff_factory = new StaffFactory(getActivity());
     }
 
     @Override
@@ -73,12 +68,12 @@ public class TimesheetStaffFragment extends Fragment {
         fab_auto_screening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBiometricClient = new NBiometricClient();
+                biometric_client = new NBiometricClient();
                 FragmentManager fragmentManager = getActivity().getFragmentManager();
-                logTimeAutoFragment = new LogTimeAutoFragment();
-                logTimeAutoFragment.setCancelable(false);
-                logTimeAutoFragment.setmBiometricClient(mBiometricClient);
-                logTimeAutoFragment.show(fragmentManager, getString(R.string.label_log_time_auto));
+                log_time_auto_fragment = new LogTimeAutoFragment();
+                log_time_auto_fragment.setCancelable(false);
+                log_time_auto_fragment.setmBiometricClient(biometric_client);
+                log_time_auto_fragment.show(fragmentManager, getString(R.string.label_log_time_auto));
             }
         });
 
@@ -117,13 +112,13 @@ public class TimesheetStaffFragment extends Fragment {
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBiometricClient = new NBiometricClient();
+                biometric_client = new NBiometricClient();
                 FragmentManager fragmentManager = getActivity().getFragmentManager();
-                logTimeFragment = new LogTimeFragment();
-                logTimeFragment.setCancelable(false);
-                logTimeFragment.setStaff(staff);
-                logTimeFragment.setmBiometricClient(mBiometricClient);
-                logTimeFragment.show(fragmentManager, getString(R.string.label_log_time));
+                log_time_fragment = new LogTimeFragment();
+                log_time_fragment.setCancelable(false);
+                log_time_fragment.setStaff(staff);
+                log_time_fragment.setmBiometricClient(biometric_client);
+                log_time_fragment.show(fragmentManager, getString(R.string.label_log_time));
             }
         });
 
@@ -131,11 +126,11 @@ public class TimesheetStaffFragment extends Fragment {
     }
 
     public void searchStaff(String searchTerm) {
-        if(searchStaff != null){
-            searchStaff.cancel(true);
+        if(search_staff != null){
+            search_staff.cancel(true);
         }
-        searchStaff = new SearchStaff(searchTerm);
-        searchStaff.execute();
+        search_staff = new SearchStaff(searchTerm);
+        search_staff.execute();
     }
 
     public class SearchStaff extends AsyncTask<Void, Void, Void>
@@ -158,7 +153,7 @@ public class TimesheetStaffFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(Staff staff : (searchTerm.equals("")?staffFactory.getActiveStaffs():staffFactory.searchStaffs(searchTerm))){
+            for(Staff staff : (searchTerm.equals("")? staff_factory.getActiveStaffs(): staff_factory.searchStaffs(searchTerm))){
                 staff_list.add(createRowStaff(staff));
             }
             staff_list.get(staff_list.size()-1).setDisplayBottomSpacer(true);

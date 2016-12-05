@@ -3,14 +3,11 @@ package com.globe3.tno.g3_mobile.fragments;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.app_objects.DailyTime;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
@@ -30,9 +26,7 @@ import com.globe3.tno.g3_mobile.app_objects.TimeLog;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.async.TimeLogSingleUploadTask;
-import com.globe3.tno.g3_mobile.constants.App;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
-import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.neurotec.biometrics.NBiometricOperation;
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NBiometricTask;
@@ -41,7 +35,6 @@ import com.neurotec.biometrics.NMatchingResult;
 import com.neurotec.biometrics.NSubject;
 import com.neurotec.biometrics.NTemplateSize;
 import com.neurotec.biometrics.client.NBiometricClient;
-import com.neurotec.devices.NDevice;
 import com.neurotec.devices.NDeviceManager;
 import com.neurotec.devices.NDeviceType;
 import com.neurotec.util.concurrent.CompletionHandler;
@@ -49,7 +42,6 @@ import com.neurotec.util.concurrent.CompletionHandler;
 import java.util.Calendar;
 import java.util.EnumSet;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
 public class LogTimeAutoFragment extends DialogFragment {
@@ -57,9 +49,9 @@ public class LogTimeAutoFragment extends DialogFragment {
 
     Project project;
 
-    LogTimeStaffFragment logTimeStaffFragment;
-    LogTimeProjectFragment logTimeProjectFragment;
-    LogTimeSummaryFragment logTimeSummaryFragment;
+    LogTimeStaffFragment log_time_staff_fragment;
+    LogTimeProjectFragment log_time_project_fragment;
+    LogTimeSummaryFragment log_time_summary_fragment;
 
     NBiometricClient mBiometricClient;
     boolean scanner_found;
@@ -120,8 +112,8 @@ public class LogTimeAutoFragment extends DialogFragment {
                 mBiometricClient.cancel();
                 mBiometricClient = null;
             }
-            if(logTimeStaffFragment != null){
-                logTimeStaffFragment.resume();
+            if(log_time_staff_fragment != null){
+                log_time_staff_fragment.resume();
             }
             dismiss();
         }
@@ -216,8 +208,8 @@ public class LogTimeAutoFragment extends DialogFragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(logTimeStaffFragment != null){
-            logTimeStaffFragment.resume();
+        if(log_time_staff_fragment != null){
+            log_time_staff_fragment.resume();
         }
     }
 
@@ -381,12 +373,12 @@ public class LogTimeAutoFragment extends DialogFragment {
         });
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
-        logTimeProjectFragment = new LogTimeProjectFragment();
-        logTimeProjectFragment.setCancelable(false);
-        logTimeProjectFragment.setStaff(staff);
-        logTimeProjectFragment.setLog_type(log_type);
-        logTimeProjectFragment.setLogTimeAutoFragment(this);
-        logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
+        log_time_project_fragment = new LogTimeProjectFragment();
+        log_time_project_fragment.setCancelable(false);
+        log_time_project_fragment.setStaff(staff);
+        log_time_project_fragment.setLog_type(log_type);
+        log_time_project_fragment.setLogTimeAutoFragment(this);
+        log_time_project_fragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
 
     private void showSummary(Staff staff){
@@ -405,10 +397,10 @@ public class LogTimeAutoFragment extends DialogFragment {
         new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
-        logTimeSummaryFragment = new LogTimeSummaryFragment();
-        logTimeSummaryFragment.setCancelable(false);
-        logTimeSummaryFragment.setTimeLog(timeLog);
-        logTimeSummaryFragment.setLogTimeAutoFragment(this);
+        log_time_summary_fragment = new LogTimeSummaryFragment();
+        log_time_summary_fragment.setCancelable(false);
+        log_time_summary_fragment.setTimeLog(timeLog);
+        log_time_summary_fragment.setLogTimeAutoFragment(this);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -417,7 +409,7 @@ public class LogTimeAutoFragment extends DialogFragment {
             }
         });
 
-        logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
+        log_time_summary_fragment.show(fragmentManager, getString(R.string.label_log_time_summary));
     }
 
     private class ScanTask extends AsyncTask<Void, Void, Boolean> {
@@ -460,7 +452,7 @@ public class LogTimeAutoFragment extends DialogFragment {
         this.project = project;
     }
     public void setLogTimeStaffFragment(LogTimeStaffFragment logTimeStaffFragment) {
-        this.logTimeStaffFragment = logTimeStaffFragment;
+        this.log_time_staff_fragment = logTimeStaffFragment;
     }
     public void setmBiometricClient(NBiometricClient mBiometricClient) {
         this.mBiometricClient = mBiometricClient;

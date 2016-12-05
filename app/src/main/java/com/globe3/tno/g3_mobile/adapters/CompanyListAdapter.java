@@ -14,13 +14,13 @@ import com.globe3.tno.g3_mobile.view_objects.RowCompany;
 import java.util.ArrayList;
 
 public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.ViewHolder> {
-    Context parentContext;
+    Context parent_context;
 
-    private ArrayList<RowCompany> companyList;
+    private ArrayList<RowCompany> company_list;
 
     public CompanyListAdapter(ArrayList<RowCompany> companyList, Context parentContext) {
-        this.parentContext = parentContext;
-        this.companyList = companyList;
+        this.parent_context = parentContext;
+        this.company_list = companyList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -35,13 +35,13 @@ public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.
     }
 
     public void add(int position, RowCompany company) {
-        companyList.add(position, company);
+        company_list.add(position, company);
         notifyItemInserted(position);
     }
 
     public void remove(RowCompany company) {
-        int position = companyList.indexOf(company);
-        companyList.remove(position);
+        int position = company_list.indexOf(company);
+        company_list.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -54,7 +54,7 @@ public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        RowCompany rowCompany = companyList.get(position);
+        RowCompany rowCompany = company_list.get(position);
         viewHolder.rl_row_company.setOnClickListener(rowCompany.getOnClickListener());
         viewHolder.tv_company_name.setText(rowCompany.getCompanyName());
 
@@ -62,6 +62,6 @@ public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.
 
     @Override
     public int getItemCount() {
-        return companyList.size();
+        return company_list.size();
     }
 }

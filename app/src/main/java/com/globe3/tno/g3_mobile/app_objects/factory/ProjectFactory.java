@@ -127,8 +127,8 @@ public class ProjectFactory {
 
         tabledata tabledata = new tabledata();
 
-        tabledata.uniquenum_pri = projectPhoto.getUnique();
-        tabledata.uniquenum_sec = projectPhoto.getProject().getUniquenum();
+        tabledata.uniquenum_pri = projectPhoto.getUniquenumPri();
+        tabledata.uniquenum_sec = projectPhoto.getProject().getUniquenumPri();
         tabledata.tag_void_yn = "n";
         tabledata.tag_deleted_yn = "n";
         tabledata.date_post = new Date();
@@ -152,7 +152,7 @@ public class ProjectFactory {
         for(tabledata tabledata : tabledata_repo.get_tabledatas("uniquenum_sec = '" + projectUnique + "' AND (nvar25_01 LIKE '%" + searchTerm + "%' OR nvar100_01 LIKE '%" + searchTerm + "%')")){
             ProjectPhoto projectPhoto = new ProjectPhoto();
             projectPhoto.setProject(project);
-            projectPhoto.setUnique(tabledata.uniquenum_pri);
+            projectPhoto.setUniquenumPri(tabledata.uniquenum_pri);
             projectPhoto.setReference(tabledata.nvar25_01);
             projectPhoto.setRemarks(tabledata.nvar100_01);
 
@@ -167,7 +167,7 @@ public class ProjectFactory {
     private Project convertEntity(entproject entproject){
         Project project = new Project();
         project.setIdcode(entproject.idcode);
-        project.setUniquenum(entproject.uniquenum_pri);
+        project.setUniquenumPri(entproject.uniquenum_pri);
         project.setDesc(entproject.project_name);
         project.setCode(entproject.project_code);
         project.setActive(entproject.active_yn.equals("y"));
@@ -177,8 +177,8 @@ public class ProjectFactory {
     private entproject convertToEntity(Project project){
         entproject entproject = new entproject();
         entproject.idcode = project.getIdcode();
-        entproject.uniquenum_pri = project.getUniquenum();
-        entproject.project_unique = project.getUniquenum();
+        entproject.uniquenum_pri = project.getUniquenumPri();
+        entproject.project_unique = project.getUniquenumPri();
         entproject.project_name = project.getDesc();
         entproject.project_code = project.getCode();
         entproject.active_yn = project.getActive() ? "y" : "n";

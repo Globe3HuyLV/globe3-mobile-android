@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class TimeLog implements Serializable{
     private long idcode;
-    private String uniquenum_pri;
+    private String uniquenumPri;
     private Date date;
     private String type;
     private Staff staff;
@@ -19,12 +19,12 @@ public class TimeLog implements Serializable{
         this.idcode = idcode;
     }
 
-    public String getUniquenum_pri() {
-        return uniquenum_pri;
+    public String getUniquenumPri() {
+        return uniquenumPri;
     }
 
-    public void setUniquenum_pri(String uniquenum_pri) {
-        this.uniquenum_pri = uniquenum_pri;
+    public void setUniquenumPri(String uniquenumPri) {
+        this.uniquenumPri = uniquenumPri;
     }
 
     public Date getDate() {

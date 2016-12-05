@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Company implements Serializable{
     private long idcode;
-    private String uniquenum;
+    private String uniquenumPri;
     private String name;
     private String code;
     private boolean active;
@@ -13,8 +13,8 @@ public class Company implements Serializable{
         return idcode;
     }
 
-    public String getUniquenum() {
-        return uniquenum;
+    public String getUniquenumPri() {
+        return uniquenumPri;
     }
 
     public String getName() {
@@ -33,8 +33,8 @@ public class Company implements Serializable{
         this.idcode = idcode;
     }
 
-    public void setUniquenum(String uniquenum) {
-        this.uniquenum = uniquenum;
+    public void setUniquenumPri(String uniquenumPri) {
+        this.uniquenumPri = uniquenumPri;
     }
 
     public void setName(String name) {

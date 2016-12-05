@@ -43,15 +43,15 @@ import java.util.EnumSet;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
 public class LocationCheckAutoFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
     Project project;
 
-    LogTimeStaffFragment logTimeStaffFragment;
-    LogTimeProjectFragment logTimeProjectFragment;
-    LogTimeSummaryFragment logTimeSummaryFragment;
+    LogTimeStaffFragment log_time_staff_fragment;
+    LogTimeProjectFragment log_time_project_fragment;
+    LogTimeSummaryFragment log_time_summary_fragment;
 
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
     boolean scanner_found;
 
     String log_type = TagTableUsage.LOCATION_CHECK;
@@ -70,7 +70,7 @@ public class LocationCheckAutoFragment extends DialogFragment {
             new ScanTask(new Runnable() {
                 @Override
                 public void run() {
-                    mBiometricClient = new NBiometricClient();
+                    biometric_client = new NBiometricClient();
                     setPrompt(PROMPT_CONNECTING);
                 }
             }, new Runnable() {
@@ -103,12 +103,12 @@ public class LocationCheckAutoFragment extends DialogFragment {
     private View.OnClickListener cancel = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(mBiometricClient!=null){
-                mBiometricClient.cancel();
-                mBiometricClient = null;
+            if(biometric_client !=null){
+                biometric_client.cancel();
+                biometric_client = null;
             }
-            if(logTimeStaffFragment != null){
-                logTimeStaffFragment.resume();
+            if(log_time_staff_fragment != null){
+                log_time_staff_fragment.resume();
             }
             dismiss();
         }
@@ -117,7 +117,7 @@ public class LocationCheckAutoFragment extends DialogFragment {
     private Runnable loaderAnimate = new Runnable() {
         @Override
         public void run() {
-            iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+            iv_loader.startAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.rotate));
         }
     };
 
@@ -154,7 +154,7 @@ public class LocationCheckAutoFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View logTimeFragment = inflater.inflate(R.layout.fragment_location_check_auto, viewGroup, false);
-        parentContext = logTimeFragment.getContext();
+        parent_context = logTimeFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         ll_main_container = (LinearLayout) logTimeFragment.findViewById(R.id.ll_main_container);
@@ -174,8 +174,8 @@ public class LocationCheckAutoFragment extends DialogFragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(logTimeStaffFragment != null){
-            logTimeStaffFragment.resume();
+        if(log_time_staff_fragment != null){
+            log_time_staff_fragment.resume();
         }
     }
 
@@ -228,7 +228,7 @@ public class LocationCheckAutoFragment extends DialogFragment {
                                 }else{
                                     showSummary(new StaffFactory(getActivity()).getStaff(staff_unique));
                                 }
-                                mBiometricClient = null;
+                                biometric_client = null;
                             }else{
                                 setPrompt(PROMPT_MULTIPLE_RESULT);
                             }
@@ -257,16 +257,16 @@ public class LocationCheckAutoFragment extends DialogFragment {
     };
 
     private void capture() {
-        if(mBiometricClient==null){
-            mBiometricClient = new NBiometricClient();
+        if(biometric_client ==null){
+            biometric_client = new NBiometricClient();
         }
         NSubject subject = new NSubject();
         NFinger finger = new NFinger();
 
-        mBiometricClient.setUseDeviceManager(true);
-        NDeviceManager deviceManager = mBiometricClient.getDeviceManager();
+        biometric_client.setUseDeviceManager(true);
+        NDeviceManager deviceManager = biometric_client.getDeviceManager();
         deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
-        mBiometricClient.initialize();
+        biometric_client.initialize();
 
         NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
         scanner_found = devices.size() > 0;
@@ -277,8 +277,8 @@ public class LocationCheckAutoFragment extends DialogFragment {
 
         subject.getFingers().add(finger);
 
-        mBiometricClient.setFingersTemplateSize(NTemplateSize.LARGE);
-        mBiometricClient.createTemplate(subject, subject, captureHandler);
+        biometric_client.setFingersTemplateSize(NTemplateSize.LARGE);
+        biometric_client.createTemplate(subject, subject, captureHandler);
     }
 
     private void setPrompt(final int status){
@@ -287,17 +287,17 @@ public class LocationCheckAutoFragment extends DialogFragment {
                 @Override
                 public void run() {
                     tv_prompt.setText(getText(PROMPT_TEXT[status]));
-                    tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
+                    tv_prompt.setTextColor(ContextCompat.getColor(parent_context, PROMPT_TEXT_COLOR[status]));
                     iv_loader.setVisibility(LOADER_DISPLAY[status]);
-                    iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
+                    iv_loader.setColorFilter(ContextCompat.getColor(parent_context, LOADER_COLOR[status]));
                     iv_finger.setVisibility(FINGER_DISPLAY[status]);
-                    iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
+                    iv_finger.setColorFilter(ContextCompat.getColor(parent_context, FINGER_COLOR[status]));
                     LOADER_ANIMATION[status].run();
                     tv_action_button.setText(ACTION_TEXT[status]);
-                    tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
+                    tv_action_button.setTextColor(ContextCompat.getColor(parent_context, ACTION_TEXT_COLOR[status]));
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
-                    tv_cancel.setTextColor(ContextCompat.getColor(parentContext, CANCEL_TEXT_COLOR[status]));
+                    tv_cancel.setTextColor(ContextCompat.getColor(parent_context, CANCEL_TEXT_COLOR[status]));
                     tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
                     tv_cancel.setOnClickListener(ONCLICK_CANCEL[status]);
                 }
@@ -339,12 +339,12 @@ public class LocationCheckAutoFragment extends DialogFragment {
         });
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
-        logTimeProjectFragment = new LogTimeProjectFragment();
-        logTimeProjectFragment.setCancelable(false);
-        logTimeProjectFragment.setStaff(staff);
-        logTimeProjectFragment.setLog_type(log_type);
-        logTimeProjectFragment.setLocationCheckAutoFragment(this);
-        logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
+        log_time_project_fragment = new LogTimeProjectFragment();
+        log_time_project_fragment.setCancelable(false);
+        log_time_project_fragment.setStaff(staff);
+        log_time_project_fragment.setLog_type(log_type);
+        log_time_project_fragment.setLocationCheckAutoFragment(this);
+        log_time_project_fragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
 
     private void showSummary(Staff staff){
@@ -363,10 +363,10 @@ public class LocationCheckAutoFragment extends DialogFragment {
         new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
-        logTimeSummaryFragment = new LogTimeSummaryFragment();
-        logTimeSummaryFragment.setCancelable(false);
-        logTimeSummaryFragment.setTimeLog(timeLog);
-        logTimeSummaryFragment.setLocationCheckAutoFragment(this);
+        log_time_summary_fragment = new LogTimeSummaryFragment();
+        log_time_summary_fragment.setCancelable(false);
+        log_time_summary_fragment.setTimeLog(timeLog);
+        log_time_summary_fragment.setLocationCheckAutoFragment(this);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -375,7 +375,7 @@ public class LocationCheckAutoFragment extends DialogFragment {
             }
         });
 
-        logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
+        log_time_summary_fragment.show(fragmentManager, getString(R.string.label_log_time_summary));
     }
 
     private class ScanTask extends AsyncTask<Void, Void, Boolean> {
@@ -417,10 +417,10 @@ public class LocationCheckAutoFragment extends DialogFragment {
     public void setProject(Project project) {
         this.project = project;
     }
-    public void setLogTimeStaffFragment(LogTimeStaffFragment logTimeStaffFragment) {
-        this.logTimeStaffFragment = logTimeStaffFragment;
+    public void setLogTimeStaffFragment(LogTimeStaffFragment log_time_staff_fragment) {
+        this.log_time_staff_fragment = log_time_staff_fragment;
     }
-    public void setmBiometricClient(NBiometricClient mBiometricClient) {
-        this.mBiometricClient = mBiometricClient;
+    public void setBiometricClient(NBiometricClient biometric_client) {
+        this.biometric_client = biometric_client;
     }
 }

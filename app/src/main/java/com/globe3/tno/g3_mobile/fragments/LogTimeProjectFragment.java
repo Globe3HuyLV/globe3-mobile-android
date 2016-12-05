@@ -2,7 +2,6 @@ package com.globe3.tno.g3_mobile.fragments;
 
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -11,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,15 +36,13 @@ import com.globe3.tno.g3_mobile.app_objects.Staff;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-
 public class LogTimeProjectFragment extends DialogFragment {
     Staff staff;
 
-    LogTimeFragment logTimeFragment;
-    LogTimeAutoFragment logTimeAutoFragment;
-    LocationCheckAutoFragment locationCheckAutoFragment;
-    LogTimeSummaryFragment logTimeSummaryFragment;
+    LogTimeFragment log_time_fragment;
+    LogTimeAutoFragment log_time_auto_fragment;
+    LocationCheckAutoFragment location_check_auto_fragment;
+    LogTimeSummaryFragment log_time_summary_fragment;
 
     RecyclerView recycler_project_list;
     RecyclerView.Adapter recyclerViewAdapter;
@@ -67,7 +63,7 @@ public class LogTimeProjectFragment extends DialogFragment {
 
     String log_type;
 
-    TimeLog timeLog;
+    TimeLog time_log;
 
     SearchProject searchProject;
 
@@ -90,10 +86,10 @@ public class LogTimeProjectFragment extends DialogFragment {
         tv_action_button = (TextView) logTimeProjectFragment.findViewById(R.id.tv_action_button);
         tv_cancel = (TextView) logTimeProjectFragment.findViewById(R.id.tv_cancel);
 
-        timeLog = new TimeLog();
-        timeLog.setDate(Calendar.getInstance().getTime());
-        timeLog.setType(log_type);
-        timeLog.setStaff(staff);
+        time_log = new TimeLog();
+        time_log.setDate(Calendar.getInstance().getTime());
+        time_log.setType(log_type);
+        time_log.setStaff(staff);
 
         if(staff!=null){
             if(staff.getPhoto1()!=null){
@@ -150,14 +146,14 @@ public class LogTimeProjectFragment extends DialogFragment {
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(logTimeFragment!=null){
-                    logTimeFragment.startExtract();
+                if(log_time_fragment !=null){
+                    log_time_fragment.startExtract();
                 }
-                if(logTimeAutoFragment!=null){
-                    logTimeAutoFragment.startExtract();
+                if(log_time_auto_fragment !=null){
+                    log_time_auto_fragment.startExtract();
                 }
-                if(locationCheckAutoFragment!=null){
-                    locationCheckAutoFragment.startExtract();
+                if(location_check_auto_fragment !=null){
+                    location_check_auto_fragment.startExtract();
                 }
                 dismiss();
             }
@@ -172,7 +168,7 @@ public class LogTimeProjectFragment extends DialogFragment {
         rowProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timeLog.setProject(project);
+                time_log.setProject(project);
                 showSummary();
             }
         });
@@ -183,22 +179,22 @@ public class LogTimeProjectFragment extends DialogFragment {
     private void showSummary(){
         StaffFactory staffFactory = new StaffFactory(getActivity());
 
-        DailyTime dailyTime = staffFactory.logTime(staff, timeLog.getProject(), timeLog.getType());
+        DailyTime dailyTime = staffFactory.logTime(staff, time_log.getProject(), time_log.getType());
 
-        LogItem logItem = new AuditFactory(getActivity()).Log(timeLog.getType());
+        LogItem logItem = new AuditFactory(getActivity()).Log(time_log.getType());
 
         new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
-        logTimeSummaryFragment = new LogTimeSummaryFragment();
-        logTimeSummaryFragment.setCancelable(false);
-        logTimeSummaryFragment.setTimeLog(timeLog);
-        logTimeSummaryFragment.setLogTimeAutoFragment(logTimeAutoFragment);
-        logTimeSummaryFragment.setLogTimeFragment(logTimeFragment);
-        logTimeSummaryFragment.setLocationCheckAutoFragment(locationCheckAutoFragment);
+        log_time_summary_fragment = new LogTimeSummaryFragment();
+        log_time_summary_fragment.setCancelable(false);
+        log_time_summary_fragment.setTimeLog(time_log);
+        log_time_summary_fragment.setLogTimeAutoFragment(log_time_auto_fragment);
+        log_time_summary_fragment.setLogTimeFragment(log_time_fragment);
+        log_time_summary_fragment.setLocationCheckAutoFragment(location_check_auto_fragment);
 
         dismiss();
-        logTimeSummaryFragment.show(fragmentManager, getString(R.string.label_log_time_summary));
+        log_time_summary_fragment.show(fragmentManager, getString(R.string.label_log_time_summary));
     }
 
     public void setLog_type(String log_type) {
@@ -208,13 +204,13 @@ public class LogTimeProjectFragment extends DialogFragment {
         this.staff = staff;
     }
     public void setLogTimeFragment(LogTimeFragment logTimeFragment) {
-        this.logTimeFragment = logTimeFragment;
+        this.log_time_fragment = logTimeFragment;
     }
     public void setLogTimeAutoFragment(LogTimeAutoFragment logTimeAutoFragment) {
-        this.logTimeAutoFragment = logTimeAutoFragment;
+        this.log_time_auto_fragment = logTimeAutoFragment;
     }
     public void setLocationCheckAutoFragment(LocationCheckAutoFragment locationCheckAutoFragment) {
-        this.locationCheckAutoFragment = locationCheckAutoFragment;
+        this.location_check_auto_fragment = locationCheckAutoFragment;
     }
 
     public void searchProject(String searchTerm) {

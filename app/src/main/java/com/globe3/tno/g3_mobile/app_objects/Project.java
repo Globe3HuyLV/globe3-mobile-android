@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Project implements Serializable{
     private long idcode;
-    private String uniquenum;
+    private String uniquenumPri;
     private String desc;
     private String code;
     private boolean active;
@@ -17,12 +17,12 @@ public class Project implements Serializable{
         return idcode;
     }
 
-    public void setUniquenum(String pUniquenum){
-        this.uniquenum = pUniquenum;
+    public void setUniquenumPri(String pUniquenum){
+        this.uniquenumPri = pUniquenum;
     }
 
-    public String getUniquenum(){
-        return uniquenum;
+    public String getUniquenumPri(){
+        return uniquenumPri;
     }
 
     public void setDesc(String pName){

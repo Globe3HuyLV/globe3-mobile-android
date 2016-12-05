@@ -1,8 +1,6 @@
 package com.globe3.tno.g3_mobile.fragments;
 
 import android.app.FragmentManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,38 +13,35 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.globe3.tno.g3_mobile.adapters.RegisterFingerStaffListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Project;
-import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
 import com.globe3.tno.g3_mobile.view_objects.RowProject;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
-import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 
 import java.util.ArrayList;
 
 public class TimesheetProjectFragment extends Fragment {
-    ProjectFactory projectFactory;
+    ProjectFactory project_factory;
 
     RecyclerView recycler_project_list;
-    RecyclerView.Adapter recyclerViewAdapter;
-    RecyclerView.LayoutManager recyclerViewLayoutManager;
+    RecyclerView.Adapter recycler_view_adapter;
+    RecyclerView.LayoutManager recycler_view_layout_manager;
 
     RelativeLayout rl_search_loader;
     ImageView iv_search_loader;
     RelativeLayout rl_no_record;
 
-    LogTimeStaffFragment logTimeStaffFragment;
+    LogTimeStaffFragment log_time_staff_fragment;
 
     ArrayList<RowProject> project_list;
 
-    SearchProject searchProject;
+    SearchProject search_project;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        projectFactory = new ProjectFactory(getActivity());
+        project_factory = new ProjectFactory(getActivity());
     }
 
     @Override
@@ -61,17 +56,17 @@ public class TimesheetProjectFragment extends Fragment {
         iv_search_loader.setAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animate_rotate_clockwise));
 
         project_list = new ArrayList<>();
-        for(Project project : projectFactory.getActiveProjects()){
+        for(Project project : project_factory.getActiveProjects()){
             project_list.add(createRowProject(project));
         }
 
         recycler_project_list.setHasFixedSize(true);
 
-        recyclerViewLayoutManager = new LinearLayoutManager(viewGroup.getContext());
-        recycler_project_list.setLayoutManager(recyclerViewLayoutManager);
+        recycler_view_layout_manager = new LinearLayoutManager(viewGroup.getContext());
+        recycler_project_list.setLayoutManager(recycler_view_layout_manager);
 
-        recyclerViewAdapter = new ProjectListAdapter(project_list, viewGroup.getContext());
-        recycler_project_list.setAdapter(recyclerViewAdapter);
+        recycler_view_adapter = new ProjectListAdapter(project_list, viewGroup.getContext());
+        recycler_project_list.setAdapter(recycler_view_adapter);
 
         return projectFragment;
     }
@@ -84,10 +79,10 @@ public class TimesheetProjectFragment extends Fragment {
             @Override
             public void onClick(View v) {
                     FragmentManager fragmentManager = getActivity().getFragmentManager();
-                    logTimeStaffFragment = new LogTimeStaffFragment();
-                    logTimeStaffFragment.setCancelable(false);
-                    logTimeStaffFragment.setProject(project);
-                    logTimeStaffFragment.show(fragmentManager, getString(R.string.label_log_time_staff));
+                    log_time_staff_fragment = new LogTimeStaffFragment();
+                    log_time_staff_fragment.setCancelable(false);
+                    log_time_staff_fragment.setProject(project);
+                    log_time_staff_fragment.show(fragmentManager, getString(R.string.label_log_time_staff));
             }
         });
 
@@ -95,11 +90,11 @@ public class TimesheetProjectFragment extends Fragment {
     }
 
     public void searchProject(String searchTerm) {
-        if(searchProject != null){
-            searchProject.cancel(true);
+        if(search_project != null){
+            search_project.cancel(true);
         }
-        searchProject = new SearchProject(searchTerm);
-        searchProject.execute();
+        search_project = new SearchProject(searchTerm);
+        search_project.execute();
     }
 
     public class SearchProject extends AsyncTask<Void, Void, Void>
@@ -121,7 +116,7 @@ public class TimesheetProjectFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(Project project : (searchTerm.equals("")?projectFactory.getActiveProjects():projectFactory.searchProject(searchTerm))){
+            for(Project project : (searchTerm.equals("")? project_factory.getActiveProjects(): project_factory.searchProject(searchTerm))){
                 project_list.add(createRowProject(project));
             }
             return null;
@@ -131,11 +126,11 @@ public class TimesheetProjectFragment extends Fragment {
         protected void onPostExecute(Void result) {
             recycler_project_list.setHasFixedSize(true);
 
-            recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-            recycler_project_list.setLayoutManager(recyclerViewLayoutManager);
+            recycler_view_layout_manager = new LinearLayoutManager(getActivity());
+            recycler_project_list.setLayoutManager(recycler_view_layout_manager);
 
-            recyclerViewAdapter = new ProjectListAdapter(project_list, getActivity());
-            recycler_project_list.setAdapter(recyclerViewAdapter);
+            recycler_view_adapter = new ProjectListAdapter(project_list, getActivity());
+            recycler_project_list.setAdapter(recycler_view_adapter);
 
             recycler_project_list.setVisibility(project_list.size()==0?View.GONE:View.VISIBLE);
             rl_search_loader.setVisibility(View.GONE);
