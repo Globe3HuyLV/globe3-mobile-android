@@ -45,7 +45,7 @@ import java.util.EnumSet;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
 public class LogTimeAutoFragment extends DialogFragment {
-    Context parentContext;
+    Context parent_context;
 
     Project project;
 
@@ -53,7 +53,7 @@ public class LogTimeAutoFragment extends DialogFragment {
     LogTimeProjectFragment log_time_project_fragment;
     LogTimeSummaryFragment log_time_summary_fragment;
 
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
     boolean scanner_found;
 
     String log_type = TagTableUsage.TIMELOG_IN;
@@ -75,7 +75,7 @@ public class LogTimeAutoFragment extends DialogFragment {
             new ScanTask(new Runnable() {
                 @Override
                 public void run() {
-                    mBiometricClient = new NBiometricClient();
+                    biometric_client = new NBiometricClient();
                     setPrompt(PROMPT_CONNECTING);
                 }
             }, new Runnable() {
@@ -108,9 +108,9 @@ public class LogTimeAutoFragment extends DialogFragment {
     private View.OnClickListener cancel = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(mBiometricClient!=null){
-                mBiometricClient.cancel();
-                mBiometricClient = null;
+            if(biometric_client !=null){
+                biometric_client.cancel();
+                biometric_client = null;
             }
             if(log_time_staff_fragment != null){
                 log_time_staff_fragment.resume();
@@ -122,7 +122,7 @@ public class LogTimeAutoFragment extends DialogFragment {
     private Runnable loaderAnimate = new Runnable() {
         @Override
         public void run() {
-            iv_loader.startAnimation(AnimationUtils.loadAnimation(parentContext, R.anim.rotate));
+            iv_loader.startAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.rotate));
         }
     };
 
@@ -149,8 +149,8 @@ public class LogTimeAutoFragment extends DialogFragment {
     final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
     final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop};
     final static int[] ACTION_TEXT = {R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_scan_again};
-    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
-    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
+    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
+    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey};
     final static boolean[] ACTION_CLICKABLE = {false, true, false, true, true, true, true};
     final static boolean[] CANCEL_CLICKABLE = {false, true, false, true, true, true, true};
     final View.OnClickListener[] ONCLICK_ACTION = {null, refresh, null, scan_again, refresh, refresh, scan_again};
@@ -159,7 +159,7 @@ public class LogTimeAutoFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
         View logTimeFragment = inflater.inflate(R.layout.fragment_log_time_auto, viewGroup, false);
-        parentContext = logTimeFragment.getContext();
+        parent_context = logTimeFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         ll_main_container = (LinearLayout) logTimeFragment.findViewById(R.id.ll_main_container);
@@ -257,12 +257,12 @@ public class LogTimeAutoFragment extends DialogFragment {
                                 }
                             }
                             if(single_staff){
-                                if(project==null && log_type.equals(TagTableUsage.TIMELOG_IN)){
+                                if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
                                     selectProject(new StaffFactory(getActivity()).getStaff(staff_unique));
                                 }else{
                                     showSummary(new StaffFactory(getActivity()).getStaff(staff_unique));
                                 }
-                                mBiometricClient = null;
+                                biometric_client = null;
                             }else{
                                 setPrompt(PROMPT_MULTIPLE_RESULT);
                             }
@@ -291,16 +291,16 @@ public class LogTimeAutoFragment extends DialogFragment {
     };
 
     private void capture() {
-        if(mBiometricClient==null){
-            mBiometricClient = new NBiometricClient();
+        if(biometric_client ==null){
+            biometric_client = new NBiometricClient();
         }
         NSubject subject = new NSubject();
         NFinger finger = new NFinger();
 
-        mBiometricClient.setUseDeviceManager(true);
-        NDeviceManager deviceManager = mBiometricClient.getDeviceManager();
+        biometric_client.setUseDeviceManager(true);
+        NDeviceManager deviceManager = biometric_client.getDeviceManager();
         deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
-        mBiometricClient.initialize();
+        biometric_client.initialize();
 
         NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
         scanner_found = devices.size() > 0;
@@ -311,8 +311,8 @@ public class LogTimeAutoFragment extends DialogFragment {
 
         subject.getFingers().add(finger);
 
-        mBiometricClient.setFingersTemplateSize(NTemplateSize.LARGE);
-        mBiometricClient.createTemplate(subject, subject, captureHandler);
+        biometric_client.setFingersTemplateSize(NTemplateSize.LARGE);
+        biometric_client.createTemplate(subject, subject, captureHandler);
     }
 
     private void setPrompt(final int status){
@@ -321,17 +321,17 @@ public class LogTimeAutoFragment extends DialogFragment {
                 @Override
                 public void run() {
                     tv_prompt.setText(getText(PROMPT_TEXT[status]));
-                    tv_prompt.setTextColor(ContextCompat.getColor(parentContext, PROMPT_TEXT_COLOR[status]));
+                    tv_prompt.setTextColor(ContextCompat.getColor(parent_context, PROMPT_TEXT_COLOR[status]));
                     iv_loader.setVisibility(LOADER_DISPLAY[status]);
-                    iv_loader.setColorFilter(ContextCompat.getColor(parentContext, LOADER_COLOR[status]));
+                    iv_loader.setColorFilter(ContextCompat.getColor(parent_context, LOADER_COLOR[status]));
                     iv_finger.setVisibility(FINGER_DISPLAY[status]);
-                    iv_finger.setColorFilter(ContextCompat.getColor(parentContext, FINGER_COLOR[status]));
+                    iv_finger.setColorFilter(ContextCompat.getColor(parent_context, FINGER_COLOR[status]));
                     LOADER_ANIMATION[status].run();
                     tv_action_button.setText(ACTION_TEXT[status]);
-                    tv_action_button.setTextColor(ContextCompat.getColor(parentContext, ACTION_TEXT_COLOR[status]));
+                    tv_action_button.setTextColor(ContextCompat.getColor(parent_context, ACTION_TEXT_COLOR[status]));
                     tv_action_button.setClickable(ACTION_CLICKABLE[status]);
                     tv_action_button.setOnClickListener(ONCLICK_ACTION[status]);
-                    tv_cancel.setTextColor(ContextCompat.getColor(parentContext, CANCEL_TEXT_COLOR[status]));
+                    tv_cancel.setTextColor(ContextCompat.getColor(parent_context, CANCEL_TEXT_COLOR[status]));
                     tv_cancel.setClickable(CANCEL_CLICKABLE[status]);
                     tv_cancel.setOnClickListener(ONCLICK_CANCEL[status]);
                 }
@@ -455,6 +455,6 @@ public class LogTimeAutoFragment extends DialogFragment {
         this.log_time_staff_fragment = logTimeStaffFragment;
     }
     public void setmBiometricClient(NBiometricClient mBiometricClient) {
-        this.mBiometricClient = mBiometricClient;
+        this.biometric_client = mBiometricClient;
     }
 }

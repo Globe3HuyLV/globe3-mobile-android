@@ -28,8 +28,11 @@ import com.globe3.tno.g3_mobile.async.StaffSingleUploadTask;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.globe3.tno.g3_mobile.util.FileUtility;
+import com.neurotec.biometrics.NBiometricOperation;
 import com.neurotec.biometrics.NBiometricStatus;
+import com.neurotec.biometrics.NBiometricTask;
 import com.neurotec.biometrics.NFinger;
+import com.neurotec.biometrics.NMatchingResult;
 import com.neurotec.biometrics.NSubject;
 import com.neurotec.biometrics.NTemplateSize;
 import com.neurotec.biometrics.client.NBiometricClient;
@@ -187,20 +190,21 @@ public class RegisterFingerFragment extends DialogFragment {
     final static int PROMPT_NOT_MATCH = 7;
     final static int PROMPT_EXTRACTING = 8;
     final static int PROMPT_VERIFYING = 9;
+    final static int PROMPT_FINGER_EXIST = 10;
 
-    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found, R.string.msg_extraction_failed, R.string.msg_an_error_has_occured, R.string.msg_fingers_not_match, R.string.msg_extracting_fingerprint, R.string.msg_verifying_fingerprint};
-    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight};
-    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE};
-    final static int[] LOADER_COLOR = {R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight};
-    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE};
-    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight};
-    final static int[] ACTION_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart, R.string.label_restart, R.string.label_refresh_scanner, R.string.label_refresh_scanner};
-    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight, R.color.colorMenuLight};
-    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorMenuLight, R.color.colorMenuLight};
-    final static boolean[] ACTION_CLICKABLE = {false, true, true, true, true, true, true, true, false, false};
-    final static boolean[] CANCEL_CLICKABLE = {false, true, true, true, true, true, true, true, false, false};
-    final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderAnimate, loaderAnimate};
-    final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, finish, refresh, refresh, restart, restart, refresh, refresh};
+    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found, R.string.msg_extraction_failed, R.string.msg_an_error_has_occured, R.string.msg_fingers_not_match, R.string.msg_extracting_fingerprint, R.string.msg_verifying_fingerprint, R.string.msg_finger_already_registered};
+    final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed};
+    final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE};
+    final static int[] LOADER_COLOR = {R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight};
+    final static int[] FINGER_DISPLAY = {View.GONE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, View.GONE, View.VISIBLE};
+    final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed};
+    final static int[] ACTION_TEXT = {R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_finish, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart, R.string.label_restart, R.string.label_refresh_scanner, R.string.label_refresh_scanner, R.string.label_restart};
+    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorAccentLight};
+    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorBlueGrey};
+    final static boolean[] ACTION_CLICKABLE = {false, true, true, true, true, true, true, true, false, false, true};
+    final static boolean[] CANCEL_CLICKABLE = {false, true, true, true, true, true, true, true, false, false, true};
+    final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderStop, loaderAnimate, loaderAnimate, loaderStop};
+    final View.OnClickListener[] ONCLICK_ACTION = {refresh, refresh, refresh, finish, refresh, refresh, restart, restart, refresh, refresh, restart};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -289,38 +293,13 @@ public class RegisterFingerFragment extends DialogFragment {
         }
     };
 
-    private void capture() {
-        biometric_client = new NBiometricClient();
-        NSubject subject = new NSubject();
-        NFinger finger = new NFinger();
+    private CompletionHandler<NBiometricTask, NBiometricOperation> identifyHandler = new CompletionHandler<NBiometricTask, NBiometricOperation>() {
 
-        biometric_client.setUseDeviceManager(true);
-        NDeviceManager deviceManager = biometric_client.getDeviceManager();
-        deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
-        biometric_client.initialize();
-
-        NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
-        scanner_found = devices.size() > 0;
-        if(!scanner_found) {
-            setPrompt(PROMPT_SCANNER_NOT_FOUND);
-            return;
-        }
-
-        subject.getFingers().add(finger);
-
-        biometric_client.setFingersTemplateSize(NTemplateSize.LARGE);
-        biometric_client.createTemplate(subject, subject, completionHandler);
-    }
-
-    private void verify() throws IOException {
-        NSubject fingerReference = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_ref));
-        NSubject fingerCandidate = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_can));
-
-        biometric_client.verify(fingerReference, fingerCandidate, null, new CompletionHandler<NBiometricStatus, Void>() {
-            @Override
-            public void completed(NBiometricStatus result, Void attachment) {
-                try {
-                    if (result == NBiometricStatus.OK) {
+        @Override
+        public void completed(final NBiometricTask result, NBiometricOperation attachment) {
+            switch (attachment) {
+                case IDENTIFY:
+                    if (result.getStatus() == NBiometricStatus.MATCH_NOT_FOUND) {
                         staff.setRegistered(true);
 
                         switch (finger_selected){
@@ -349,9 +328,96 @@ public class RegisterFingerFragment extends DialogFragment {
 
                         staff_factory.registerFingerprint(staff);
 
+                        BiometricUtility.deleteFinger(staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
                         BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
 
                         verifyStatus(NODE_SUCCESS);
+                    } else if (result.getStatus() == NBiometricStatus.OK) {
+                        setPrompt(PROMPT_FINGER_EXIST);
+                    }else {
+                        setPrompt(PROMPT_EXTRACT_FAILED);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void failed(Throwable th, NBiometricOperation attachment) {
+            th.printStackTrace();
+            setPrompt(PROMPT_EXTRACT_FAILED);
+        }
+
+    };
+
+    private void capture() {
+        biometric_client = new NBiometricClient();
+        NSubject subject = new NSubject();
+        NFinger finger = new NFinger();
+
+        biometric_client.setUseDeviceManager(true);
+        NDeviceManager deviceManager = biometric_client.getDeviceManager();
+        deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
+        biometric_client.initialize();
+
+        NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
+        scanner_found = devices.size() > 0;
+        if(!scanner_found) {
+            setPrompt(PROMPT_SCANNER_NOT_FOUND);
+            return;
+        }
+
+        subject.getFingers().add(finger);
+
+        biometric_client.setFingersTemplateSize(NTemplateSize.LARGE);
+        biometric_client.createTemplate(subject, subject, completionHandler);
+    }
+
+    private void verify() throws IOException {
+        final NSubject fingerReference = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_ref));
+        final NSubject fingerCandidate = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_can));
+
+        biometric_client.verify(fingerReference, fingerCandidate, null, new CompletionHandler<NBiometricStatus, Void>() {
+            @Override
+            public void completed(NBiometricStatus result, Void attachment) {
+                try {
+                    if (result == NBiometricStatus.OK) {
+                        NBiometricTask identifyTask = BIOMETRIC_DATA.createTask(EnumSet.of(NBiometricOperation.IDENTIFY), fingerReference);
+                        BIOMETRIC_DATA.performTask(identifyTask, NBiometricOperation.IDENTIFY, identifyHandler);
+
+                        /*staff.setRegistered(true);
+
+                        switch (finger_selected){
+                            case 1:
+                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
+                                break;
+                            case 2:
+                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
+                                break;
+                            case 3:
+                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
+                                break;
+                            case 4:
+                                staff.setFingerprint_image4(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
+                                break;
+                            case 5:
+                                staff.setFingerprint_image5(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
+                                break;
+                        }
+
+                        staff_factory.updateStaff(staff);
+
+                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
+
+                        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
+
+                        staff_factory.registerFingerprint(staff);
+
+                        BiometricUtility.deleteFinger(staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
+                        BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
+
+                        verifyStatus(NODE_SUCCESS);*/
                     } else {
                         verifyStatus(NODE_FAILED);
                         setPrompt(PROMPT_NOT_MATCH);

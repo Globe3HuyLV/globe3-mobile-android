@@ -144,8 +144,8 @@ public class LocationCheckAutoFragment extends DialogFragment {
     final static int[] FINGER_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed};
     final Runnable[] LOADER_ANIMATION = {loaderAnimate, loaderStop, loaderAnimate, loaderStop, loaderStop, loaderStop, loaderStop};
     final static int[] ACTION_TEXT = {R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_refresh_scanner, R.string.msg_scan_again, R.string.msg_scan_again};
-    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
-    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
+    final static int[] ACTION_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccent, R.color.colorMenuLight, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent, R.color.colorAccent};
+    final static int[] CANCEL_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorMenuLight, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey, R.color.colorBlueGrey};
     final static boolean[] ACTION_CLICKABLE = {false, true, false, true, true, true, true};
     final static boolean[] CANCEL_CLICKABLE = {false, true, false, true, true, true, true};
     final View.OnClickListener[] ONCLICK_ACTION = {null, refresh, null, scan_again, refresh, refresh, scan_again};
@@ -153,22 +153,22 @@ public class LocationCheckAutoFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        View logTimeFragment = inflater.inflate(R.layout.fragment_location_check_auto, viewGroup, false);
-        parent_context = logTimeFragment.getContext();
+        View locationCheckAutoFragment = inflater.inflate(R.layout.fragment_location_check_auto, viewGroup, false);
+        parent_context = locationCheckAutoFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        ll_main_container = (LinearLayout) logTimeFragment.findViewById(R.id.ll_main_container);
+        ll_main_container = (LinearLayout) locationCheckAutoFragment.findViewById(R.id.ll_main_container);
 
-        tv_prompt = (TextView) logTimeFragment.findViewById(R.id.tv_prompt);
-        iv_loader = (ImageView) logTimeFragment.findViewById(R.id.iv_loader);
-        iv_finger = (ImageView) logTimeFragment.findViewById(R.id.iv_finger);
-        tv_action_button = (TextView) logTimeFragment.findViewById(R.id.tv_action_button);
-        tv_cancel = (TextView) logTimeFragment.findViewById(R.id.tv_cancel);
+        tv_prompt = (TextView) locationCheckAutoFragment.findViewById(R.id.tv_prompt);
+        iv_loader = (ImageView) locationCheckAutoFragment.findViewById(R.id.iv_loader);
+        iv_finger = (ImageView) locationCheckAutoFragment.findViewById(R.id.iv_finger);
+        tv_action_button = (TextView) locationCheckAutoFragment.findViewById(R.id.tv_action_button);
+        tv_cancel = (TextView) locationCheckAutoFragment.findViewById(R.id.tv_cancel);
 
         tv_cancel.setOnClickListener(cancel);
 
         startExtract();
-        return logTimeFragment;
+        return locationCheckAutoFragment;
     }
 
     @Override

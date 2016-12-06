@@ -373,6 +373,7 @@ public class Globe3Db extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
+        database.rawQuery("PRAGMA journal_mode = OFF", null);
         database.execSQL(TABLE_BIOM_USERACCESS_CREATE);
         database.execSQL(TABLE_BIOM_ENTITY_CREATE);
         database.execSQL(TABLE_BIOM_PROJECT_CREATE);

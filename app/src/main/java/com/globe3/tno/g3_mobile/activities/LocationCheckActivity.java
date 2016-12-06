@@ -1,5 +1,6 @@
 package com.globe3.tno.g3_mobile.activities;
 
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +30,8 @@ import com.globe3.tno.g3_mobile.adapters.LocationCheckStaffListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.fragments.LocationCheckAutoFragment;
+import com.globe3.tno.g3_mobile.fragments.LocationCheckFragment;
+import com.globe3.tno.g3_mobile.fragments.LogTimeFragment;
 import com.globe3.tno.g3_mobile.view_objects.RowStaff;
 import com.neurotec.biometrics.client.NBiometricClient;
 
@@ -41,6 +44,7 @@ public class LocationCheckActivity extends BaseActivity {
 
     NBiometricClient biometric_client;
 
+    LocationCheckFragment locationCheckFragment;
     LocationCheckAutoFragment location_check_auto_fragment;
 
     ActionBar action_bar;
@@ -187,7 +191,12 @@ public class LocationCheckActivity extends BaseActivity {
         rowStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                biometric_client = new NBiometricClient();
+                locationCheckFragment = new LocationCheckFragment();
+                locationCheckFragment.setCancelable(false);
+                locationCheckFragment.setStaff(staff);
+                locationCheckFragment.setmBiometricClient(biometric_client);
+                locationCheckFragment.show(getFragmentManager(), getString(R.string.label_log_time));
             }
         });
 

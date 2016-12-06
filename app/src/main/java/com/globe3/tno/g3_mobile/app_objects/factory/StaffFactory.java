@@ -117,8 +117,6 @@ public class StaffFactory {
                 staff.photo1 = null;
             }
 
-            new Thread().sleep(200);
-
             BiometricUtility.deleteFinger(staff.uniquenum_pri + "_1");
             BiometricUtility.deleteFinger(staff.uniquenum_pri + "_2");
             BiometricUtility.deleteFinger(staff.uniquenum_pri + "_3");
@@ -131,8 +129,6 @@ public class StaffFactory {
             BiometricUtility.enrollFinger(staff.fingerprint_image4, staff.uniquenum_pri + "_4");
             BiometricUtility.enrollFinger(staff.fingerprint_image5, staff.uniquenum_pri + "_5");
         } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

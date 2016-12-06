@@ -41,6 +41,7 @@ public class LogTimeProjectFragment extends DialogFragment {
 
     LogTimeFragment log_time_fragment;
     LogTimeAutoFragment log_time_auto_fragment;
+    LocationCheckFragment location_check_fragment;
     LocationCheckAutoFragment location_check_auto_fragment;
     LogTimeSummaryFragment log_time_summary_fragment;
 
@@ -155,6 +156,10 @@ public class LogTimeProjectFragment extends DialogFragment {
                 if(location_check_auto_fragment !=null){
                     location_check_auto_fragment.startExtract();
                 }
+                if(location_check_fragment != null){
+                    location_check_fragment.startExtract();
+                }
+
                 dismiss();
             }
         });
@@ -192,6 +197,7 @@ public class LogTimeProjectFragment extends DialogFragment {
         log_time_summary_fragment.setLogTimeAutoFragment(log_time_auto_fragment);
         log_time_summary_fragment.setLogTimeFragment(log_time_fragment);
         log_time_summary_fragment.setLocationCheckAutoFragment(location_check_auto_fragment);
+        log_time_summary_fragment.setLocationCheckFragment(location_check_fragment);
 
         dismiss();
         log_time_summary_fragment.show(fragmentManager, getString(R.string.label_log_time_summary));
@@ -211,6 +217,9 @@ public class LogTimeProjectFragment extends DialogFragment {
     }
     public void setLocationCheckAutoFragment(LocationCheckAutoFragment locationCheckAutoFragment) {
         this.location_check_auto_fragment = locationCheckAutoFragment;
+    }
+    public void setLocationCheckFragment(LocationCheckFragment locationCheckFragment){
+        location_check_fragment = locationCheckFragment;
     }
 
     public void searchProject(String searchTerm) {

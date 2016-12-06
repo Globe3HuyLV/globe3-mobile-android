@@ -65,6 +65,10 @@ public class AuditlogRepo {
         db_helper.close();
     }
 
+    public void setJournalOff(){
+        database.rawQuery("PRAGMA journal_mode = OFF", null);
+    }
+
     public auditlog create_auditlog(auditlog auditlog) {
 
         ContentValues values = new ContentValues();

@@ -114,6 +114,14 @@ public class AuditFactory {
         return activity_list;
     }
 
+    public void journalOff(){
+        auditlog_repo.open();
+
+        auditlog_repo.setJournalOff();
+
+        auditlog_repo.close();
+    }
+
     public void deleteEverything(){
         auditlog_repo.open();
 

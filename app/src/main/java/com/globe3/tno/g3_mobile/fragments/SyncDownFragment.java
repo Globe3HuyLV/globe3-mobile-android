@@ -1,12 +1,12 @@
 package com.globe3.tno.g3_mobile.fragments;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +29,21 @@ import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
 public class SyncDownFragment extends DialogFragment {
     Context parent_context;
+
+    AuditFactory auditFactory;
+    UserFactory userFactory;
+    CompanyFactory companyFactory;
+    ProjectFactory projectFactory;
+    StaffFactory staffFactory;
 
     ImageView iv_icon_sync_down;
     TextView tv_sync_down_progress;
@@ -43,8 +54,17 @@ public class SyncDownFragment extends DialogFragment {
     int sync_total = 0;
     int sync_progress = 0;
 
+    ArrayList<WriteDB> write_db_list;
+    int write_db_que_num = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
+        auditFactory = new AuditFactory(getActivity());
+        userFactory = new UserFactory(getActivity());
+        companyFactory = new CompanyFactory(getActivity());
+        projectFactory = new ProjectFactory(getActivity());
+        staffFactory = new StaffFactory(getActivity());
+
         View syncDownFragment = inflater.inflate(R.layout.fragment_sync_down, viewGroup, false);
         parent_context = syncDownFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -63,7 +83,10 @@ public class SyncDownFragment extends DialogFragment {
             }
         });
 
-        new SyncDown(getActivity()).execute();
+        write_db_list = new ArrayList<>();
+
+        new SyncDown().execute();
+
         return syncDownFragment;
     }
 
@@ -77,24 +100,39 @@ public class SyncDownFragment extends DialogFragment {
         });
     }
 
-    public class SyncDown extends AsyncTask<Void, Void, Boolean> {
-        AuditFactory auditFactory;
-        UserFactory userFactory;
-        CompanyFactory companyFactory;
-        ProjectFactory projectFactory;
-        StaffFactory staffFactory;
+    private void showSyncStatus(final boolean syncSuccess){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(syncSuccess){
+                    tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorBlackLight));
+                    tv_sync_down_desc.setText(parent_context.getString(R.string.msg_sync_down_complete));
+                    tv_sync_down_desc.setVisibility(View.VISIBLE);
+                    tv_done.setText(parent_context.getString(R.string.label_done));
+                }else{
+                    tv_sync_down_progress.setText(parent_context.getString(R.string.msg_sync_failed));
+                    tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorFailed));
+                    tv_done.setText(parent_context.getString(R.string.label_cancel));
+                    tv_sync_down_desc.setVisibility(View.GONE);
+                }
+                iv_icon_sync_down.setAnimation(null);
+                ll_done.setVisibility(View.VISIBLE);
+                ((DashboardActivity)getActivity()).showLastSync();
+            }
+        });
+    }
 
-        public SyncDown(Activity activity){
-            auditFactory = new AuditFactory(activity);
-            userFactory = new UserFactory(activity);
-            companyFactory = new CompanyFactory(activity);
-            projectFactory = new ProjectFactory(activity);
-            staffFactory = new StaffFactory(activity);
-        }
+    private class SyncDown extends AsyncTask<Void, Void, Boolean> {
+        LogItem logItem;
+        JSONArray users;
+        JSONArray companies;
+        JSONArray projects;
+        JSONArray staffs;
+        JSONArray staffProjects;
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            LogItem logItem = auditFactory.Log(TagTableUsage.DATA_SYNC_DOWN);
+            logItem = auditFactory.Log(TagTableUsage.DATA_SYNC_DOWN);
             try {
                 JSONObject userResultJSON = HttpUtility.requestJSON("usersync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject companyResultJSON = HttpUtility.requestJSON("entitysync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
@@ -102,55 +140,20 @@ public class SyncDownFragment extends DialogFragment {
                 JSONObject staffResultJSON = HttpUtility.requestJSON("staffsync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject staffProjectResultJSON = HttpUtility.requestJSON("project_staff_assign_sync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
 
-                JSONArray users = userResultJSON.getJSONArray("items");
-                JSONArray companies = companyResultJSON.getJSONArray("items");
-                JSONArray projects = projectResultJSON.getJSONArray("items");
-                JSONArray staffs = staffResultJSON.getJSONArray("items");
-                JSONArray staffProjects = staffProjectResultJSON.getJSONArray("items");
-
+                users = userResultJSON.getJSONArray("items");
+                companies = companyResultJSON.getJSONArray("items");
+                projects = projectResultJSON.getJSONArray("items");
+                staffs = staffResultJSON.getJSONArray("items");
+                staffProjects = staffProjectResultJSON.getJSONArray("items");
                 if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
-                    sync_total = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
+
+                    auditFactory.journalOff();
 
                     userFactory.deleteAll();
                     companyFactory.deleteAll();
                     projectFactory.deleteAll();
                     staffFactory.deleteAll();
                     staffFactory.deleteStaffProject();
-
-                    for(int i=0;i<users.length();i++)
-                    {
-                        JSONObject userJson = users.getJSONObject(i);
-                        userFactory.createUser(userJson, logItem);
-                        updateProgress();
-                    }
-
-                    for(int i=0;i<companies.length();i++)
-                    {
-                        JSONObject companyJson = companies.getJSONObject(i);
-                        companyFactory.createCompany(companyJson, logItem);
-                        updateProgress();
-                    }
-
-                    for(int i=0;i<projects.length();i++)
-                    {
-                        JSONObject projectJson = projects.getJSONObject(i);
-                        projectFactory.createProject(projectJson, logItem);
-                        updateProgress();
-                    }
-
-                    for(int i=0;i<staffs.length();i++)
-                    {
-                        JSONObject staffJson = staffs.getJSONObject(i);
-                        staffFactory.downloadStaff(staffJson, logItem);
-                        updateProgress();
-                    }
-
-                    for(int i=0;i<staffProjects.length();i++)
-                    {
-                        JSONObject staffJson = staffProjects.getJSONObject(i);
-                        staffFactory.downloadStaffProject(staffJson, logItem);
-                        updateProgress();
-                    }
 
                     return true;
                 }else{
@@ -163,21 +166,115 @@ public class SyncDownFragment extends DialogFragment {
         }
 
         @Override
-        protected void onPostExecute(Boolean syncSuccess) {
-            if(syncSuccess){
-                tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorBlackLight));
-                tv_sync_down_desc.setText(parent_context.getString(R.string.msg_sync_down_complete));
-                tv_sync_down_desc.setVisibility(View.VISIBLE);
-                tv_done.setText(parent_context.getString(R.string.label_done));
+        protected void onPostExecute(Boolean downloadSuccess) {
+            if(downloadSuccess){
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sync_total = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
+
+                        try {
+                            for(int i=0;i<users.length();i++)
+                            {
+                                final JSONObject userJson = users.getJSONObject(i);
+                                write_db_list.add(new WriteDB(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        userFactory.createUser(userJson, logItem);
+                                    }
+                                }));
+                            }
+
+                            for(int i=0;i<companies.length();i++)
+                            {
+                                final JSONObject companyJson = companies.getJSONObject(i);
+                                write_db_list.add(new WriteDB(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        companyFactory.createCompany(companyJson, logItem);
+                                    }
+                                }));
+                            }
+
+                            for(int i=0;i<projects.length();i++)
+                            {
+                                final JSONObject projectJson = projects.getJSONObject(i);
+                                write_db_list.add(new WriteDB(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        projectFactory.createProject(projectJson, logItem);
+                                    }
+                                }));
+
+                            }
+
+                            for(int i=0;i<staffs.length();i++)
+                            {
+                                final JSONObject staffJson = staffs.getJSONObject(i);
+                                write_db_list.add(new WriteDB(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        staffFactory.downloadStaff(staffJson, logItem);
+                                    }
+                                }));
+                            }
+
+                            for(int i=0;i<staffProjects.length();i++)
+                            {
+                                final JSONObject staffJson = staffProjects.getJSONObject(i);
+                                write_db_list.add(new WriteDB(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        staffFactory.downloadStaffProject(staffJson, logItem);
+                                    }
+                                }));
+                            }
+
+                            write_db_list.get(0).execute();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            showSyncStatus(false);
+                        }
+                    }
+                });
             }else{
-                tv_sync_down_progress.setText(parent_context.getString(R.string.msg_sync_failed));
-                tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorFailed));
-                tv_done.setText(parent_context.getString(R.string.label_cancel));
-                tv_sync_down_desc.setVisibility(View.GONE);
+                showSyncStatus(false);
             }
-            iv_icon_sync_down.setAnimation(null);
-            ll_done.setVisibility(View.VISIBLE);
-            ((DashboardActivity)getActivity()).showLastSync();
+        }
+    }
+
+    private class WriteDB extends AsyncTask<Void, Void, Boolean> {
+        private Runnable task;
+
+        public WriteDB(Runnable task){
+            this.task = task;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                task.run();
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean writeSuccess) {
+            if(writeSuccess){
+                updateProgress();
+                write_db_que_num++;
+                if(write_db_que_num<write_db_list.size()){
+                    write_db_list.get(write_db_que_num).execute();
+                }else if(write_db_que_num==write_db_list.size()){
+                    showSyncStatus(true);
+                }
+            }else{
+                showSyncStatus(false);
+            }
+
         }
     }
 }

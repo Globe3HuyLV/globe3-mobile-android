@@ -25,6 +25,7 @@ public class LogTimeSummaryFragment extends DialogFragment {
 
     LogTimeFragment log_time_fragment;
     LogTimeAutoFragment log_time_auto_fragment;
+    LocationCheckFragment location_check_fragment;
     LocationCheckAutoFragment location_check_auto_fragment;
 
     ImageView iv_staff_photo;
@@ -104,6 +105,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
                 if(location_check_auto_fragment !=null){
                     location_check_auto_fragment.startExtract();
                 }
+                if(location_check_fragment !=null){
+                    location_check_fragment.startExtract();
+                }
                 dismiss();
             }
         });
@@ -120,6 +124,9 @@ public class LogTimeSummaryFragment extends DialogFragment {
                 }
                 if(location_check_auto_fragment !=null){
                     location_check_auto_fragment.dismiss();
+                }
+                if(location_check_fragment !=null){
+                    location_check_fragment.dismiss();
                 }
                 dismiss();
             }
@@ -138,5 +145,8 @@ public class LogTimeSummaryFragment extends DialogFragment {
     }
     public void setLocationCheckAutoFragment(LocationCheckAutoFragment locationCheckAutoFragment) {
         this.location_check_auto_fragment = locationCheckAutoFragment;
+    }
+    public void setLocationCheckFragment(LocationCheckFragment locationCheckFragment){
+        location_check_fragment = locationCheckFragment;
     }
 }
