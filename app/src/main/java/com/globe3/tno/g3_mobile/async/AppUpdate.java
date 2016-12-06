@@ -13,8 +13,10 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.BuildConfig;
+import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.R;
@@ -25,6 +27,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_WEBSERVICE_ADDR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_WEBSERVICE_PATH;
 
@@ -69,6 +72,9 @@ public class AppUpdate extends AsyncTask<Void, Void, Boolean>
 
                 Date appCurVersion = DateUtility.getStringDate(buildDate, "yyyy-MM-dd HH:mm:ss");
                 Date appLatestVersion = DateUtility.getStringDate(latest_version, "yyyy-MM-dd HH:mm:ss");
+
+                Log.i(APP_NAME, "buildDate"+buildDate);
+                Log.i(APP_NAME, "latest_version"+latest_version);
 
                 if(appCurVersion.getTime() < appLatestVersion.getTime()){
                     final Runnable doUpdate = new Runnable() {
