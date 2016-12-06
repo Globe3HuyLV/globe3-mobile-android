@@ -117,7 +117,7 @@ public class StaffFactory {
                 staff.photo1 = null;
             }
 
-            new Thread().sleep(100);
+            new Thread().sleep(200);
 
             BiometricUtility.deleteFinger(staff.uniquenum_pri + "_1");
             BiometricUtility.deleteFinger(staff.uniquenum_pri + "_2");

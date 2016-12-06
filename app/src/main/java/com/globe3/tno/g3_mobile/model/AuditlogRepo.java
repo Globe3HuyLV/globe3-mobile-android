@@ -166,7 +166,7 @@ public class AuditlogRepo {
     public ArrayList<auditlog> get_staff_recent_activity(){
         ArrayList<auditlog> auditlogs = new ArrayList<>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "tag_table_usage=?", new String[]{TagTableUsage.TIMELOG_IN, TagTableUsage.TIMELOG_OUT, TagTableUsage.LOCATION_CHECK, TagTableUsage.FINGERPRINT_REGISTER}, null, null, "idcode DESC", "5");
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "uniquenum_sec!='' AND tag_table_usage in ('"+TagTableUsage.TIMELOG_IN+"','"+TagTableUsage.TIMELOG_OUT+"','"+TagTableUsage.LOCATION_CHECK+"','"+TagTableUsage.FINGERPRINT_REGISTER+"')", null, null, null, "date_post DESC", "15");
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -174,13 +174,10 @@ public class AuditlogRepo {
                 auditlogs.add(cursorToObject(cursor));
                 cursor.moveToNext();
             }
-
-            cursor.close();
-
-            return auditlogs;
-        }else{
-            return null;
         }
+
+        cursor.close();
+        return auditlogs;
     }
 
     public auditlog get_auditlog_latest_sync(String pUsage){

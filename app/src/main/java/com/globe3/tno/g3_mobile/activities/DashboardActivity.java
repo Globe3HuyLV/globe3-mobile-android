@@ -15,15 +15,20 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,10 +38,15 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.globe3.tno.g3_mobile.BuildConfig;
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.adapters.LocationCheckStaffListAdapter;
+import com.globe3.tno.g3_mobile.adapters.RecentActivityListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Company;
 import com.globe3.tno.g3_mobile.app_objects.GPSLocation;
+import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.globe3.tno.g3_mobile.app_objects.StaffAction;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.fragments.CompanySelectFragment;
@@ -45,12 +55,15 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.GPSUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.util.PermissionUtility;
+import com.globe3.tno.g3_mobile.view_objects.RecentActivity;
 import com.neurotec.biometrics.NMatchingSpeed;
 import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
@@ -60,9 +73,9 @@ import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
-import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 import static com.globe3.tno.g3_mobile.globals.Globals.GPS_UTILITY;
+import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     DashboardActivity dashboard_activity;
@@ -70,6 +83,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     AuditFactory audit_factory;
     UserFactory user_factory;
     CompanyFactory company_factory;
+    StaffFactory staffFactory;
 
     ActionBar action_bar;
     ActionBarDrawerToggle toggle;
@@ -89,6 +103,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     TextView tv_gps;
     TextView tv_pending_sync;
 
+    LinearLayout ll_recent_activity_list;
+    RecyclerView recycler_recent_activity;
+    RecyclerView.Adapter recyclerViewAdapter;
+    RecyclerView.LayoutManager recyclerViewLayoutManager;
+    LinearLayout ll_no_activity;
+
     RelativeLayout rl_blocker;
 
     FloatingActionButton fab_timesheet;
@@ -100,6 +120,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     NavigationView navigation_drawer_logout;
 
     ArrayList<Company> company_list;
+    ArrayList<RecentActivity> recent_activity_list;
+
+    int[] STAFF_ACTION_ICON = {R.drawable.ic_fingerprint_black_36dp, R.drawable.ic_access_time_black_36dp, R.drawable.ic_access_time_black_36dp, R.drawable.ic_room_black_36dp};
+    int[] STAFF_ACTION_ICON_COLOR = {R.color.colorIndigo, R.color.colorGreen, R.color.colorOrange, R.color.colorTeal};
+    int[] STAFF_ACTION_TEXT = {R.string.label_registration, R.string.label_time_in, R.string.label_time_out, R.string.label_location_check};
 
     LocationManager location_manager;
 
@@ -144,10 +169,20 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(recent_activity_list!=null){
+            fetchRecentActivity();
+            showRecentActivity();
+        }
+    }
+
     public void onActivityLoading(){
         audit_factory = new AuditFactory(dashboard_activity);
         user_factory = new UserFactory(dashboard_activity);
         company_factory = new CompanyFactory(dashboard_activity);
+        staffFactory = new StaffFactory(dashboard_activity);
 
         dashboard_toolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
         dashboard_drawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
@@ -162,6 +197,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         tv_gps = (TextView) findViewById(R.id.tv_gps);
         tv_pending_sync = (TextView) findViewById(R.id.tv_pending_sync);
 
+        ll_recent_activity_list = (LinearLayout) findViewById(R.id.ll_recent_activity_list);
+        recyclerViewLayoutManager = new LinearLayoutManager(dashboard_activity);
+        recycler_recent_activity = (RecyclerView) findViewById(R.id.recycler_recent_activity);
+        ll_no_activity = (LinearLayout) findViewById(R.id.ll_no_activity);
+
         rl_blocker = (RelativeLayout) findViewById(R.id.rl_blocker);
 
         fab_timesheet = (FloatingActionButton) findViewById(R.id.fab_timesheet);
@@ -175,6 +215,15 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         DEVICE_ID = Settings.Secure.getString(dashboard_activity.getContentResolver(), Settings.Secure.ANDROID_ID);
         DEVICE_MODEL = android.os.Build.MODEL;
         DEVICE_NAME = BluetoothAdapter.getDefaultAdapter().getName();
+
+        recent_activity_list = new ArrayList<>();
+        fetchRecentActivity();
+
+        if(user_factory.getActiveUsers().size() > 0){
+            company_list = USERLOGINID.equals("m8") ? company_factory.getActiveCompanys() : company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
+        }else{
+            company_list = new ArrayList<>();
+        }
 
         location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -261,8 +310,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             }
         });
 
-        loadCompanies();
+        showCompany();
         showLastSync();
+        showRecentActivity();
 
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
@@ -282,7 +332,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         handler.postDelayed(runnable, 3000);
     }
 
-    public void loadCompanies(){
+    private void showCompany(){
         if(getSupportActionBar() != null){
             ActionBar mActionBar = getSupportActionBar();
             mActionBar.setDisplayShowHomeEnabled(false);
@@ -295,12 +345,45 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
             mActionBar.setCustomView(mCustomView, new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
             mActionBar.setDisplayShowCustomEnabled(true);
+        }
+    }
 
-            if(user_factory.getActiveUsers().size() > 0){
-                company_list = USERLOGINID.equals("m8") ? company_factory.getActiveCompanys() : company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
-            }else{
-                company_list = new ArrayList<Company>();
-            }
+    private void fetchRecentActivity(){
+        recent_activity_list.clear();
+
+        for(StaffAction staffAction : audit_factory.getRecentActivity()){
+            int action_index = getStaffActionIndex(staffAction.getActionType());
+
+            staffAction.setStaff(staffFactory.getStaff(staffAction.getStaff().getUniquenumPri()));
+
+            RecentActivity recentActivity = new RecentActivity();
+            recentActivity.setIcon(STAFF_ACTION_ICON[action_index]);
+            recentActivity.setIconColor(STAFF_ACTION_ICON_COLOR[action_index]);
+            recentActivity.setType(getString(STAFF_ACTION_TEXT[action_index]));
+            recentActivity.setTime((DateUtility.getDateString(new Date(), "yyyy-MM-dd").equals(DateUtility.getDateString(staffAction.getActionDate(), "yyyy-MM-dd"))? getString(R.string.label_today) :  DateUtility.getDateString(staffAction.getActionDate(), "dd MMM yyyy")) + " " + DateUtility.getDateString(staffAction.getActionDate(), "HH:mm"));
+            recentActivity.setStaffNum(staffAction.getStaff().getStaff_num());
+            recentActivity.setStaffName(staffAction.getStaff().getStaff_desc());
+
+            recent_activity_list.add(recentActivity);
+        }
+    }
+
+    private void showRecentActivity(){
+        if(recent_activity_list.size() > 0){
+            recycler_recent_activity.setHasFixedSize(true);
+
+            recycler_recent_activity.setLayoutManager(recyclerViewLayoutManager);
+
+            recyclerViewAdapter = new RecentActivityListAdapter(recent_activity_list, dashboard_activity);
+            recycler_recent_activity.setAdapter(recyclerViewAdapter);
+
+            recycler_recent_activity.setVisibility(View.VISIBLE);
+
+            recycler_recent_activity.setVisibility(View.VISIBLE);
+            ll_no_activity.setVisibility(View.GONE);
+        }else{
+            recycler_recent_activity.setVisibility(View.GONE);
+            ll_no_activity.setVisibility(View.VISIBLE);
         }
     }
 
@@ -356,12 +439,32 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         menu_apps.close(true);
     }
 
-    public void showAppVersion(){
+    private void showAppVersion(){
         logo_touch_counter++;
         if(logo_touch_counter==3){
             Toast.makeText(dashboard_activity, dashboard_activity.getString(R.string.msg_version_date_1s, DateUtility.getDateString(new Date(BuildConfig.TIMESTAMP), "yyyy-MM-dd HH:mm:ss")), Toast.LENGTH_SHORT).show();
             logo_touch_counter = 0;
         }
+    }
+    private int getStaffActionIndex(String tagTableUsage){
+        int action_index = 0;
+
+        switch (tagTableUsage){
+            case TagTableUsage.FINGERPRINT_REGISTER:
+                action_index = 0;
+                break;
+            case TagTableUsage.TIMELOG_IN:
+                action_index = 1;
+                break;
+            case TagTableUsage.TIMELOG_OUT:
+                action_index =  2;
+                break;
+            case TagTableUsage.LOCATION_CHECK:
+                action_index = 3;
+                break;
+        }
+
+        return action_index;
     }
 
     public void goToTimesheet(View view){

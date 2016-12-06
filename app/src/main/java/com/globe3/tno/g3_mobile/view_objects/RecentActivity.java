@@ -2,10 +2,11 @@ package com.globe3.tno.g3_mobile.view_objects;
 
 public class RecentActivity {
     private int icon;
+    private int iconColor;
     private String type;
     private String staffNum;
     private String staffName;
-    private String minutes;
+    private String time;
 
     public int getIcon() {
         return icon;
@@ -15,6 +16,14 @@ public class RecentActivity {
         this.icon = icon;
     }
 
+    public int getIconColor() {
+        return iconColor;
+    }
+
+    public void setIconColor(int iconColor) {
+        this.iconColor = iconColor;
+    }
+    
     public String getType() {
         return type;
     }
@@ -39,11 +48,11 @@ public class RecentActivity {
         this.staffName = staffName;
     }
 
-    public String getMinutes() {
-        return minutes;
+    public String getTime() {
+        return time;
     }
 
-    public void setMinutes(String minutes) {
-        this.minutes = minutes;
+    public void setTime(String time) {
+        this.time = time;
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.globe3.tno.g3_mobile.app_objects.StaffAction;
 import com.globe3.tno.g3_mobile.model.entities.auditlog;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
@@ -20,11 +21,9 @@ import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 
 public class AuditFactory {
     AuditlogRepo auditlog_repo;
-    StaffFactory staff_factory;
 
     public AuditFactory(Context context) {
         auditlog_repo = new AuditlogRepo(context);
-        staff_factory = new StaffFactory(context);
     }
 
     public LogItem Log(String tableUsage){
@@ -94,17 +93,20 @@ public class AuditFactory {
         }
     }
 
-    public ArrayList<RecentActivity> getRecentActivity(){
-        ArrayList<RecentActivity> activity_list = new ArrayList<>();
+    public ArrayList<StaffAction> getRecentActivity(){
+        ArrayList<StaffAction> activity_list = new ArrayList<>();
 
         auditlog_repo.open();
 
         for(auditlog auditlog : auditlog_repo.get_staff_recent_activity()){
-            RecentActivity recentActivity = new RecentActivity();
-            Staff staff = staff_factory.getStaff(auditlog.uniquenum_sec);
+            StaffAction staffAction = new StaffAction();
 
-            recentActivity.setIcon(R.drawable.ic_access_time_black_36dp);
+            staffAction.setStaff(new Staff());
+            staffAction.getStaff().setUniquenumPri(auditlog.uniquenum_sec);
+            staffAction.setActionDate(auditlog.date_post);
+            staffAction.setActionType(auditlog.tag_table_usage);
 
+            activity_list.add(staffAction);
         }
 
         auditlog_repo.close();

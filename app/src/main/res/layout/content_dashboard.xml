@@ -248,12 +248,18 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_recent_activity"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"/>
                     <LinearLayout
-                        android:id="@+id/tv_no_activity"
+                        android:id="@+id/ll_no_activity"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:visibility="gone">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

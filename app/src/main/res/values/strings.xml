@@ -72,6 +72,7 @@
     <string name="label_no_photo">No photo</string>
     <string name="label_no_activity">No Activity</string>
     <string name="label_start_registration">Start registration</string>
+    <string name="label_today">Today</string>
 
     <string name="msg_data_is_latest">Data is latest</string>
     <string name="msg_connected">Connected</string>
