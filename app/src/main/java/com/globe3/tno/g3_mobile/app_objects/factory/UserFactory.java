@@ -27,13 +27,21 @@ import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 
 public class UserFactory {
     UseraccessRepo useraccess_repo;
-    EntityRepo entity_repo;
     TabledataRepo tabledata_repo;
 
     public UserFactory(Context context) {
         useraccess_repo = new UseraccessRepo(context);
-        entity_repo = new EntityRepo(context);
         tabledata_repo = new TabledataRepo(context);
+    }
+
+    public void openRepo(){
+        useraccess_repo.open();
+        tabledata_repo = new TabledataRepo(useraccess_repo);
+    }
+
+    public void closeRepo(){
+        useraccess_repo.close();
+        tabledata_repo.close();
     }
 
     public void createUser(User user) {
@@ -88,6 +96,49 @@ public class UserFactory {
         tabledata_repo.open();
         tabledata_repo.create_tabledata(tabledata);
         tabledata_repo.close();
+    }
+
+    public void downloadUser(JSONObject userJson, LogItem logItem) {
+
+        useraccess useraccess = new useraccess();
+        tabledata tabledata = new tabledata();
+
+        try {
+            useraccess.tag_table_usage = userJson.getString("tag_table_usage");
+            useraccess.uniquenum_pri = userJson.getString("uniquenum_pri");
+            useraccess.uniquenum_sec = userJson.getString("uniquenum_sec");
+            useraccess.active_yn = userJson.getString("tag_deleted_yn").equals("y") ? "n" : "y";
+            useraccess.date_post = DateUtility.getStringDate(userJson.getString("date_post"));
+            useraccess.date_submit = DateUtility.getStringDate(userJson.getString("date_submit"));
+            useraccess.date_lastupdate = DateUtility.getStringDate(userJson.getString("date_lastupdate"));
+            useraccess.sync_unique = logItem.getLogUnique();
+            useraccess.date_sync = logItem.getLogDate();
+            useraccess.cfsqlfilename = userJson.getString("cfsqlfilename");
+            useraccess.masterfn = userJson.getString("masterfn");
+            useraccess.companyfn = userJson.getString("companyfn");
+            useraccess.companyid = userJson.getString("companyloginid");
+            useraccess.userid = userJson.getString("userloginid");
+            useraccess.password = userJson.getString("password");
+            useraccess.date_valid_to = DateUtility.getStringDate(userJson.getString("date_valid_to"));
+            useraccess.date_valid_from = DateUtility.getStringDate(userJson.getString("date_valid_from"));
+            useraccess.staff_code = userJson.getString("staff_code");
+            useraccess.staff_desc = userJson.getString("staff_desc");
+            useraccess.staff_unique = userJson.getString("staff_unique");
+            useraccess.user_specialnum = userJson.getString("mac");
+
+            tabledata.tag_table_usage = "co_list";
+            tabledata.uniquenum_pri = Uniquenum.Generate();
+            tabledata.uniquenum_sec = userJson.getString("uniquenum_pri");
+            tabledata.companyfn = userJson.getString("companyfn");
+            tabledata.masterfn = userJson.getString("masterfn");
+            tabledata.sync_unique = logItem.getLogUnique();
+            tabledata.nvar100_01 = userJson.getString("company_list");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        useraccess_repo.create_useraccess(useraccess);
+        tabledata_repo.create_tabledata(tabledata);
     }
 
     public void deleteUser(User user) {

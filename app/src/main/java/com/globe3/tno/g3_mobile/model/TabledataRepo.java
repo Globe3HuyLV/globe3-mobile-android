@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 import com.globe3.tno.g3_mobile.model.entities.tabledata;
@@ -13,10 +14,10 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 
 import java.util.ArrayList;
 
-public class TabledataRepo {
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
-    private SQLiteDatabase database;
-    private Globe3Db db_helper;
+public class TabledataRepo extends BaseRepo{
+
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -47,20 +48,12 @@ public class TabledataRepo {
             Globe3Db.COLUMN_NUM02
     };
 
-
-
     public TabledataRepo(Context context) {
-        db_helper = new Globe3Db(context);
+        super(context);
     }
 
-
-    public void open() throws SQLException {
-        database = db_helper.getWritableDatabase();
-    }
-
-
-    public void close() {
-        db_helper.close();
+    public TabledataRepo(BaseRepo baseRepo){
+        super(baseRepo.database, baseRepo.db_helper);
     }
 
     public tabledata create_tabledata(tabledata tabledata) {

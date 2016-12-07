@@ -14,10 +14,8 @@ import com.globe3.tno.g3_mobile.model.entities.useraccess;
 
 import java.util.ArrayList;
 
-public class UseraccessRepo {
+public class UseraccessRepo extends BaseRepo{
 
-    private SQLiteDatabase database;
-    private Globe3Db db_helper;
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -44,17 +42,7 @@ public class UseraccessRepo {
     };
 
     public UseraccessRepo(Context context) {
-        db_helper = new Globe3Db(context);
-    }
-
-
-    public void open() throws SQLException {
-        database = db_helper.getWritableDatabase();
-    }
-
-
-    public void close() {
-        db_helper.close();
+        super(context);
     }
 
 

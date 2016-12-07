@@ -31,6 +31,15 @@ public class ProjectFactory {
         tabledata_repo = new TabledataRepo(context);
     }
 
+    public void openRepo(){
+        project_repo.open();
+        tabledata_repo = new TabledataRepo(project_repo);
+    }
+
+    public void closeRepo(){
+        project_repo.close();
+    }
+
     public void createProject(Project project) {
         project_repo.open();
         project_repo.create_project(convertToEntity(project));
@@ -63,6 +72,32 @@ public class ProjectFactory {
         project_repo.open();
         project_repo.create_project(entproject);
         project_repo.close();
+    }
+
+    public void downloadProject(JSONObject projectJson, LogItem logItem) {
+
+        entproject entproject = new entproject();
+        try {
+            entproject.masterfn = projectJson.getString("masterfn");
+            entproject.companyfn = projectJson.getString("companyfn");
+            entproject.uniquenum_pri = projectJson.getString("uniquenum");
+            entproject.tag_table_usage = projectJson.getString("tag_table_usage");
+            entproject.uniquenum_sec = projectJson.getString("uniquenum_sec");
+            entproject.active_yn = projectJson.getString("tag_active_yn");
+            entproject.date_post = DateUtility.getStringDate(projectJson.getString("date_post"));
+            entproject.date_submit = DateUtility.getStringDate(projectJson.getString("date_submit"));
+            entproject.date_lastupdate = DateUtility.getStringDate(projectJson.getString("date_lastupdate"));
+            entproject.sync_unique = logItem.getLogUnique();
+            entproject.date_sync = logItem.getLogDate();
+            entproject.project_code = projectJson.getString("projcode_code");
+            entproject.project_name = projectJson.getString("desc_english");
+            entproject.project_unique = projectJson.getString("projcode_unique");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        project_repo.create_project(entproject);
     }
 
     public void deleteProject(Project project) {

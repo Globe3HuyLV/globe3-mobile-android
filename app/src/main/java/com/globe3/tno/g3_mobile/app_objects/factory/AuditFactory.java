@@ -2,9 +2,9 @@ package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.content.Context;
 
-import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.StaffAction;
+import com.globe3.tno.g3_mobile.model.BaseRepo;
 import com.globe3.tno.g3_mobile.model.entities.auditlog;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
@@ -12,18 +12,17 @@ import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.globe3.tno.g3_mobile.model.AuditlogRepo;
-import com.globe3.tno.g3_mobile.view_objects.RecentActivity;
+import com.globe3.tno.g3_mobile.model.AuditLogRepo;
 
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 
 public class AuditFactory {
-    AuditlogRepo auditlog_repo;
+    AuditLogRepo auditlog_repo;
 
     public AuditFactory(Context context) {
-        auditlog_repo = new AuditlogRepo(context);
+        auditlog_repo = new AuditLogRepo(context);
     }
 
     public LogItem Log(String tableUsage){
@@ -112,14 +111,6 @@ public class AuditFactory {
         auditlog_repo.close();
 
         return activity_list;
-    }
-
-    public void journalOff(){
-        auditlog_repo.open();
-
-        auditlog_repo.setJournalOff();
-
-        auditlog_repo.close();
     }
 
     public void deleteEverything(){

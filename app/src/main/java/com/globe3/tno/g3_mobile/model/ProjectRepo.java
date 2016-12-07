@@ -14,10 +14,7 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 
 import java.util.ArrayList;
 
-public class ProjectRepo {
-
-    private SQLiteDatabase database;
-    private Globe3Db db_helper;
+public class ProjectRepo extends BaseRepo{
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -39,19 +36,8 @@ public class ProjectRepo {
 
 
     public ProjectRepo(Context context) {
-        db_helper = new Globe3Db(context);
+        super(context);
     }
-
-
-    public void open() throws SQLException {
-        database = db_helper.getWritableDatabase();
-    }
-
-
-    public void close() {
-        db_helper.close();
-    }
-
 
     public entproject create_project(entproject entproject) {
         ContentValues values = new ContentValues();

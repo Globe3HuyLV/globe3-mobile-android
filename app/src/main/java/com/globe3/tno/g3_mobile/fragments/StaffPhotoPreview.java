@@ -48,6 +48,9 @@ public class StaffPhotoPreview extends DialogFragment {
         @Override
         public void onClick(View v) {
             staff_factory.updateStaff(staff);
+
+            audit_factory.Log(TagTableUsage.PHOTO_REGISTER, staff.getUniquenumPri());
+
             new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
             ((PhotosActivity) getActivity()).finishStaffTakePhoto();
             dismiss();

@@ -122,9 +122,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     ArrayList<Company> company_list;
     ArrayList<RecentActivity> recent_activity_list;
 
-    int[] STAFF_ACTION_ICON = {R.drawable.ic_fingerprint_black_36dp, R.drawable.ic_access_time_black_36dp, R.drawable.ic_access_time_black_36dp, R.drawable.ic_room_black_36dp};
-    int[] STAFF_ACTION_ICON_COLOR = {R.color.colorIndigo, R.color.colorGreen, R.color.colorOrange, R.color.colorTeal};
-    int[] STAFF_ACTION_TEXT = {R.string.label_registration, R.string.label_time_in, R.string.label_time_out, R.string.label_location_check};
+    int[] STAFF_ACTION_ICON = {R.drawable.ic_fingerprint_black_36dp, R.drawable.ic_access_time_black_36dp, R.drawable.ic_access_time_black_36dp, R.drawable.ic_room_black_36dp, R.drawable.ic_account_box_black_36dp};
+    int[] STAFF_ACTION_ICON_COLOR = {R.color.colorIndigo, R.color.colorGreen, R.color.colorOrange, R.color.colorTeal, R.color.colorLimeGreen};
+    int[] STAFF_ACTION_TEXT = {R.string.label_registration, R.string.label_time_in, R.string.label_time_out, R.string.label_location_check, R.string.label_photo};
 
     LocationManager location_manager;
 
@@ -461,6 +461,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 break;
             case TagTableUsage.LOCATION_CHECK:
                 action_index = 3;
+                break;
+            case TagTableUsage.PHOTO_REGISTER:
+                action_index = 4;
                 break;
         }
 

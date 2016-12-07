@@ -27,6 +27,8 @@
     <color name="colorIndigoLight">#303F9F</color>
     <color name="colorGreen">#66BB6A</color>
     <color name="colorGreenLight">#A5D6A7</color>
+    <color name="colorLimeGreen">#9CCC65</color>
+    <color name="colorLimeGreenLight">#C5E1A5</color>
     <color name="colorTeal">#00796B</color>
     <color name="colorTealLight">#009688</color>
     <color name="colorOrange">#FFA726</color>

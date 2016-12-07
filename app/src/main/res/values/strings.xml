@@ -32,6 +32,7 @@
     <string name="label_register_finger">Register Finger</string>
     <string name="label_select_finger">Select Finger</string>
     <string name="label_registration">Registration</string>
+    <string name="label_photo">Photo</string>
     <string name="label_log_time">Log Time</string>
     <string name="label_log_time_auto">Log Time Auto</string>
     <string name="label_log_time_project">Log Time Project</string>
@@ -92,6 +93,7 @@
     <string name="msg_extracting_fingerprint">Extracting Fingerprint</string>
     <string name="msg_verifying_fingerprint">Verifying Fingerprint</string>
     <string name="msg_finger_already_registered">Finger already registered</string>
+    <string name="msg_finger_registered_by_another_staff">Finger registered by another staff</string>
     <string name="msg_connecting_to_scanner">Connecting to scanner</string>
     <string name="msg_scanner_not_found">Scanner not found</string>
     <string name="msg_no_match_found">No match found</string>

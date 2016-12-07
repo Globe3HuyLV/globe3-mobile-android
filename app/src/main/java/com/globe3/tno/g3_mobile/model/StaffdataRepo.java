@@ -17,10 +17,8 @@ import java.util.Date;
 import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 
-public class StaffdataRepo {
+public class StaffdataRepo extends BaseRepo{
 
-    private SQLiteDatabase database;
-    private Globe3Db db_helper;
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -73,15 +71,7 @@ public class StaffdataRepo {
     };
 
     public StaffdataRepo(Context context) {
-        db_helper = new Globe3Db(context);
-    }
-
-    public void open() throws SQLException {
-        database = db_helper.getWritableDatabase();
-    }
-
-    public void close() {
-        db_helper.close();
+        super(context);
     }
 
     public staffdata create_staffdata(staffdata staffdata) {

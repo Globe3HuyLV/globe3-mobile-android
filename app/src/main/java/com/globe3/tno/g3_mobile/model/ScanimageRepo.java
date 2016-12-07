@@ -14,10 +14,7 @@ import java.util.ArrayList;
 
 import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
-public class ScanimageRepo {
-
-    private SQLiteDatabase database;
-    private Globe3Db db_helper;
+public class ScanimageRepo extends BaseRepo{
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -57,15 +54,11 @@ public class ScanimageRepo {
     };
 
     public ScanimageRepo(Context context) {
-        db_helper = new Globe3Db(context);
+        super(context);
     }
 
-    public void open() throws SQLException {
-        database = db_helper.getWritableDatabase();
-    }
-
-    public void close() {
-        db_helper.close();
+    public ScanimageRepo(BaseRepo baseRepo){
+        super(baseRepo.database, baseRepo.db_helper);
     }
 
     public scanimage create_scanimage(scanimage scanimage) {

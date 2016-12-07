@@ -21,10 +21,8 @@ import static com.globe3.tno.g3_mobile.globals.Globals.PHONE_NUMBER;
 import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
 
-public class AuditlogRepo {
+public class AuditLogRepo extends BaseRepo{
 
-    private SQLiteDatabase database;
-    private Globe3Db db_helper;
     private String[] allColumns = { Globe3Db.COLUMN_IDCODE,
             Globe3Db.COLUMN_TAG_TABLE_USAGE,
             Globe3Db.COLUMN_SYNC_UNIQUE,
@@ -53,20 +51,8 @@ public class AuditlogRepo {
             Globe3Db.COLUMN_NUM02
     };
 
-    public AuditlogRepo(Context context) {
-        db_helper = new Globe3Db(context);
-    }
-
-    public void open() throws SQLException {
-        database = db_helper.getWritableDatabase();
-    }
-
-    public void close() {
-        db_helper.close();
-    }
-
-    public void setJournalOff(){
-        database.rawQuery("PRAGMA journal_mode = OFF", null);
+    public AuditLogRepo(Context context) {
+        super(context);
     }
 
     public auditlog create_auditlog(auditlog auditlog) {
@@ -170,7 +156,7 @@ public class AuditlogRepo {
     public ArrayList<auditlog> get_staff_recent_activity(){
         ArrayList<auditlog> auditlogs = new ArrayList<>();
 
-        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "uniquenum_sec!='' AND tag_table_usage in ('"+TagTableUsage.TIMELOG_IN+"','"+TagTableUsage.TIMELOG_OUT+"','"+TagTableUsage.LOCATION_CHECK+"','"+TagTableUsage.FINGERPRINT_REGISTER+"')", null, null, null, "date_post DESC", "15");
+        Cursor cursor = database.query(Globe3Db.TABLE_AUDITLOG, allColumns, "uniquenum_sec!='' AND tag_table_usage in ('"+TagTableUsage.TIMELOG_IN+"','"+TagTableUsage.TIMELOG_OUT+"','"+TagTableUsage.LOCATION_CHECK+"','"+TagTableUsage.FINGERPRINT_REGISTER+"', '"+TagTableUsage.PHOTO_REGISTER+"')", null, null, null, "date_post DESC", "15");
 
         if(cursor.getCount() > 0){
             cursor.moveToFirst();

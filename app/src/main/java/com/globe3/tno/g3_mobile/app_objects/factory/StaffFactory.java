@@ -48,7 +48,6 @@ import static com.globe3.tno.g3_mobile.globals.Globals.GPS_LOCATION;
 
 public class StaffFactory {
     private Context context;
-    ProjectFactory project_factory;
     ScanimageRepo scanimage_repo;
     DailytimeRepo dailytime_repo;
     StaffdataRepo staffdata_repo;
@@ -60,7 +59,17 @@ public class StaffFactory {
         scanimage_repo = new ScanimageRepo(context);
         dailytime_repo = new DailytimeRepo(context);
         tabledata_repo = new TabledataRepo(context);
-        project_factory = new ProjectFactory(context);
+    }
+
+    public void openRepo(){
+        staffdata_repo.open();
+        scanimage_repo = new ScanimageRepo(staffdata_repo);
+        dailytime_repo = new DailytimeRepo(staffdata_repo);
+        tabledata_repo = new TabledataRepo(staffdata_repo);
+    }
+
+    public void closeRepo(){
+        staffdata_repo.close();
     }
 
     public void createStaff(Staff staff) {
@@ -132,9 +141,7 @@ public class StaffFactory {
             e.printStackTrace();
         }
 
-        staffdata_repo.open();
         staffdata_repo.create_staffdata(staff);
-        staffdata_repo.close();
     }
 
     public void downloadStaffProject(JSONObject staffJson, LogItem logItem) {
@@ -164,10 +171,7 @@ public class StaffFactory {
 
             staff_project.tag_deleted_yn = "n";
 
-            tabledata_repo.open();
             tabledata_repo.create_tabledata(staff_project);
-            tabledata_repo.close();
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -184,8 +188,7 @@ public class StaffFactory {
         staffdata_repo.delete_staffdata_all();
         staffdata_repo.close();
     }
-
-    public void deleteStaffProject(){
+    public void deleteAllStaffProject(){
         tabledata_repo.open();
         tabledata_repo.delete_tabledata_all(STAFF_PROJECT);
         tabledata_repo.close();

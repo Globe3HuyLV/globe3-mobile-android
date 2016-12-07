@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.activities.RegisterFingerActivity;
+import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
@@ -45,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.FINGER_COUNTER;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
@@ -192,7 +195,7 @@ public class RegisterFingerFragment extends DialogFragment {
     final static int PROMPT_VERIFYING = 9;
     final static int PROMPT_FINGER_EXIST = 10;
 
-    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found, R.string.msg_extraction_failed, R.string.msg_an_error_has_occured, R.string.msg_fingers_not_match, R.string.msg_extracting_fingerprint, R.string.msg_verifying_fingerprint, R.string.msg_finger_already_registered};
+    final static int[] PROMPT_TEXT = {R.string.msg_connecting_to_scanner, R.string.msg_place_finger_scanner, R.string.msg_lift_finger_scan_again, R.string.msg_registration_success, R.string.msg_scanner_not_found, R.string.msg_extraction_failed, R.string.msg_an_error_has_occured, R.string.msg_fingers_not_match, R.string.msg_extracting_fingerprint, R.string.msg_verifying_fingerprint, R.string.msg_finger_registered_by_another_staff};
     final static int[] PROMPT_TEXT_COLOR = {R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorSuccess, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorFailed, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorFailed};
     final static int[] LOADER_DISPLAY = {View.VISIBLE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.GONE, View.VISIBLE, View.VISIBLE, View.GONE};
     final static int[] LOADER_COLOR = {R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorMenuLight, R.color.colorAccentLight, R.color.colorAccentLight, R.color.colorMenuLight};
@@ -300,40 +303,25 @@ public class RegisterFingerFragment extends DialogFragment {
             switch (attachment) {
                 case IDENTIFY:
                     if (result.getStatus() == NBiometricStatus.MATCH_NOT_FOUND) {
-                        staff.setRegistered(true);
+                        saveFinger();
+                    } else if (result.getStatus() == NBiometricStatus.OK) {
+                        boolean single_staff = true;
+                        String staff_unique = result.getSubjects().get(0).getMatchingResults().get(0).getId();
 
-                        switch (finger_selected){
-                            case 1:
-                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
+                        staff_unique = staff_unique.substring(0, staff_unique.indexOf('_'));
+
+                        for(NMatchingResult matchingResult : result.getSubjects().get(0).getMatchingResults()){
+                            if(!staff_unique.equals(matchingResult.getId().substring(0, matchingResult.getId().indexOf('_')))){
+                                single_staff = false;
                                 break;
-                            case 2:
-                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 3:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 4:
-                                staff.setFingerprint_image4(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 5:
-                                staff.setFingerprint_image5(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
+                            }
                         }
 
-                        staff_factory.updateStaff(staff);
-
-                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
-
-                        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
-
-                        staff_factory.registerFingerprint(staff);
-
-                        BiometricUtility.deleteFinger(staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
-                        BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
-
-                        verifyStatus(NODE_SUCCESS);
-                    } else if (result.getStatus() == NBiometricStatus.OK) {
-                        setPrompt(PROMPT_FINGER_EXIST);
+                        if(single_staff && staff_unique.equals(staff.getUniquenumPri())){
+                            saveFinger();
+                        }else{
+                            setPrompt(PROMPT_FINGER_EXIST);
+                        }
                     }else {
                         setPrompt(PROMPT_EXTRACT_FAILED);
                     }
@@ -350,6 +338,50 @@ public class RegisterFingerFragment extends DialogFragment {
         }
 
     };
+
+    private void saveFinger(){
+        staff.setRegistered(true);
+        String subject_id = staff.getUniquenumPri() + "_" + String.valueOf(finger_selected);
+        byte[] finger_byte = null;
+
+        switch (finger_selected){
+            case 1:
+                staff.setFingerprint_image1(FileUtility.getFileBlob(path_finger_ref));
+                finger_byte = staff.getFingerprint_image1();
+                break;
+            case 2:
+                staff.setFingerprint_image2(FileUtility.getFileBlob(path_finger_ref));
+                finger_byte = staff.getFingerprint_image2();
+                break;
+            case 3:
+                staff.setFingerprint_image3(FileUtility.getFileBlob(path_finger_ref));
+                finger_byte = staff.getFingerprint_image3();
+                break;
+            case 4:
+                staff.setFingerprint_image4(FileUtility.getFileBlob(path_finger_ref));
+                finger_byte = staff.getFingerprint_image4();
+                break;
+            case 5:
+                staff.setFingerprint_image5(FileUtility.getFileBlob(path_finger_ref));
+                finger_byte = staff.getFingerprint_image5();
+                break;
+        }
+
+        staff_factory.updateStaff(staff);
+
+        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
+
+        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
+
+        staff_factory.registerFingerprint(staff);
+
+        BiometricUtility.deleteFinger(subject_id);
+        BiometricUtility.enrollFinger(BIOMETRIC_DATA, finger_byte, subject_id);
+
+        verifyStatus(NODE_SUCCESS);
+        FileUtility.fileDelete(path_finger_ref);
+        FileUtility.fileDelete(path_finger_can);
+    }
 
     private void capture() {
         biometric_client = new NBiometricClient();
@@ -426,9 +458,6 @@ public class RegisterFingerFragment extends DialogFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                     setPrompt(PROMPT_ERROR_OCCURRED);
-                } finally {
-                    FileUtility.fileDelete(path_finger_ref);
-                    FileUtility.fileDelete(path_finger_can);
                 }
             }
 

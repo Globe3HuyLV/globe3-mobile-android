@@ -229,7 +229,9 @@ public class LogTimeStaffFragment extends DialogFragment {
             for(Staff staff : (searchTerm.equals("")?new StaffFactory(getActivity()).getActiveStaffs():new StaffFactory(getActivity()).searchStaffs(searchTerm))){
                 staff_list.add(createRowStaff(staff));
             }
-            staff_list.get(staff_list.size()-1).setDisplayBottomSpacer(true);
+            if(staff_list.size()>0){
+                staff_list.get(staff_list.size()-1).setDisplayBottomSpacer(true);
+            }
             return null;
         }
 

@@ -1,12 +1,11 @@
 package com.globe3.tno.g3_mobile.fragments;
 
+import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,16 +33,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
-
 public class SyncDownFragment extends DialogFragment {
-    Context parent_context;
+    Activity parent_activity;
 
-    AuditFactory auditFactory;
-    UserFactory userFactory;
-    CompanyFactory companyFactory;
-    ProjectFactory projectFactory;
-    StaffFactory staffFactory;
+    AuditFactory audit_factory;
+    UserFactory user_factory;
+    CompanyFactory company_factory;
+    ProjectFactory project_factory;
+    StaffFactory staff_factory;
 
     ImageView iv_icon_sync_down;
     TextView tv_sync_down_progress;
@@ -54,19 +51,27 @@ public class SyncDownFragment extends DialogFragment {
     int sync_total = 0;
     int sync_progress = 0;
 
-    ArrayList<WriteDB> write_db_list;
-    int write_db_que_num = 0;
+    ArrayList<UserWriteDB> write_db_user_list;
+    ArrayList<CompanyWriteDB> write_db_company_list;
+    ArrayList<ProjectWriteDB> write_db_project_list;
+    ArrayList<StaffWriteDB> write_db_staff_list;
+
+    int write_db_user_que_num = 0;
+    int write_db_company_que_num = 0;
+    int write_db_project_que_num = 0;
+    int write_db_staff_que_num = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        auditFactory = new AuditFactory(getActivity());
-        userFactory = new UserFactory(getActivity());
-        companyFactory = new CompanyFactory(getActivity());
-        projectFactory = new ProjectFactory(getActivity());
-        staffFactory = new StaffFactory(getActivity());
+        parent_activity = getActivity();
+
+        audit_factory = new AuditFactory(parent_activity);
+        user_factory = new UserFactory(parent_activity);
+        company_factory = new CompanyFactory(parent_activity);
+        project_factory = new ProjectFactory(parent_activity);
+        staff_factory = new StaffFactory(getActivity());
 
         View syncDownFragment = inflater.inflate(R.layout.fragment_sync_down, viewGroup, false);
-        parent_context = syncDownFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         iv_icon_sync_down = (ImageView) syncDownFragment.findViewById(R.id.iv_icon_sync_down);
@@ -75,7 +80,7 @@ public class SyncDownFragment extends DialogFragment {
         ll_done = (LinearLayout) syncDownFragment.findViewById(R.id.ll_done);
         tv_done = (TextView) syncDownFragment.findViewById(R.id.tv_done);
 
-        iv_icon_sync_down.setAnimation(AnimationUtils.loadAnimation(parent_context, R.anim.animate_rotate_counter_clockwise));
+        iv_icon_sync_down.setAnimation(AnimationUtils.loadAnimation(parent_activity, R.anim.animate_rotate_counter_clockwise));
         tv_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +88,10 @@ public class SyncDownFragment extends DialogFragment {
             }
         });
 
-        write_db_list = new ArrayList<>();
+        write_db_user_list = new ArrayList<>();
+        write_db_company_list = new ArrayList<>();
+        write_db_project_list = new ArrayList<>();
+        write_db_staff_list = new ArrayList<>();
 
         new SyncDown().execute();
 
@@ -105,14 +113,14 @@ public class SyncDownFragment extends DialogFragment {
             @Override
             public void run() {
                 if(syncSuccess){
-                    tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorBlackLight));
-                    tv_sync_down_desc.setText(parent_context.getString(R.string.msg_sync_down_complete));
+                    tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_activity, R.color.colorBlackLight));
+                    tv_sync_down_desc.setText(getString(R.string.msg_sync_down_complete));
                     tv_sync_down_desc.setVisibility(View.VISIBLE);
-                    tv_done.setText(parent_context.getString(R.string.label_done));
+                    tv_done.setText(getString(R.string.label_done));
                 }else{
-                    tv_sync_down_progress.setText(parent_context.getString(R.string.msg_sync_failed));
-                    tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_context, R.color.colorFailed));
-                    tv_done.setText(parent_context.getString(R.string.label_cancel));
+                    tv_sync_down_progress.setText(getString(R.string.msg_sync_failed));
+                    tv_sync_down_progress.setTextColor(ContextCompat.getColor(parent_activity, R.color.colorFailed));
+                    tv_done.setText(getString(R.string.label_cancel));
                     tv_sync_down_desc.setVisibility(View.GONE);
                 }
                 iv_icon_sync_down.setAnimation(null);
@@ -132,7 +140,7 @@ public class SyncDownFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            logItem = auditFactory.Log(TagTableUsage.DATA_SYNC_DOWN);
+            logItem = audit_factory.Log(TagTableUsage.DATA_SYNC_DOWN);
             try {
                 JSONObject userResultJSON = HttpUtility.requestJSON("usersync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject companyResultJSON = HttpUtility.requestJSON("entitysync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
@@ -147,13 +155,74 @@ public class SyncDownFragment extends DialogFragment {
                 staffProjects = staffProjectResultJSON.getJSONArray("items");
                 if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
 
-                    auditFactory.journalOff();
+                    user_factory.deleteAll();
+                    company_factory.deleteAll();
+                    project_factory.deleteAll();
+                    staff_factory.deleteAll();
+                    staff_factory.deleteAllStaffProject();
 
-                    userFactory.deleteAll();
-                    companyFactory.deleteAll();
-                    projectFactory.deleteAll();
-                    staffFactory.deleteAll();
-                    staffFactory.deleteStaffProject();
+                    sync_total = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
+
+                    try {
+                        for(int i=0;i<users.length();i++)
+                        {
+                            final JSONObject userJson = users.getJSONObject(i);
+                            write_db_user_list.add(new UserWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    user_factory.downloadUser(userJson, logItem);
+                                }
+                            }));
+                        }
+
+                        for(int i=0;i<companies.length();i++)
+                        {
+                            final JSONObject companyJson = companies.getJSONObject(i);
+                            write_db_company_list.add(new CompanyWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    company_factory.downloadCompany(companyJson, logItem);
+                                }
+                            }));
+                        }
+
+                        for(int i=0;i<projects.length();i++)
+                        {
+                            final JSONObject projectJson = projects.getJSONObject(i);
+                            write_db_project_list.add(new ProjectWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    project_factory.downloadProject(projectJson, logItem);
+                                }
+                            }));
+
+                        }
+
+                        for(int i=0;i<staffs.length();i++)
+                        {
+                            final JSONObject staffJson = staffs.getJSONObject(i);
+                            write_db_staff_list.add(new StaffWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    staff_factory.downloadStaff(staffJson, logItem);
+                                }
+                            }));
+                        }
+
+                        for(int i=0;i<staffProjects.length();i++)
+                        {
+                            final JSONObject staffJson = staffProjects.getJSONObject(i);
+                            write_db_staff_list.add(new StaffWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    staff_factory.downloadStaffProject(staffJson, logItem);
+                                }
+                            }));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showSyncStatus(false);
+                    }
 
                     return true;
                 }else{
@@ -171,70 +240,8 @@ public class SyncDownFragment extends DialogFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        sync_total = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
-
-                        try {
-                            for(int i=0;i<users.length();i++)
-                            {
-                                final JSONObject userJson = users.getJSONObject(i);
-                                write_db_list.add(new WriteDB(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        userFactory.createUser(userJson, logItem);
-                                    }
-                                }));
-                            }
-
-                            for(int i=0;i<companies.length();i++)
-                            {
-                                final JSONObject companyJson = companies.getJSONObject(i);
-                                write_db_list.add(new WriteDB(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        companyFactory.createCompany(companyJson, logItem);
-                                    }
-                                }));
-                            }
-
-                            for(int i=0;i<projects.length();i++)
-                            {
-                                final JSONObject projectJson = projects.getJSONObject(i);
-                                write_db_list.add(new WriteDB(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        projectFactory.createProject(projectJson, logItem);
-                                    }
-                                }));
-
-                            }
-
-                            for(int i=0;i<staffs.length();i++)
-                            {
-                                final JSONObject staffJson = staffs.getJSONObject(i);
-                                write_db_list.add(new WriteDB(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        staffFactory.downloadStaff(staffJson, logItem);
-                                    }
-                                }));
-                            }
-
-                            for(int i=0;i<staffProjects.length();i++)
-                            {
-                                final JSONObject staffJson = staffProjects.getJSONObject(i);
-                                write_db_list.add(new WriteDB(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        staffFactory.downloadStaffProject(staffJson, logItem);
-                                    }
-                                }));
-                            }
-
-                            write_db_list.get(0).execute();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            showSyncStatus(false);
-                        }
+                        user_factory.openRepo();
+                        write_db_user_list.get(0).execute();
                     }
                 });
             }else{
@@ -243,10 +250,10 @@ public class SyncDownFragment extends DialogFragment {
         }
     }
 
-    private class WriteDB extends AsyncTask<Void, Void, Boolean> {
+    private class UserWriteDB extends AsyncTask<Void, Void, Boolean> {
         private Runnable task;
 
-        public WriteDB(Runnable task){
+        public UserWriteDB(Runnable task){
             this.task = task;
         }
 
@@ -265,16 +272,124 @@ public class SyncDownFragment extends DialogFragment {
         protected void onPostExecute(Boolean writeSuccess) {
             if(writeSuccess){
                 updateProgress();
-                write_db_que_num++;
-                if(write_db_que_num<write_db_list.size()){
-                    write_db_list.get(write_db_que_num).execute();
-                }else if(write_db_que_num==write_db_list.size()){
+                write_db_user_que_num++;
+                if(write_db_user_que_num<write_db_user_list.size()){
+                    write_db_user_list.get(write_db_user_que_num).execute();
+                }else if(write_db_user_que_num==write_db_user_list.size()){
+                    user_factory.closeRepo();
+                    company_factory.openRepo();
+                    write_db_company_list.get(0).execute();
+                }
+            }else{
+                showSyncStatus(false);
+            }
+        }
+    }
+
+    private class CompanyWriteDB extends AsyncTask<Void, Void, Boolean> {
+        private Runnable task;
+
+        public CompanyWriteDB(Runnable task){
+            this.task = task;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                task.run();
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean writeSuccess) {
+            if(writeSuccess){
+                updateProgress();
+                write_db_company_que_num++;
+                if(write_db_company_que_num<write_db_company_list.size()){
+                    write_db_company_list.get(write_db_company_que_num).execute();
+                }else if(write_db_company_que_num==write_db_company_list.size()){
+                    company_factory.closeRepo();
+                    project_factory.openRepo();
+                    write_db_project_list.get(0).execute();
+                }
+            }else{
+                showSyncStatus(false);
+            }
+        }
+    }
+
+    private class ProjectWriteDB extends AsyncTask<Void, Void, Boolean> {
+        private Runnable task;
+
+        public ProjectWriteDB(Runnable task){
+            this.task = task;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                task.run();
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean writeSuccess) {
+            if(writeSuccess){
+                updateProgress();
+                write_db_project_que_num++;
+                if(write_db_project_que_num<write_db_project_list.size()){
+                    write_db_project_list.get(write_db_project_que_num).execute();
+                }else if(write_db_project_que_num==write_db_project_list.size()){
+                    project_factory.closeRepo();
+                    staff_factory.openRepo();
+                    write_db_staff_list.get(0).execute();
+                }
+            }else{
+                showSyncStatus(false);
+            }
+        }
+    }
+
+    private class StaffWriteDB extends AsyncTask<Void, Void, Boolean> {
+        private Runnable task;
+
+        public StaffWriteDB(Runnable task){
+            this.task = task;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                task.run();
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean writeSuccess) {
+            if(writeSuccess){
+                updateProgress();
+                write_db_staff_que_num++;
+                if(write_db_staff_que_num<write_db_staff_list.size()){
+                    write_db_staff_list.get(write_db_staff_que_num).execute();
+                }else if(write_db_staff_que_num==write_db_staff_list.size()){
+                    staff_factory.closeRepo();
                     showSyncStatus(true);
                 }
             }else{
                 showSyncStatus(false);
             }
-
         }
     }
 }
