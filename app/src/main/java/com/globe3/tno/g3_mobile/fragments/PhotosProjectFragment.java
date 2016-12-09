@@ -78,8 +78,12 @@ public class PhotosProjectFragment extends Fragment {
         rowProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(getActivity(), ProjectPhotoSelectActivity.class));
-                startActivity(new Intent(getActivity(), ProjectPhotoActivity.class));
+                Intent projectPhotoIntent = new Intent(getActivity(), ProjectPhotoActivity.class);
+                Bundle projectBundle = new Bundle();
+                projectBundle.putSerializable("project", project);
+                projectPhotoIntent.putExtras(projectBundle);
+
+                startActivity(projectPhotoIntent);
             }
         });
 

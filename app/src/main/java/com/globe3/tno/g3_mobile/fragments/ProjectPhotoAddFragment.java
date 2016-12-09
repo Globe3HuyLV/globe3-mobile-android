@@ -11,17 +11,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.app_objects.Project;
+
+import java.util.ArrayList;
 
 public class ProjectPhotoAddFragment extends DialogFragment {
     Context parent_context;
+
+    Project project;
 
     TextView tv_project_code;
     TextView tv_project_desc;
     TextView tv_selected_photos_count;
     EditText et_ref_num;
     EditText et_remarks;
-    TextView tv_select_photos;
     TextView tv_upload;
+    TextView tv_cancel;
+
+    private ArrayList<String> image_urls;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -34,26 +41,29 @@ public class ProjectPhotoAddFragment extends DialogFragment {
         tv_selected_photos_count = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_selected_photos_count);
         et_ref_num = (EditText) projectPhotoAddFragment.findViewById(R.id.et_ref_num);
         et_remarks = (EditText) projectPhotoAddFragment.findViewById(R.id.et_remarks);
-        tv_select_photos = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_select_photos);
         tv_upload = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_upload);
+        tv_cancel = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_cancel);
+
+        tv_project_code.setText(project.getCode());
+        tv_project_desc.setText(project.getDesc());
+
+        tv_selected_photos_count.setText(String.format(getString(R.string.msg_num_photos_selected), String.valueOf(image_urls.size())));
+
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
         return projectPhotoAddFragment;
     }
 
-    public void finishProjectPhotoAdd(){
-        dismiss();
+    public void setProject(Project project) {
+        this.project = project;
     }
 
-    public void showPhotosCount(int photosCount){
-        if(photosCount > 0){
-            tv_selected_photos_count.setText(String.format(getString(R.string.msg_num_photos_selected), String.valueOf(photosCount)));
-            tv_selected_photos_count.setVisibility(View.VISIBLE);
-            tv_select_photos.setVisibility(View.GONE);
-            tv_upload.setVisibility(View.VISIBLE);
-        }else{
-            tv_selected_photos_count.setVisibility(View.GONE);
-            tv_select_photos.setVisibility(View.VISIBLE);
-            tv_upload.setVisibility(View.GONE);
-        }
+    public void setImageUrls(ArrayList<String> image_urls) {
+        this.image_urls = image_urls;
     }
 }

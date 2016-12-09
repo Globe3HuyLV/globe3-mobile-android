@@ -240,13 +240,48 @@ public class SyncDownFragment extends DialogFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        user_factory.openRepo();
-                        write_db_user_list.get(0).execute();
+                        syncUser();
                     }
                 });
             }else{
                 showSyncStatus(false);
             }
+        }
+    }
+
+    private void syncUser(){
+        if(write_db_user_list.size() > 0){
+            user_factory.openRepo();
+            write_db_user_list.get(0).execute();
+        }else{
+            syncCompany();
+        }
+    }
+
+    private void syncCompany(){
+        if(write_db_company_list.size() > 0){
+            company_factory.openRepo();
+            write_db_company_list.get(0).execute();
+        }else{
+            syncProject();
+        }
+    }
+
+    private void syncProject(){
+        if(write_db_project_list.size() > 0){
+            project_factory.openRepo();
+            write_db_project_list.get(0).execute();
+        }else{
+            syncStaff();
+        }
+    }
+
+    private void syncStaff(){
+        if(write_db_staff_list.size() > 0){
+            staff_factory.openRepo();
+            write_db_staff_list.get(0).execute();
+        }else{
+            showSyncStatus(true);
         }
     }
 
@@ -277,8 +312,7 @@ public class SyncDownFragment extends DialogFragment {
                     write_db_user_list.get(write_db_user_que_num).execute();
                 }else if(write_db_user_que_num==write_db_user_list.size()){
                     user_factory.closeRepo();
-                    company_factory.openRepo();
-                    write_db_company_list.get(0).execute();
+                    syncCompany();
                 }
             }else{
                 showSyncStatus(false);
@@ -313,8 +347,7 @@ public class SyncDownFragment extends DialogFragment {
                     write_db_company_list.get(write_db_company_que_num).execute();
                 }else if(write_db_company_que_num==write_db_company_list.size()){
                     company_factory.closeRepo();
-                    project_factory.openRepo();
-                    write_db_project_list.get(0).execute();
+                    syncProject();
                 }
             }else{
                 showSyncStatus(false);
@@ -349,8 +382,7 @@ public class SyncDownFragment extends DialogFragment {
                     write_db_project_list.get(write_db_project_que_num).execute();
                 }else if(write_db_project_que_num==write_db_project_list.size()){
                     project_factory.closeRepo();
-                    staff_factory.openRepo();
-                    write_db_staff_list.get(0).execute();
+                    syncStaff();
                 }
             }else{
                 showSyncStatus(false);

@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
 
 import com.globe3.tno.g3_mobile.adapters.ProjectPhotoGridAdapter;
+import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.fragments.ProjectPhotoAddFragment;
 import com.globe3.tno.g3_mobile.view_objects.GridItemProjectPhoto;
 import com.globe3.tno.g3_mobile.R;
@@ -23,12 +25,13 @@ import com.globe3.tno.g3_mobile.R;
 import java.util.ArrayList;
 
 import static com.globe3.tno.g3_mobile.constants.App.ACTIVITY_RESULT_SELECT_PHOTOS;
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 
 public class ProjectPhotoActivity extends BaseActivity {
     ProjectPhotoActivity project_photo_activity;
     ArrayList<GridItemProjectPhoto> project_photo_list;
 
-    ProjectPhotoAddFragment project_photo_add_fragment;
+    Project project;
 
     ActionBar action_bar;
     Drawable up_arrow;
@@ -36,22 +39,12 @@ public class ProjectPhotoActivity extends BaseActivity {
     GridView gv_project_photos;
     FloatingActionButton fab_project_photo_add;
 
-    ArrayList<String> selected_photos;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_project_photo);
         super.onCreate(savedInstanceState);
 
         project_photo_activity = this;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data!= null && requestCode == ACTIVITY_RESULT_SELECT_PHOTOS){
-            selected_photos = data.getStringArrayListExtra("selected_photos");
-            project_photo_add_fragment.showPhotosCount(selected_photos.size());
-        }
     }
 
     @Override
@@ -65,6 +58,11 @@ public class ProjectPhotoActivity extends BaseActivity {
     }
 
     public void onActivityLoading(){
+        Bundle projectBundle = getIntent().getExtras();
+        if(projectBundle != null){
+            project = (Project) projectBundle.getSerializable("project");
+        }
+
         gv_project_photos = (GridView) findViewById(R.id.gv_project_photos);
         fab_project_photo_add = (FloatingActionButton) findViewById(R.id.fab_project_photo_add);
 
@@ -101,10 +99,6 @@ public class ProjectPhotoActivity extends BaseActivity {
 
             project_photo_list.add(gridItemProjectPhoto);
         }
-
-        if(selected_photos == null){
-            selected_photos = new ArrayList<>();
-        }
     }
 
     public void onActivityReady(){
@@ -113,7 +107,7 @@ public class ProjectPhotoActivity extends BaseActivity {
             if(getResources().getResourceName(R.drawable.abc_ic_ab_back_mtrl_am_alpha) != null){
                 up_arrow = ContextCompat.getDrawable(project_photo_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
                 up_arrow.setColorFilter(ContextCompat.getColor(project_photo_activity, R.color.colorMenuDark), PorterDuff.Mode.SRC_ATOP);
-                action_bar.setTitle("PRJ1001");
+                action_bar.setTitle(project.getCode());
                 action_bar.setHomeAsUpIndicator(up_arrow);
             }
         }
@@ -123,33 +117,17 @@ public class ProjectPhotoActivity extends BaseActivity {
         fab_project_photo_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fragmentManager = getFragmentManager();
-                project_photo_add_fragment = new ProjectPhotoAddFragment();
-                project_photo_add_fragment.setCancelable(false);
-                project_photo_add_fragment.show(fragmentManager, getString(R.string.label_add_project_photo));
+                Intent selectPhotosIntent = new Intent(project_photo_activity, ProjectPhotoSelectActivity.class);
+                Bundle projectBundle = new Bundle();
+                projectBundle.putSerializable("project", project);
+                selectPhotosIntent.putExtras(projectBundle);
+                startActivityForResult(selectPhotosIntent, ACTIVITY_RESULT_SELECT_PHOTOS);
             }
         });
     }
 
     public void goToProjectPhotoItem(View view){
         startActivity(new Intent(project_photo_activity, ProjectPhotoItemViewActivity.class));
-    }
-
-    public void finishProjectPhotoAdd(View view){
-        project_photo_add_fragment.finishProjectPhotoAdd();
-        if(!fab_project_photo_add.isShown()){
-            fab_project_photo_add.show();
-        }
-    }
-
-    public void uploadPhotos(View view) {
-
-    }
-
-    public void goToSelectPhotos(View view){
-        Intent selePhotosIntent = new Intent(project_photo_activity, ProjectPhotoSelectActivity.class);
-        selePhotosIntent.putStringArrayListExtra("selected_photos", selected_photos);
-        startActivityForResult(selePhotosIntent, ACTIVITY_RESULT_SELECT_PHOTOS);
     }
 
     public final class gridViewOnScrollListener implements AbsListView.OnScrollListener {

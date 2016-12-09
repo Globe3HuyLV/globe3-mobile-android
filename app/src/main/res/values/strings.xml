@@ -132,6 +132,7 @@
     <string name="msg_no_record_found">No record found</string>
     <string name="msg_selection_limit_photos_reached">Selection Limit of %1$s Photos Reached</string>
     <string name="msg_num_photos_selected">%1$s photo(s) selected</string>
+    <string name="msg_please_select_photos">Please select photos</string>
     <string name="msg_failed_to_obtain_camera_permission">Failed to obtain camera permission</string>
     <string name="msg_failed_capture">Failed capture</string>
     <string name="msg_camera_not_suppoted">Camera not supported</string>

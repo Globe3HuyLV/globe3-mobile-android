@@ -6,6 +6,6 @@
         app:showAsAction="always" />
     <item android:id="@+id/action_add_photos"
         android:title="@string/label_add_photos"
-        android:icon="@drawable/ic_check_black_24dp"
+        android:icon="@drawable/ic_file_upload_black_24dp"
         app:showAsAction="always" />
 </menu>
