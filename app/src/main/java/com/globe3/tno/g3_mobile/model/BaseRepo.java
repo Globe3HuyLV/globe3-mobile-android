@@ -18,7 +18,9 @@ public class BaseRepo {
     }
 
     public void open() throws SQLException {
-        if(database==null || !database.isOpen()){
+        if(database==null){
+            database = db_helper.getWritableDatabase();
+        }else if(!database.isOpen()){
             database = db_helper.getWritableDatabase();
         }
     }

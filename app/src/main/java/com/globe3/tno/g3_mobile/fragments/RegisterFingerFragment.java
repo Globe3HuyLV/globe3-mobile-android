@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +41,14 @@ import com.neurotec.biometrics.NTemplateSize;
 import com.neurotec.biometrics.client.NBiometricClient;
 import com.neurotec.devices.NDeviceManager;
 import com.neurotec.devices.NDeviceType;
+import com.neurotec.images.NImage;
 import com.neurotec.lang.NCore;
 import com.neurotec.util.concurrent.CompletionHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
 import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
@@ -62,8 +66,6 @@ public class RegisterFingerFragment extends DialogFragment {
 
     int step_num = 1;
     int finger_selected = 1;
-    String path_finger_ref;
-    String path_finger_can;
 
     Context parent_context;
 
@@ -92,6 +94,9 @@ public class RegisterFingerFragment extends DialogFragment {
     ImageView iv_finger;
     TextView tv_action_button;
     TextView tv_cancel;
+
+    NSubject fingerReference;
+    NSubject fingerCandidate;
 
     private View.OnClickListener refresh = new  View.OnClickListener(){
         @Override
@@ -124,8 +129,6 @@ public class RegisterFingerFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             step_num = 1;
-            FileUtility.fileDelete(path_finger_ref);
-            FileUtility.fileDelete(path_finger_can);
             startExtract();
         }
     };
@@ -211,8 +214,6 @@ public class RegisterFingerFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        path_finger_ref = GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg";
-        path_finger_can = GLOBE3_DATA_DIR + staff.getUniquenumPri() + "_c.jpeg";
 
         View registerFragment = inflater.inflate(R.layout.fragment_regsiter_finger, viewGroup, false);
         parent_context = registerFragment.getContext();
@@ -259,28 +260,21 @@ public class RegisterFingerFragment extends DialogFragment {
         public void completed(NBiometricStatus result, NSubject subject) {
             if (result == NBiometricStatus.OK) {
                 if(step_num == 1){
+                    fingerReference = subject;
                     setPrompt(PROMPT_EXTRACTING);
                 }else{
+                    fingerCandidate = subject;
                     setPrompt(PROMPT_VERIFYING);
                 }
 
                 try {
-                    String sPrefix = step_num == 1 ? "" : "_c";
-
-                    File outputFile = new File(GLOBE3_DATA_DIR, staff.getUniquenumPri() + sPrefix + ".jpeg");
-                    subject.getFingers().get(0).getImage().save(outputFile.getAbsolutePath());
 
                     if(step_num == 1){
                         extractStatus(NODE_SUCCESS);
                         capture();
                         step_num++;
                     }else{
-                        try {
-                            verify();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            setPrompt(PROMPT_ERROR_OCCURRED);
-                        }
+                        verify();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -302,7 +296,7 @@ public class RegisterFingerFragment extends DialogFragment {
         public void completed(final NBiometricTask result, NBiometricOperation attachment) {
             switch (attachment) {
                 case IDENTIFY:
-                    if (result.getStatus() == NBiometricStatus.MATCH_NOT_FOUND) {
+                    if (result.getStatus() == NBiometricStatus.MATCH_NOT_FOUND) {;
                         saveFinger();
                     } else if (result.getStatus() == NBiometricStatus.OK) {
                         boolean single_staff = true;
@@ -342,27 +336,38 @@ public class RegisterFingerFragment extends DialogFragment {
     private void saveFinger(){
         staff.setRegistered(true);
         String subject_id = staff.getUniquenumPri() + "_" + String.valueOf(finger_selected);
-        byte[] finger_byte = null;
+
+        Bitmap finger_bitmap = fingerReference.getFingers().get(0).getImage().toBitmap();
+        ByteArrayOutputStream finger_bos = new ByteArrayOutputStream();
+        finger_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, finger_bos);
+
+        byte[] finger_byte = finger_bos.toByteArray();
+
+        finger_byte[13] = 00000001;
+        finger_byte[14] = 00000001;
+        finger_byte[15] = (byte) 244;
+        finger_byte[16] =  00000001;
+        finger_byte[17] = (byte) 244;
 
         switch (finger_selected){
             case 1:
-                staff.setFingerprint_image1(FileUtility.getFileBlob(path_finger_ref));
+                staff.setFingerprint_image1(finger_byte);
                 finger_byte = staff.getFingerprint_image1();
                 break;
             case 2:
-                staff.setFingerprint_image2(FileUtility.getFileBlob(path_finger_ref));
+                staff.setFingerprint_image2(finger_byte);
                 finger_byte = staff.getFingerprint_image2();
                 break;
             case 3:
-                staff.setFingerprint_image3(FileUtility.getFileBlob(path_finger_ref));
+                staff.setFingerprint_image3(finger_byte);
                 finger_byte = staff.getFingerprint_image3();
                 break;
             case 4:
-                staff.setFingerprint_image4(FileUtility.getFileBlob(path_finger_ref));
+                staff.setFingerprint_image4(finger_byte);
                 finger_byte = staff.getFingerprint_image4();
                 break;
             case 5:
-                staff.setFingerprint_image5(FileUtility.getFileBlob(path_finger_ref));
+                staff.setFingerprint_image5(finger_byte);
                 finger_byte = staff.getFingerprint_image5();
                 break;
         }
@@ -375,12 +380,9 @@ public class RegisterFingerFragment extends DialogFragment {
 
         staff_factory.registerFingerprint(staff);
 
-        BiometricUtility.deleteFinger(subject_id);
-        BiometricUtility.enrollFinger(BIOMETRIC_DATA, finger_byte, subject_id);
+        BiometricUtility.updateFinger(finger_byte, subject_id);
 
         verifyStatus(NODE_SUCCESS);
-        FileUtility.fileDelete(path_finger_ref);
-        FileUtility.fileDelete(path_finger_can);
     }
 
     private void capture() {
@@ -407,8 +409,6 @@ public class RegisterFingerFragment extends DialogFragment {
     }
 
     private void verify() throws IOException {
-        final NSubject fingerReference = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_ref));
-        final NSubject fingerCandidate = BiometricUtility.createSubject(getActivity(), Uri.parse(path_finger_can));
 
         biometric_client.verify(fingerReference, fingerCandidate, null, new CompletionHandler<NBiometricStatus, Void>() {
             @Override

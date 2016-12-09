@@ -128,6 +128,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     LocationManager location_manager;
 
+    boolean sync_in_progress = false;
     int logo_touch_counter;
 
     @Override
@@ -412,13 +413,17 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             tv_last_sync.setAllCaps(false);
             tv_last_sync.setTextColor(ActivityCompat.getColor(dashboard_activity, R.color.colorBlackLight));
         }
+        sync_in_progress = false;
     }
 
     public void syncDown(View view){
-        FragmentManager fragmentManager = getFragmentManager();
-        SyncDownFragment syncDownFragment = new SyncDownFragment();
-        syncDownFragment.setCancelable(false);
-        syncDownFragment.show(fragmentManager, getString(R.string.label_sync_down));
+        if(!sync_in_progress){
+            sync_in_progress = true;
+            FragmentManager fragmentManager = getFragmentManager();
+            SyncDownFragment syncDownFragment = new SyncDownFragment();
+            syncDownFragment.setCancelable(false);
+            syncDownFragment.show(fragmentManager, getString(R.string.label_sync_down));
+        }
     }
 
     public void requestGPS(View view){
