@@ -334,55 +334,61 @@ public class RegisterFingerFragment extends DialogFragment {
     };
 
     private void saveFinger(){
-        staff.setRegistered(true);
-        String subject_id = staff.getUniquenumPri() + "_" + String.valueOf(finger_selected);
+        try {
+            staff.setRegistered(true);
+            String subject_id = staff.getUniquenumPri() + "_" + String.valueOf(finger_selected);
 
-        Bitmap finger_bitmap = fingerReference.getFingers().get(0).getImage().toBitmap();
-        ByteArrayOutputStream finger_bos = new ByteArrayOutputStream();
-        finger_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, finger_bos);
+            Bitmap finger_bitmap = fingerReference.getFingers().get(0).getImage().toBitmap();
+            ByteArrayOutputStream finger_bos = new ByteArrayOutputStream();
+            finger_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, finger_bos);
 
-        byte[] finger_byte = finger_bos.toByteArray();
+            byte[] finger_byte = finger_bos.toByteArray();
 
-        finger_byte[13] = 00000001;
-        finger_byte[14] = 00000001;
-        finger_byte[15] = (byte) 244;
-        finger_byte[16] =  00000001;
-        finger_byte[17] = (byte) 244;
+            finger_byte[13] = 00000001;
+            finger_byte[14] = 00000001;
+            finger_byte[15] = (byte) 244;
+            finger_byte[16] =  00000001;
+            finger_byte[17] = (byte) 244;
 
-        switch (finger_selected){
-            case 1:
-                staff.setFingerprint_image1(finger_byte);
-                finger_byte = staff.getFingerprint_image1();
-                break;
-            case 2:
-                staff.setFingerprint_image2(finger_byte);
-                finger_byte = staff.getFingerprint_image2();
-                break;
-            case 3:
-                staff.setFingerprint_image3(finger_byte);
-                finger_byte = staff.getFingerprint_image3();
-                break;
-            case 4:
-                staff.setFingerprint_image4(finger_byte);
-                finger_byte = staff.getFingerprint_image4();
-                break;
-            case 5:
-                staff.setFingerprint_image5(finger_byte);
-                finger_byte = staff.getFingerprint_image5();
-                break;
+            switch (finger_selected){
+                case 1:
+                    staff.setFingerprint_image1(finger_byte);
+                    finger_byte = staff.getFingerprint_image1();
+                    break;
+                case 2:
+                    staff.setFingerprint_image2(finger_byte);
+                    finger_byte = staff.getFingerprint_image2();
+                    break;
+                case 3:
+                    staff.setFingerprint_image3(finger_byte);
+                    finger_byte = staff.getFingerprint_image3();
+                    break;
+                case 4:
+                    staff.setFingerprint_image4(finger_byte);
+                    finger_byte = staff.getFingerprint_image4();
+                    break;
+                case 5:
+                    staff.setFingerprint_image5(finger_byte);
+                    finger_byte = staff.getFingerprint_image5();
+                    break;
+            }
+
+            staff_factory.updateStaff(staff);
+
+            audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
+
+            new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
+
+            staff_factory.registerFingerprint(staff);
+
+            BiometricUtility.updateFinger(finger_byte, subject_id);
+
+            verifyStatus(NODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            setPrompt(PROMPT_EXTRACT_FAILED);
         }
 
-        staff_factory.updateStaff(staff);
-
-        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
-
-        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
-
-        staff_factory.registerFingerprint(staff);
-
-        BiometricUtility.updateFinger(finger_byte, subject_id);
-
-        verifyStatus(NODE_SUCCESS);
     }
 
     private void capture() {
@@ -417,39 +423,6 @@ public class RegisterFingerFragment extends DialogFragment {
                     if (result == NBiometricStatus.OK) {
                         NBiometricTask identifyTask = BIOMETRIC_DATA.createTask(EnumSet.of(NBiometricOperation.IDENTIFY), fingerReference);
                         BIOMETRIC_DATA.performTask(identifyTask, NBiometricOperation.IDENTIFY, identifyHandler);
-
-                        /*staff.setRegistered(true);
-
-                        switch (finger_selected){
-                            case 1:
-                                staff.setFingerprint_image1(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 2:
-                                staff.setFingerprint_image2(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 3:
-                                staff.setFingerprint_image3(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 4:
-                                staff.setFingerprint_image4(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                            case 5:
-                                staff.setFingerprint_image5(FileUtility.getFileBlob(GLOBE3_DATA_DIR + staff.getUniquenumPri() + ".jpeg"));
-                                break;
-                        }
-
-                        staff_factory.updateStaff(staff);
-
-                        audit_factory.Log(TagTableUsage.FINGERPRINT_REGISTER, staff.getUniquenumPri());
-
-                        new StaffSingleUploadTask(staff_factory, staff, audit_factory.Log(TagTableUsage.STAFF_SYNC_UP, staff.getUniquenumPri())).execute();
-
-                        staff_factory.registerFingerprint(staff);
-
-                        BiometricUtility.deleteFinger(staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
-                        BiometricUtility.enrollFinger(BIOMETRIC_DATA, staff.getFingerprint_image1(), staff.getUniquenumPri() + "_" + String.valueOf(finger_selected));
-
-                        verifyStatus(NODE_SUCCESS);*/
                     } else {
                         verifyStatus(NODE_FAILED);
                         setPrompt(PROMPT_NOT_MATCH);
