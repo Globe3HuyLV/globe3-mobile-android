@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
-import com.globe3.tno.g3_mobile.app_objects.ProjectPhoto;
 import com.globe3.tno.g3_mobile.model.ProjectRepo;
 import com.globe3.tno.g3_mobile.model.TabledataRepo;
 import com.globe3.tno.g3_mobile.model.entities.entproject;
@@ -16,11 +15,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-
-import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
-import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
-import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 
 public class ProjectFactory {
     ProjectRepo project_repo;
@@ -155,48 +149,6 @@ public class ProjectFactory {
         Project project = convertEntity(project_repo.get_project(pUniquenum));
         project_repo.close();
         return project;
-    }
-
-    public void saveProjectPhotos(ProjectPhoto projectPhoto){
-        tabledata_repo.open();
-
-        tabledata tabledata = new tabledata();
-
-        tabledata.uniquenum_pri = projectPhoto.getUniquenumPri();
-        tabledata.uniquenum_sec = projectPhoto.getProject().getUniquenumPri();
-        tabledata.tag_void_yn = "n";
-        tabledata.tag_deleted_yn = "n";
-        tabledata.date_post = new Date();
-        tabledata.userid_creator = USERLOGINID;
-        tabledata.masterfn = MASTERFN;
-        tabledata.companyfn = COMPANYFN;
-        tabledata.nvar25_01 = projectPhoto.getReference();
-        tabledata.nvar100_01 = projectPhoto.getRemarks();
-
-        tabledata_repo.create_tabledata(tabledata);
-
-        project_repo.close();
-    }
-
-    public ArrayList<ProjectPhoto> getProjectPhotos(String projectUnique, String searchTerm){
-        tabledata_repo.open();
-
-        Project project = this.getProject(projectUnique);
-        ArrayList<ProjectPhoto> projectPhotos = new ArrayList<ProjectPhoto>();
-
-        for(tabledata tabledata : tabledata_repo.get_tabledatas("uniquenum_sec = '" + projectUnique + "' AND (nvar25_01 LIKE '%" + searchTerm + "%' OR nvar100_01 LIKE '%" + searchTerm + "%')")){
-            ProjectPhoto projectPhoto = new ProjectPhoto();
-            projectPhoto.setProject(project);
-            projectPhoto.setUniquenumPri(tabledata.uniquenum_pri);
-            projectPhoto.setReference(tabledata.nvar25_01);
-            projectPhoto.setRemarks(tabledata.nvar100_01);
-
-            projectPhotos.add(projectPhoto);
-        }
-
-        tabledata_repo.close();
-
-        return projectPhotos;
     }
 
     private Project convertEntity(entproject entproject){
