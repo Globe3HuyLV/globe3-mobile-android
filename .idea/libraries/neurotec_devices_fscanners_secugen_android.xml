@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="neurotec-devices-fscanners-secugen-android">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/lib/neurotec-devices-fscanners-secugen-android.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

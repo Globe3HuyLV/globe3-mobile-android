@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="neurotec-devices-fscanners-suprema-biomini-android">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/lib/neurotec-devices-fscanners-suprema-biomini-android.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

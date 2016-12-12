@@ -2,121 +2,364 @@
 <items version="2" >
 
     <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\lib\universal-image-loader-1.6.1-with-src.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="fcefe15e2d56ea4abdaac9932d2a192d809ea1cf">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\2\universal-image-loader-1.6.1-with-src_b7f607bdedf21dcef4fe2c5835a7d5c9b3995b99\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="7a8c1fbadbef7b6cd216fee003ab72557a047c05">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_e8a4d763a77a8628bd3719e8383eca74401f2e18\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\libs\internal_impl-23.4.0.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.2"
         sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.4.0_2d2dba9dda93c489ba30a2205702f5226e13f07e\classes.dex" />
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/internal_impl-23.4.0_ad13928dac3788f1e5848a744edf5501a004f48c.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-nextbiometrics-android.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.2"
-        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.4.0_38967ed8666fb6c81ecfce578d97331f4fbe391d\classes.dex" />
+        sha1="25a681cf2ee599abbe5b5386b716faa5962344fa">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-nextbiometrics-android_fcc02b1cbbd47a154ccfd2c611afa768d0396bba.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.4.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-cardview-v7-23.4.0_e33a62fbca5a911b87886f3a9efedd27b2286e49\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.4.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-23.4.0_ed50758b1da9812d5723fb325efaec98264ef5b3\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.4.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="ec75036c3c52e451d0cde50a5aedaf5fd32354a0">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.4.0_394a68fd718cab6105b17d4332a86cca2bdf6f6a\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.github.clans\fab\1.6.4\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="1c3b9743fe8bb166a90a7e98b9b9f1f8021d80cd">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.github.clans-fab-1.6.4_79af22fbe93b98dcc5e26f7f0606b1697a26dc71\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.2"
-        sha1="7f7736ba19530ae49cc1052684e281161ea7d0be">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_aade705f9d8e29b15d3859bc155150abc6d1d51f\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\tno\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.4.0\support-annotations-23.4.0.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.2"
         sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.4.0_d7a4b6d34dac4117299e916fe84b190302dffb85\classes.dex" />
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/support-annotations-23.4.0_3f6963b651fca4bc943cc6ca1bb1f06c18c3cd16.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-biometrics-android.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.2"
-        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.4.0_f265e2d28abbe282ef3aca4a9e4f6cbbcdc2a5fc\classes.dex" />
+        sha1="148e0c94aef61411ce4eb13f554a0ce98b3f9365">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-biometrics-android_921ae1fe6f5b5995c1eb03449991ba661c88e438.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\design\23.4.0\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-core-android.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.2"
-        sha1="5326d9a850d491714fef8cbfaa9ea3416f0bf0d2">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.4.0_0ac8377c33c0d89c1dbca6e75bc31e79ce36bdc3\classes.dex" />
+        sha1="ac47a6da83228466d17b02a965c046a3bee6700d">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-core-android_bf9d413d78c9d0c5d7d09222fe845ffb60a58bd1.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.4.0\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-23.4.0_5e1c29a0552d69db04b2168ed3bbfd7bef495358.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-futronic-bluetooth-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="aa93bcbd09a254dc40038513de83c21dc1b1b525">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-futronic-bluetooth-android_df94223477faecbab4db0c01d335ce0daac3fe80.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-bluefin-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="3c7545c06465e936a080e12290c85c9e5a4dba9e">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-bluefin-android_b6ed08adba8c3d2d0f98b45a470af20ece30a611.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/universal-image-loader-1.6.1-with-src.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="fcefe15e2d56ea4abdaac9932d2a192d809ea1cf">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.6.1-with-src_afc5fc11a4c03020c2f3ae2a0d77139b3eb20baa.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/jna.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="d5d643d0349e93d6c7e4221fb5e063eb3101ce62">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/jna_b816f517aaa1649fd5f454a8b41fc98c62392177.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-miaxis-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="3d6859eaf5a1d531627c4ab8955850d9af98637c">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-miaxis-android_ef8607195876e3ebb34a8714149c1820c49a601f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="ec75036c3c52e451d0cde50a5aedaf5fd32354a0">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-recyclerview-v7-23.4.0_a5ede364649e8f40d7b57d9f754a62c6c11442d9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-biometrics-client-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="bd925bcb7612f1e12f863e7dda5320af7820b0e8">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-biometrics-client-android_778a9c04209af758ef1d2d1cde9c6f41f7e5c79a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-suprema-biomini-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="3adebb95ec74408938e6448b4878eb732943fc72">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-suprema-biomini-android_1dd8cc856ae19322fcac0ecffee91aa57b9feb2d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="b0498a9c23208f8d49e89aac622ca7fcf325a3a5">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-android_e24b4ef452d6ab5ccb7a444975e0f89a7d53018e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-virtual-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="e6ea65069400edd69bfdab0c55e80986181950b8">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-virtual-android_a141bb024666ff2b189b657985f483c4ee88e890.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-media-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="718d30db8d11751906148ba94b7461b6e4e7737a">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-media-android_75e76a9306b8cdb33ce5413f1084ef1d93a1bfaf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-secugen-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="8eba7960a47eb8303117319508bedc44827bb03a">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-secugen-android_2abfd1d37d38a4631008defb2ec7419a80d3d731.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.2"
         sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
-        <dex dex="C:\Users\tno\Google Drive\G3_MOBILE\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-23.4.0_569c5d4d592cce5d2ae28032e4dd4f305af9618b\classes.dex" />
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-23.4.0_e89a4bfe388c9b2488217eaaa8ac9de87d5c9a98.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-media-processing-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="4c7122b83721125d53a213923d3e5c6b3fd7b0f7">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-media-processing-android_e285a8372ac7709315642ecd80b15269e6a742bc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-gui-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="7d07655308d1cd646e9759b7d741a34d1d102abd">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-gui-android_f6e31dd79d658ab34d69714abd470c00946dc5bc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-23.4.0_b3ccc2f9380e1d37b8ef6f2fb42a344f0010be9e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-irisscanners-iritech-irishield-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="5c1ca46c142f0678cd382feec058d98c3bf107c9">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-irisscanners-iritech-irishield-android_0bbcd765018254a14f6dd3dc7027c1392b9c29c2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-licensing-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="2b5fae1665e18f4d57fd53b66c8e2025b611cceb">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-licensing-android_dd70eb11972d345e757a1aef4fcd59c91dc31e59.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-licensing-gui-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="1bdbdcd34229cb64b12e174e43969b1a99bae79f">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-licensing-gui-android_0c586579198faad159a009f4e56a25ce5319f3ea.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/design/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="5326d9a850d491714fef8cbfaa9ea3416f0bf0d2">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-design-23.4.0_fca972ea8fbcccfcb7c8c883034ac66805880628.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-cluster-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="f92c9b3ef1209c5000c25e51c2975467e5f80dc3">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-cluster-android_be54b6091bd3af20fa76eb0276f9a7b666ba5dab.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-media-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="15864db4714fb7fe003b42d7b417c79175acbcd6">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-media-android_6ec80cf35cefee55aaceab2a76d094b5e8a47cbd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-cardview-v7-23.4.0_a8e007d5b04f863a3402ccc73f5bf07821e33d41.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-integratedbiometrics-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="96c23ba964e50722c4bd9e2f24f4f44713a1d127">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-integratedbiometrics-android_c85412deb254deccfcff6ba40c0b84c2775d1533.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-digitalpersona-uareu-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="89bb1a60a4c68cd8bb6e4634aed284241e477bdb">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-digitalpersona-uareu-android_779d0110a7d92d594bb50a52c331ded3a0c6f80f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-futronic-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="264dbcfcb412ca0f55725500cefeb864ed352df3">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-futronic-android_b3831b423e60eceb3320e09d7d88fa88c16be2d8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-smufsbio-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="f1f547ea56136aa6004082de1e27986612cd6db1">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-smufsbio-android_7c50df584b58b631642569b19bf1d24b0469ff9e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-23.4.0_c9655c24991f78be1b0bb26dd69877ac6eea4ef4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-biometrics-gui-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="17d7fe9f0ab378e79ad53557b2a19e5aeb8b495e">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-biometrics-gui-android_a2ab54093698d3132aa3815c387f34bdd8e2576d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/acra.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="44a5eb946e0d83eed4a0128d877ca1fd8168b83a">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/acra_d89e7d0b071161f89bec96485efeaaf56018526a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/lib/neurotec-devices-fscanners-startek-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="6d7e8df9d755c6a579a97cd6e3e42725a0898d6b">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/neurotec-devices-fscanners-startek-android_b832c2b06c77a5e35dfda1e9ba40f60f825d514f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.github.clans/fab/1.6.4/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="1c3b9743fe8bb166a90a7e98b9b9f1f8021d80cd">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.github.clans-fab-1.6.4_275c750f739226fb4e0226d1010539a2894a1c02.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/support-v13/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="2bf893856577f5038c0b8007a43fda3b3c5beb23">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/com.android.support-support-v13-23.4.0_a3bdbec19683ed75c576760b8dd3dca670e27e8e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/exploded-aar/com.android.support/support-v13/23.4.0/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="be09545b7e6ff322c7286d2e80bed3b75b76c529">
+        <dex dex="/Users/aaronambrosio/Projects/globe3-mobile-android/app/build/intermediates/pre-dexed/debug/internal_impl-23.4.0_ec7acff9cc6f7db831d89ef71207f066a99b42aa.jar" />
     </item>
 
 </items>
