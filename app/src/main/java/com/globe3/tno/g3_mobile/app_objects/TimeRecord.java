@@ -3,7 +3,7 @@ package com.globe3.tno.g3_mobile.app_objects;
 import java.io.Serializable;
 import java.util.Date;
 
-public class DailyTime implements Serializable{
+public class TimeRecord implements Serializable{
     private long idcode;
     private String uniquenumPri;
     private Staff Staff;

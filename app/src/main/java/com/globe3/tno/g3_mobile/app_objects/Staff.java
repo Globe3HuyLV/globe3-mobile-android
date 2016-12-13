@@ -29,6 +29,8 @@ public class Staff implements Serializable{
     private byte[] photo1;
     private boolean active;
 
+    private StaffTeam staff_team;
+
     public ArrayList<TimeLog> TimeLogs;
 
     public void setIdcode(long pIdcode){
@@ -210,5 +212,13 @@ public class Staff implements Serializable{
 
     public boolean getActive(){
         return active;
+    }
+
+    public StaffTeam getStaffTeam() {
+        return staff_team;
+    }
+
+    public void setStaffTeam(StaffTeam staffTeam) {
+        this.staff_team = staffTeam;
     }
 }

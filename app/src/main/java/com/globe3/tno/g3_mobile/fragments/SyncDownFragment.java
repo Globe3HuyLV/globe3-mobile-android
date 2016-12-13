@@ -135,6 +135,7 @@ public class SyncDownFragment extends DialogFragment {
         JSONArray users;
         JSONArray companies;
         JSONArray projects;
+        JSONArray teams;
         JSONArray staffs;
         JSONArray staffProjects;
 
@@ -145,23 +146,27 @@ public class SyncDownFragment extends DialogFragment {
                 JSONObject userResultJSON = HttpUtility.requestJSON("usersync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject companyResultJSON = HttpUtility.requestJSON("entitysync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject projectResultJSON = HttpUtility.requestJSON("projectsync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
+                JSONObject teamResultJSON = HttpUtility.requestJSON("teamsync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject staffResultJSON = HttpUtility.requestJSON("staffsync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject staffProjectResultJSON = HttpUtility.requestJSON("project_staff_assign_sync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
+
 
                 users = userResultJSON.getJSONArray("items");
                 companies = companyResultJSON.getJSONArray("items");
                 projects = projectResultJSON.getJSONArray("items");
+                teams = teamResultJSON.getJSONArray("items");
                 staffs = staffResultJSON.getJSONArray("items");
                 staffProjects = staffProjectResultJSON.getJSONArray("items");
-                if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
+                if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&teamResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
 
                     user_factory.deleteAll();
                     company_factory.deleteAll();
                     project_factory.deleteAll();
+                    staff_factory.deleteAllTeam();
                     staff_factory.deleteAll();
                     staff_factory.deleteAllStaffProject();
 
-                    sync_total = users.length()+companies.length()+projects.length()+staffs.length()+staffProjects.length();
+                    sync_total = users.length()+companies.length()+projects.length()+teams.length()+staffs.length()+staffProjects.length();
 
                     try {
                         for(int i=0;i<users.length();i++)
@@ -196,6 +201,16 @@ public class SyncDownFragment extends DialogFragment {
                                 }
                             }));
 
+                        }
+
+                        for(int i=0;i<teams.length();i++){
+                            final JSONObject teamJson = teams.getJSONObject(i);
+                            write_db_staff_list.add(new StaffWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    staff_factory.downloadTeam(teamJson, logItem);
+                                }
+                            }));
                         }
 
                         for(int i=0;i<staffs.length();i++)

@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.app_objects.DailyTime;
+import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
@@ -397,11 +396,11 @@ public class LocationCheckFragment extends DialogFragment {
         timeLog.setProject(project);
         timeLog.setStaff(staff);
 
-        DailyTime dailyTime = staffFactory.logTime(staff, project, log_type);
+        TimeRecord timeRecord = staffFactory.logTime(staff, project, log_type);
 
         LogItem logItem = new AuditFactory(getActivity()).Log(log_type, staff.getUniquenumPri());
 
-        new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
+        new TimeLogSingleUploadTask(staffFactory, timeRecord, logItem).execute();
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         log_time_summary_fragment = new LogTimeSummaryFragment();

@@ -12,8 +12,9 @@ public class TagTableUsage {
     public final static String TIMELOG_IN_OUT = "in_out";
     public final static String TIMELOG_SYNC_UP = "tl_sync_up";
     public final static String STAFF_SYNC_UP = "stf_sync_up";
-    public final static String PROJECT_PHOTO = "proj_img";
+    public final static String PROJECT_PHOTO_UPLOAD = "proj_img_up";
     public final static String STAFF_PROJECT = "stf_proj";
+    public final static String STAFF_TEAM = "stf_team";
     public final static int AUTO_SCREENING_A = 1;
     public final static int AUTO_SCREENING_B = 2;
 }

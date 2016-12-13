@@ -20,7 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
-import com.globe3.tno.g3_mobile.app_objects.DailyTime;
+import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
@@ -184,11 +184,11 @@ public class LogTimeProjectFragment extends DialogFragment {
     private void showSummary(){
         StaffFactory staffFactory = new StaffFactory(getActivity());
 
-        DailyTime dailyTime = staffFactory.logTime(staff, time_log.getProject(), time_log.getType());
+        TimeRecord timeRecord = staffFactory.logTime(staff, time_log.getProject(), time_log.getType());
 
         LogItem logItem = new AuditFactory(getActivity()).Log(time_log.getType(), staff.getUniquenumPri());
 
-        new TimeLogSingleUploadTask(staffFactory, dailyTime, logItem).execute();
+        new TimeLogSingleUploadTask(staffFactory, timeRecord, logItem).execute();
 
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         log_time_summary_fragment = new LogTimeSummaryFragment();

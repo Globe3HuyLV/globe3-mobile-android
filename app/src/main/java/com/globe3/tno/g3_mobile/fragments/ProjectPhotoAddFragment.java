@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +16,10 @@ import android.widget.TextView;
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
-import com.globe3.tno.g3_mobile.app_objects.Staff;
-import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
-import com.globe3.tno.g3_mobile.util.DateUtility;
+import com.globe3.tno.g3_mobile.app_objects.ProjectPhotoItem;
+import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
+import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.FileUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
@@ -37,6 +37,8 @@ import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 
 public class ProjectPhotoAddFragment extends DialogFragment {
     Context parent_context;
+
+    ProjectFactory project_factory;
 
     Project project;
 
@@ -69,6 +71,8 @@ public class ProjectPhotoAddFragment extends DialogFragment {
         View projectPhotoAddFragment = inflater.inflate(R.layout.fragment_project_photo_add, viewGroup, false);
         parent_context = projectPhotoAddFragment.getContext();
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        project_factory = new ProjectFactory(parent_context);
 
         tv_project_code = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_project_code);
         tv_project_desc = (TextView) projectPhotoAddFragment.findViewById(R.id.tv_project_desc);
@@ -110,6 +114,7 @@ public class ProjectPhotoAddFragment extends DialogFragment {
                     tv_upload.setOnClickListener(null);
                     tv_cancel.setOnClickListener(null);
 
+                    project_factory.openRepo();
                     upload_task_list.get(0).execute();
                 }
             }
@@ -148,7 +153,10 @@ public class ProjectPhotoAddFragment extends DialogFragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                Log.i(APP_NAME, String.valueOf(image_url_index));
+                LogItem logItem = new AuditFactory(parent_context).Log(TagTableUsage.PROJECT_PHOTO_UPLOAD);
+
+                int row_item_num = image_url_index + 1;
+
                 HashMap<String,String> detail = new HashMap<>();
                 detail.put("cfsqlfilename", CFSQLFILENAME);
                 detail.put("masterfn", MASTERFN);
@@ -160,15 +168,25 @@ public class ProjectPhotoAddFragment extends DialogFragment {
                 detail.put("reference", reference);
                 detail.put("remarks", remarks);
                 detail.put("photo_unique", upload_uniquenum);
-                detail.put("row_item_num", String.valueOf(image_url_index + 1));
+                detail.put("row_item_num", String.valueOf(row_item_num));
                 detail.put("photo", FileUtility.getBase64(image_urls.get(image_url_index)));
 
                 String param = HttpUtility.hashMapToUrl(detail);
 
                 JSONObject uploadResultJSON = HttpUtility.requestJSON("project_photo_upload", param);
-                Log.i(APP_NAME, "uploadResultJSON:"+String.valueOf(uploadResultJSON==null));
                 if(uploadResultJSON != null){
-                    //save to sqlite
+                    ProjectPhotoItem projectPhotoItem = new ProjectPhotoItem();
+                    projectPhotoItem.setUniquenumPri(upload_uniquenum);
+                    projectPhotoItem.setUniquenumSec(Uniquenum.Generate());
+                    projectPhotoItem.setProject(project);
+                    projectPhotoItem.setDate_post(logItem.getLogDate());
+                    projectPhotoItem.setRowItemNum(row_item_num);
+                    projectPhotoItem.setReferenceNum(reference);
+                    projectPhotoItem.setRemarks(remarks);
+                    projectPhotoItem.setPhoto(FileUtility.getFileBlob(image_urls.get(image_url_index)));
+
+                    project_factory.saveProjectPhoto(projectPhotoItem, logItem);
+
                     return true;
                 }else{
                     return false;
@@ -193,6 +211,8 @@ public class ProjectPhotoAddFragment extends DialogFragment {
 
                     tv_cancel.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorBlueGrey));
                     tv_cancel.setOnClickListener(dismiss);
+
+                    project_factory.closeRepo();
                 }else{
                     upload_task_list.get(image_url_index).execute();
                 }
@@ -206,6 +226,8 @@ public class ProjectPhotoAddFragment extends DialogFragment {
 
                 tv_cancel.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorBlueGrey));
                 tv_cancel.setOnClickListener(dismiss);
+
+                project_factory.closeRepo();
             }
         }
     }

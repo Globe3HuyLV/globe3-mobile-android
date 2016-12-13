@@ -1,16 +1,17 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
+import com.globe3.tno.g3_mobile.app_objects.StaffTeam;
+import com.globe3.tno.g3_mobile.model.TeamRepo;
+import com.globe3.tno.g3_mobile.model.entities.team;
 import com.globe3.tno.g3_mobile.util.BiometricUtility;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
-import com.globe3.tno.g3_mobile.app_objects.DailyTime;
+import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LocationHistory;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
@@ -28,18 +29,16 @@ import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.FileUtility;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
-import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
+import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_TEAM;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
@@ -54,6 +53,7 @@ public class StaffFactory {
     DailytimeRepo dailytime_repo;
     StaffdataRepo staffdata_repo;
     TabledataRepo tabledata_repo;
+    TeamRepo team_repo;
 
     public StaffFactory(Context context) {
         this.context = context;
@@ -61,6 +61,7 @@ public class StaffFactory {
         scanimage_repo = new ScanimageRepo(context);
         dailytime_repo = new DailytimeRepo(context);
         tabledata_repo = new TabledataRepo(context);
+        team_repo = new TeamRepo(context);
     }
 
     public void openRepo(){
@@ -68,10 +69,15 @@ public class StaffFactory {
         scanimage_repo = new ScanimageRepo(staffdata_repo);
         dailytime_repo = new DailytimeRepo(staffdata_repo);
         tabledata_repo = new TabledataRepo(staffdata_repo);
+        team_repo = new TeamRepo(staffdata_repo);
     }
 
     public void closeRepo(){
         staffdata_repo.close();
+        staffdata_repo.close();
+        dailytime_repo.close();
+        tabledata_repo.close();
+        team_repo.close();
     }
 
     public void createStaff(Staff staff) {
@@ -99,6 +105,7 @@ public class StaffFactory {
             staff.gender = staffJson.getString("gender");
             staff.race = staffJson.getString("race");
             staff.active_yn = staffJson.getString("active");
+            staff.staff_group = staffJson.getString("team_unique");
 
             staff.fingerprint_image1 = FileUtility.getImage(staffJson.getString("fingerprint_image1"));
             staff.fingerprint_image2 = FileUtility.getImage(staffJson.getString("fingerprint_image2"));
@@ -140,6 +147,32 @@ public class StaffFactory {
         staffdata_repo.create_staffdata(staff);
     }
 
+    public void downloadTeam(JSONObject teamJson, LogItem logItem){
+        team staff_team = new team();
+
+        try{
+            staff_team.masterfn = teamJson.getString("masterfn");
+            staff_team.companyfn = teamJson.getString("companyfn");
+            staff_team.uniquenum_pri = teamJson.getString("uniquenum");
+            staff_team.tag_table_usage = teamJson.getString("tag_table_usage");
+            staff_team.uniquenum_sec = teamJson.getString("uniquenum_sec");
+            staff_team.active_yn = teamJson.getString("tag_active_yn");
+            staff_team.date_post = DateUtility.getStringDate(teamJson.getString("date_post"));
+            staff_team.date_submit = DateUtility.getStringDate(teamJson.getString("date_submit"));
+            staff_team.date_lastupdate = DateUtility.getStringDate(teamJson.getString("date_lastupdate"));
+            staff_team.sync_unique = logItem.getLogUnique();
+            staff_team.date_sync = logItem.getLogDate();
+            staff_team.team_code = teamJson.getString("team_code");
+            staff_team.team_name = teamJson.getString("team_desc");
+            staff_team.team_unique = teamJson.getString("team_unique");
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        team_repo.create_team(staff_team);
+    }
+
     public void downloadStaffProject(JSONObject staffJson, LogItem logItem) {
 
         tabledata staff_project = new tabledata();
@@ -177,6 +210,12 @@ public class StaffFactory {
         staffdata_repo.open();
         staffdata_repo.delete_staffdata(convertToEntity(staff));
         staffdata_repo.close();
+    }
+
+    public void deleteAllTeam(){
+        team_repo.open();
+        team_repo.delete_team_all();
+        team_repo.close();
     }
 
     public void deleteAll() {
@@ -337,8 +376,8 @@ public class StaffFactory {
         return timeLog;
     }
 
-    public DailyTime logTime(Staff staff, Project project, String tableUsage){
-        DailyTime dailyTime = new DailyTime();
+    public TimeRecord logTime(Staff staff, Project project, String tableUsage){
+        TimeRecord timeRecord = new TimeRecord();
         dailytime_repo.open();
 
         if(tableUsage.equals(TagTableUsage.TIMELOG_IN)){
@@ -372,7 +411,7 @@ public class StaffFactory {
             dailytime.project_code = project == null ? "" : project.getCode();
             dailytime.project_name = project == null ? "" : project.getDesc();
 
-            dailyTime = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
+            timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
 
         }else if(tableUsage.equals(TagTableUsage.TIMELOG_OUT)){
 
@@ -409,7 +448,7 @@ public class StaffFactory {
                 dailytime.project_code = project == null ? "" : project.getCode();
                 dailytime.project_name = project == null ? "" : project.getDesc();
 
-                dailyTime = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
+                timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
             }else{
                 Date now = new Date();
                 dailytime.date_lastupdate = now;
@@ -425,7 +464,7 @@ public class StaffFactory {
                 dailytime.type_in_out = TagTableUsage.TIMELOG_IN_OUT;
                 dailytime_repo.update_dailytime(dailytime);
 
-                dailyTime = convertToDailyTime(staff, dailytime);
+                timeRecord = convertToDailyTime(staff, dailytime);
             }
         }else if(tableUsage.equals(TagTableUsage.LOCATION_CHECK)) {
             dailytime dailytime = new dailytime();
@@ -458,16 +497,16 @@ public class StaffFactory {
             dailytime.project_code = project == null ? "" : project.getCode();
             dailytime.project_name = project == null ? "" : project.getDesc();
 
-            dailyTime = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
+            timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
         }
 
         dailytime_repo.close();
 
-        return dailyTime;
+        return timeRecord;
     }
 
-    public DailyTime logOut(Staff staff, Project project, Date dateout){
-        DailyTime dailyTime = new DailyTime();
+    public TimeRecord logOut(Staff staff, Project project, Date dateout){
+        TimeRecord timeRecord = new TimeRecord();
 
         dailytime_repo.open();
 
@@ -500,21 +539,21 @@ public class StaffFactory {
         dailytime.project_code = project.getCode();
         dailytime.project_name = project.getDesc();
 
-        dailyTime = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
+        timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
 
         dailytime_repo.close();
 
-        return dailyTime;
+        return timeRecord;
     }
 
-    public void setDailyTimeProject(DailyTime dailyTime){
+    public void setDailyTimeProject(TimeRecord timeRecord){
 
         dailytime_repo.open();
 
-        dailytime dailytime = dailytime_repo.get_dailytime(dailyTime.getUniquenumPri());
-        dailytime.project_unique = dailyTime.getProject().getUniquenumPri();
-        dailytime.project_code = dailyTime.getProject().getCode();
-        dailytime.project_name = dailyTime.getProject().getDesc();
+        dailytime dailytime = dailytime_repo.get_dailytime(timeRecord.getUniquenumPri());
+        dailytime.project_unique = timeRecord.getProject().getUniquenumPri();
+        dailytime.project_code = timeRecord.getProject().getCode();
+        dailytime.project_name = timeRecord.getProject().getDesc();
 
         dailytime_repo.update_dailytime(dailytime);
 
@@ -578,48 +617,48 @@ public class StaffFactory {
         return timeLogs;
     }
 
-    public ArrayList<DailyTime> getTimesheetDay(Date reportDate){
-        ArrayList<DailyTime> timeLogs = new ArrayList<DailyTime>();
+    public ArrayList<TimeRecord> getTimesheetDay(Date reportDate){
+        ArrayList<TimeRecord> timeLogs = new ArrayList<TimeRecord>();
 
         dailytime_repo.open();
         staffdata_repo.open();
 
         for(dailytime dailytime : dailytime_repo.get_timesheet_day_dailytimes(reportDate)){
-            DailyTime dailyTime = new DailyTime();
+            TimeRecord timeRecord = new TimeRecord();
 
-            dailyTime.setIdcode(dailytime.idcode);
-            dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
-            dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
-            dailyTime.setDateTimePost(dailytime.date_post);
+            timeRecord.setIdcode(dailytime.idcode);
+            timeRecord.setUniquenumPri(dailytime.uniquenum_pri);
+            timeRecord.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
+            timeRecord.setDateTimePost(dailytime.date_post);
 
-            dailyTime.setDateTimeIn(dailytime.date_time_in);
-            dailyTime.setDateTimeOut(dailytime.date_time_out);
+            timeRecord.setDateTimeIn(dailytime.date_time_in);
+            timeRecord.setDateTimeOut(dailytime.date_time_out);
 
-            dailyTime.setDeviceIdIn(dailytime.device_id_in);
-            dailyTime.setDeviceIdOut(dailytime.device_id_out);
+            timeRecord.setDeviceIdIn(dailytime.device_id_in);
+            timeRecord.setDeviceIdOut(dailytime.device_id_out);
 
-            dailyTime.setDeviceModelIn(dailytime.nvar25_01);
-            dailyTime.setDeviceModelOut(dailytime.nvar25_02);
+            timeRecord.setDeviceModelIn(dailytime.nvar25_01);
+            timeRecord.setDeviceModelOut(dailytime.nvar25_02);
 
-            dailyTime.setDeviceNameIn(dailytime.nvar100_01);
-            dailyTime.setDeviceNameOut(dailytime.nvar100_02);
+            timeRecord.setDeviceNameIn(dailytime.nvar100_01);
+            timeRecord.setDeviceNameOut(dailytime.nvar100_02);
 
-            dailyTime.setGPSLocationIn(dailytime.gps_location_in);
-            dailyTime.setGPSLocationOut(dailytime.gps_location_out);
+            timeRecord.setGPSLocationIn(dailytime.gps_location_in);
+            timeRecord.setGPSLocationOut(dailytime.gps_location_out);
 
-            dailyTime.setAddressIn(dailytime.nvar100_03);
-            dailyTime.setAddressOut(dailytime.nvar100_04);
+            timeRecord.setAddressIn(dailytime.nvar100_03);
+            timeRecord.setAddressOut(dailytime.nvar100_04);
 
-            dailyTime.setLogType(dailytime.type_in_out);
+            timeRecord.setLogType(dailytime.type_in_out);
 
-            dailyTime.setProject(new Project());
-            dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
-            dailyTime.getProject().setCode(dailytime.project_code);
-            dailyTime.getProject().setDesc(dailytime.project_name);
+            timeRecord.setProject(new Project());
+            timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
+            timeRecord.getProject().setCode(dailytime.project_code);
+            timeRecord.getProject().setDesc(dailytime.project_name);
 
-            dailyTime.setSynced(((dailytime.sync_unique != null && dailytime.sync_unique != "") && (dailytime.date_lastupdate.compareTo(dailytime.date_sync)!=1)));
+            timeRecord.setSynced(((dailytime.sync_unique != null && dailytime.sync_unique != "") && (dailytime.date_lastupdate.compareTo(dailytime.date_sync)!=1)));
 
-            timeLogs.add(dailyTime);
+            timeLogs.add(timeRecord);
         }
 
         staffdata_repo.close();
@@ -647,46 +686,46 @@ public class StaffFactory {
         return locationHistory;
     }
 
-    public ArrayList<DailyTime> getTimesheetStaff(Date reportDate, String staffUnique){
-        ArrayList<DailyTime> timeLogs = new ArrayList<DailyTime>();
+    public ArrayList<TimeRecord> getTimesheetStaff(Date reportDate, String staffUnique){
+        ArrayList<TimeRecord> timeLogs = new ArrayList<TimeRecord>();
 
         dailytime_repo.open();
         staffdata_repo.open();
 
         for(dailytime dailytime : dailytime_repo.get_timesheet_staff_dailytimes(reportDate, staffUnique)){
-            DailyTime dailyTime = new DailyTime();
+            TimeRecord timeRecord = new TimeRecord();
 
-            dailyTime.setIdcode(dailytime.idcode);
-            dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
-            dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
-            dailyTime.setDateTimePost(dailytime.date_post);
+            timeRecord.setIdcode(dailytime.idcode);
+            timeRecord.setUniquenumPri(dailytime.uniquenum_pri);
+            timeRecord.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
+            timeRecord.setDateTimePost(dailytime.date_post);
 
-            dailyTime.setDateTimeIn(dailytime.date_time_in);
-            dailyTime.setDateTimeOut(dailytime.date_time_out);
+            timeRecord.setDateTimeIn(dailytime.date_time_in);
+            timeRecord.setDateTimeOut(dailytime.date_time_out);
 
-            dailyTime.setDeviceIdIn(dailytime.device_id_in);
-            dailyTime.setDeviceIdOut(dailytime.device_id_out);
+            timeRecord.setDeviceIdIn(dailytime.device_id_in);
+            timeRecord.setDeviceIdOut(dailytime.device_id_out);
 
-            dailyTime.setDeviceModelIn(dailytime.nvar25_01);
-            dailyTime.setDeviceModelOut(dailytime.nvar25_02);
+            timeRecord.setDeviceModelIn(dailytime.nvar25_01);
+            timeRecord.setDeviceModelOut(dailytime.nvar25_02);
 
-            dailyTime.setDeviceNameIn(dailytime.nvar100_01);
-            dailyTime.setDeviceNameOut(dailytime.nvar100_02);
+            timeRecord.setDeviceNameIn(dailytime.nvar100_01);
+            timeRecord.setDeviceNameOut(dailytime.nvar100_02);
 
-            dailyTime.setGPSLocationIn(dailytime.gps_location_in);
-            dailyTime.setGPSLocationOut(dailytime.gps_location_out);
+            timeRecord.setGPSLocationIn(dailytime.gps_location_in);
+            timeRecord.setGPSLocationOut(dailytime.gps_location_out);
 
-            dailyTime.setAddressIn(dailytime.nvar100_03);
-            dailyTime.setAddressOut(dailytime.nvar100_04);
+            timeRecord.setAddressIn(dailytime.nvar100_03);
+            timeRecord.setAddressOut(dailytime.nvar100_04);
 
-            dailyTime.setLogType(dailytime.type_in_out);
+            timeRecord.setLogType(dailytime.type_in_out);
 
-            dailyTime.setProject(new Project());
-            dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
-            dailyTime.getProject().setCode(dailytime.project_code);
-            dailyTime.getProject().setDesc(dailytime.project_name);
+            timeRecord.setProject(new Project());
+            timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
+            timeRecord.getProject().setCode(dailytime.project_code);
+            timeRecord.getProject().setDesc(dailytime.project_name);
 
-            timeLogs.add(dailyTime);
+            timeLogs.add(timeRecord);
         }
 
         staffdata_repo.close();
@@ -695,46 +734,46 @@ public class StaffFactory {
         return timeLogs;
     }
 
-    public ArrayList<DailyTime> getNewTimelogs(){
-        ArrayList<DailyTime> timeLogs = new ArrayList<DailyTime>();
+    public ArrayList<TimeRecord> getNewTimelogs(){
+        ArrayList<TimeRecord> timeLogs = new ArrayList<TimeRecord>();
 
         dailytime_repo.open();
         staffdata_repo.open();
 
         for(dailytime dailytime : dailytime_repo.get_new_dailytimes()){
-            DailyTime dailyTime = new DailyTime();
+            TimeRecord timeRecord = new TimeRecord();
 
-            dailyTime.setIdcode(dailytime.idcode);
-            dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
-            dailyTime.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
-            dailyTime.setDateTimePost(dailytime.date_post);
+            timeRecord.setIdcode(dailytime.idcode);
+            timeRecord.setUniquenumPri(dailytime.uniquenum_pri);
+            timeRecord.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
+            timeRecord.setDateTimePost(dailytime.date_post);
 
-            dailyTime.setDateTimeIn(dailytime.date_time_in);
-            dailyTime.setDateTimeOut(dailytime.date_time_out);
+            timeRecord.setDateTimeIn(dailytime.date_time_in);
+            timeRecord.setDateTimeOut(dailytime.date_time_out);
 
-            dailyTime.setDeviceIdIn(dailytime.device_id_in);
-            dailyTime.setDeviceIdOut(dailytime.device_id_out);
+            timeRecord.setDeviceIdIn(dailytime.device_id_in);
+            timeRecord.setDeviceIdOut(dailytime.device_id_out);
 
-            dailyTime.setDeviceModelIn(dailytime.nvar25_01);
-            dailyTime.setDeviceModelOut(dailytime.nvar25_02);
+            timeRecord.setDeviceModelIn(dailytime.nvar25_01);
+            timeRecord.setDeviceModelOut(dailytime.nvar25_02);
 
-            dailyTime.setDeviceNameIn(dailytime.nvar100_01);
-            dailyTime.setDeviceNameOut(dailytime.nvar100_02);
+            timeRecord.setDeviceNameIn(dailytime.nvar100_01);
+            timeRecord.setDeviceNameOut(dailytime.nvar100_02);
 
-            dailyTime.setGPSLocationIn(dailytime.gps_location_in);
-            dailyTime.setGPSLocationOut(dailytime.gps_location_out);
+            timeRecord.setGPSLocationIn(dailytime.gps_location_in);
+            timeRecord.setGPSLocationOut(dailytime.gps_location_out);
 
-            dailyTime.setAddressIn(dailytime.nvar100_03);
-            dailyTime.setAddressOut(dailytime.nvar100_04);
+            timeRecord.setAddressIn(dailytime.nvar100_03);
+            timeRecord.setAddressOut(dailytime.nvar100_04);
 
-            dailyTime.setLogType(dailytime.type_in_out);
+            timeRecord.setLogType(dailytime.type_in_out);
 
-            dailyTime.setProject(new Project());
-            dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
-            dailyTime.getProject().setCode(dailytime.project_code);
-            dailyTime.getProject().setDesc(dailytime.project_name);
+            timeRecord.setProject(new Project());
+            timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
+            timeRecord.getProject().setCode(dailytime.project_code);
+            timeRecord.getProject().setDesc(dailytime.project_name);
 
-            timeLogs.add(dailyTime);
+            timeLogs.add(timeRecord);
         }
 
         staffdata_repo.close();
@@ -778,42 +817,42 @@ public class StaffFactory {
         staffdata_repo.close();
     }
 
-    public DailyTime convertToDailyTime(Staff staff, dailytime dailytime){
-        DailyTime dailyTime = new DailyTime();
+    public TimeRecord convertToDailyTime(Staff staff, dailytime dailytime){
+        TimeRecord timeRecord = new TimeRecord();
 
-        dailyTime.setIdcode(dailytime.idcode);
-        dailyTime.setUniquenumPri(dailytime.uniquenum_pri);
-        dailyTime.setStaff(staff);
-        dailyTime.setDateTimePost(dailytime.date_post);
+        timeRecord.setIdcode(dailytime.idcode);
+        timeRecord.setUniquenumPri(dailytime.uniquenum_pri);
+        timeRecord.setStaff(staff);
+        timeRecord.setDateTimePost(dailytime.date_post);
 
-        dailyTime.setDateTimeIn(dailytime.date_time_in);
-        dailyTime.setDateTimeOut(dailytime.date_time_out);
+        timeRecord.setDateTimeIn(dailytime.date_time_in);
+        timeRecord.setDateTimeOut(dailytime.date_time_out);
 
-        dailyTime.setDeviceIdIn(dailytime.device_id_in);
-        dailyTime.setDeviceIdOut(dailytime.device_id_out);
+        timeRecord.setDeviceIdIn(dailytime.device_id_in);
+        timeRecord.setDeviceIdOut(dailytime.device_id_out);
 
-        dailyTime.setDeviceModelIn(dailytime.nvar25_01);
-        dailyTime.setDeviceModelOut(dailytime.nvar25_02);
+        timeRecord.setDeviceModelIn(dailytime.nvar25_01);
+        timeRecord.setDeviceModelOut(dailytime.nvar25_02);
 
-        dailyTime.setDeviceNameIn(dailytime.nvar100_01);
-        dailyTime.setDeviceNameOut(dailytime.nvar100_02);
+        timeRecord.setDeviceNameIn(dailytime.nvar100_01);
+        timeRecord.setDeviceNameOut(dailytime.nvar100_02);
 
-        dailyTime.setGPSLocationIn(dailytime.gps_location_in);
-        dailyTime.setGPSLocationOut(dailytime.gps_location_out);
+        timeRecord.setGPSLocationIn(dailytime.gps_location_in);
+        timeRecord.setGPSLocationOut(dailytime.gps_location_out);
 
-        dailyTime.setAddressIn(dailytime.nvar100_03);
-        dailyTime.setAddressOut(dailytime.nvar100_04);
+        timeRecord.setAddressIn(dailytime.nvar100_03);
+        timeRecord.setAddressOut(dailytime.nvar100_04);
 
-        dailyTime.setLogType(dailytime.type_in_out);
+        timeRecord.setLogType(dailytime.type_in_out);
 
-        dailyTime.setProject(new Project());
-        dailyTime.getProject().setUniquenumPri(dailytime.project_unique);
-        dailyTime.getProject().setCode(dailytime.project_code);
-        dailyTime.getProject().setDesc(dailytime.project_name);
+        timeRecord.setProject(new Project());
+        timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
+        timeRecord.getProject().setCode(dailytime.project_code);
+        timeRecord.getProject().setDesc(dailytime.project_name);
 
-        dailyTime.setSynced(((dailytime.sync_unique != null && dailytime.sync_unique != "") && (dailytime.date_lastupdate.compareTo(dailytime.date_sync)!=1)));
+        timeRecord.setSynced(((dailytime.sync_unique != null && dailytime.sync_unique != "") && (dailytime.date_lastupdate.compareTo(dailytime.date_sync)!=1)));
 
-        return dailyTime;
+        return timeRecord;
     }
 
     private Staff convertEntity(staffdata staffdata){
@@ -851,11 +890,23 @@ public class StaffFactory {
         staff.setFingerprint_image4(staffdata.fingerprint_image4);
         staff.setFingerprint_image5(staffdata.fingerprint_image5);
         staff.setPhoto1(staffdata.photo1);
+
+        StaffTeam staffTeam = new StaffTeam();
+        team team = team_repo.get_team(staffdata.staff_group);
+        if(team!=null){
+            staffTeam.setIdcode(team.idcode);
+            staffTeam.setUniquenumPri(team.uniquenum_pri);
+            staffTeam.setCode(team.team_code);
+            staffTeam.setDesc(team.team_name);
+            staffTeam.setActive(team.active_yn.equals("y"));
+        }
+
+        staff.setStaffTeam(staffTeam);
+
         return staff;
     }
 
     private staffdata convertToEntity(Staff staff) {
-
         staffdata staffdata = new staffdata();
         staffdata.idcode = staff.getIdcode();
         staffdata.uniquenum_pri = staff.getUniquenumPri();
@@ -879,6 +930,10 @@ public class StaffFactory {
         staffdata.gender = staff.getGender();
         staffdata.race = staff.getRace();
         staffdata.active_yn = staff.getActive() ? "y" : "n";
+
+        if(staff.getStaffTeam()!=null){
+            staffdata.staff_group = staff.getStaffTeam().getUniquenumPri();
+        }
 
         return staffdata;
     }

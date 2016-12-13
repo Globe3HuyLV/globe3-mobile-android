@@ -1,12 +1,17 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
+import com.globe3.tno.g3_mobile.app_objects.ProjectPhotoItem;
+import com.globe3.tno.g3_mobile.constants.TagTableUsage;
+import com.globe3.tno.g3_mobile.model.ProjectPhotoRepo;
 import com.globe3.tno.g3_mobile.model.ProjectRepo;
 import com.globe3.tno.g3_mobile.model.TabledataRepo;
 import com.globe3.tno.g3_mobile.model.entities.entproject;
+import com.globe3.tno.g3_mobile.model.entities.projectphoto;
 import com.globe3.tno.g3_mobile.model.entities.tabledata;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 
@@ -16,22 +21,32 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
+import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
+import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
+import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
+
 public class ProjectFactory {
     ProjectRepo project_repo;
+    ProjectPhotoRepo projectphoto_repo;
     TabledataRepo tabledata_repo;
 
     public ProjectFactory(Context context) {
         project_repo = new ProjectRepo(context);
         tabledata_repo = new TabledataRepo(context);
+        projectphoto_repo = new ProjectPhotoRepo(context);
     }
 
     public void openRepo(){
         project_repo.open();
         tabledata_repo = new TabledataRepo(project_repo);
+        projectphoto_repo = new ProjectPhotoRepo(project_repo);
     }
 
     public void closeRepo(){
         project_repo.close();
+        tabledata_repo.close();
+        projectphoto_repo.close();
     }
 
     public void createProject(Project project) {
@@ -149,6 +164,36 @@ public class ProjectFactory {
         Project project = convertEntity(project_repo.get_project(pUniquenum));
         project_repo.close();
         return project;
+    }
+
+    public void saveProjectPhoto(ProjectPhotoItem projectPhotoItem, LogItem logItem){
+        try {
+            projectphoto projectphoto = new projectphoto();
+            projectphoto.tag_table_usage = TagTableUsage.PROJECT_PHOTO_UPLOAD;
+            projectphoto.sync_unique = logItem.getLogUnique();
+            projectphoto.uniquenum_pri = projectPhotoItem.getUniquenumPri();
+            projectphoto.uniquenum_sec = projectPhotoItem.getUniquenumSec();
+            projectphoto.active_yn = "y";
+            projectphoto.date_post = projectPhotoItem.getDatePost();
+            projectphoto.date_submit = projectPhotoItem.getDatePost();
+            projectphoto.date_lastupdate = projectPhotoItem.getDatePost();
+            projectphoto.date_sync = logItem.getLogDate();
+            projectphoto.userid_creator = USERLOGINID;
+            projectphoto.masterfn = MASTERFN;
+            projectphoto.companyfn = COMPANYFN;
+            projectphoto.project_code = projectPhotoItem.getProject().getCode();
+            projectphoto.project_name = projectPhotoItem.getProject().getDesc();
+            projectphoto.project_unique = projectPhotoItem.getProject().getUniquenumPri();
+            projectphoto.row_item_num = projectPhotoItem.getRowItemNum();
+            projectphoto.reference_num = projectPhotoItem.getReferenceNum();
+            projectphoto.remarks = projectPhotoItem.getRemarks();
+            projectphoto.photo = projectPhotoItem.getPhoto();
+
+            projectphoto_repo.create_projectphoto(projectphoto);
+        }catch (Exception e){
+            Log.i(APP_NAME, "saveProjectPhoto_Error");
+            e.printStackTrace();
+        }
     }
 
     private Project convertEntity(entproject entproject){

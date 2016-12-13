@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.globe3.tno.g3_mobile.app_objects.LogItem;
+
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 
 public class Globe3Db extends SQLiteOpenHelper {
@@ -19,6 +22,9 @@ public class Globe3Db extends SQLiteOpenHelper {
     public static final String TABLE_SCANIMAGE = "scanimage";
     public static final String TABLE_DAILYTIME = "dailytime";
     public static final String TABLE_TABLEDATA = "tabledata";
+    public static final String TABLE_PROJECTPHOTO = "projectphoto";
+    public static final String TABLE_TEAM = "team";
+    public static final String TABLE_SALESORDER = "salesorder";
 
     public static final String COLUMN_IDCODE = "idcode";
     public static final String COLUMN_TAG_TABLE_USAGE = "tag_table_usage";
@@ -74,6 +80,7 @@ public class Globe3Db extends SQLiteOpenHelper {
     public static final String COLUMN_VENDOR_NAME = "vendor_name";
     public static final String COLUMN_VENDOR_UNIQUE = "vendor_unique";
     public static final String COLUMN_DATE_BIRTH = "date_birth";
+    public static final String COLUMN_PHOTO = "photo";
     public static final String COLUMN_PHOTO1 = "photo1";
     public static final String COLUMN_PHOTO2 = "photo2";
     public static final String COLUMN_FINGERPRINT_IMAGE1 = "fingerprint_image1";
@@ -109,8 +116,17 @@ public class Globe3Db extends SQLiteOpenHelper {
     public static final String COLUMN_NVAR25_05 = "nvar25_05";
     public static final String COLUMN_NVAR100_04 = "nvar100_04";
     public static final String COLUMN_NVAR100_05 = "nvar100_05";
+    public static final String COLUMN_ROW_ITEM_NUM = "row_item_num";
+    public static final String COLUMN_REFERENCE_NUM = "reference_num";
+    public static final String COLUMN_REMARKS = "remarks";
+    public static final String COLUMN_TEAM_CODE = "team_code";
+    public static final String COLUMN_TEAM_NAME = "team_name";
+    public static final String COLUMN_TEAM_UNIQUE = "team_unique";
+    public static final String COLUMN_SALES_ORDER_CODE = "sales_order_code";
+    public static final String COLUMN_SALES_ORDER_NAME = "sales_order_name";
+    public static final String COLUMN_SALES_ORDER_UNIQUE = "sales_order_unique";
 
-    private static final String TABLE_BIOM_USERACCESS_CREATE =  "CREATE TABLE `useraccess` (" +
+    private static final String TABLE_USERACCESS_CREATE =  "CREATE TABLE IF NOT EXISTS `useraccess` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -136,7 +152,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`device_id`TEXT" +
             ");";
 
-    private static final String TABLE_BIOM_ENTITY_CREATE =  "CREATE TABLE `entity` (" +
+    private static final String TABLE_ENTITY_CREATE =  "CREATE TABLE IF NOT EXISTS `entity` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -153,7 +169,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`co_name`TEXT" +
             ");";
 
-    private static final String TABLE_BIOM_PROJECT_CREATE =  "CREATE TABLE `entproject` (" +
+    private static final String TABLE_PROJECT_CREATE =  "CREATE TABLE IF NOT EXISTS `entproject` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -172,7 +188,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`project_unique`TEXT" +
             ");";
 
-    private static final String TABLE_BIOM_WDATA_CREATE =  "CREATE TABLE `staffdata` (" +
+    private static final String TABLE_WDATA_CREATE =  "CREATE TABLE IF NOT EXISTS `staffdata` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -223,7 +239,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`project_unique`TEXT" +
             ");";
 
-    private static final String TABLE_BIOM_AUDITLOG_CREATE =  "CREATE TABLE `auditlog` (" +
+    private static final String TABLE_AUDITLOG_CREATE =  "CREATE TABLE IF NOT EXISTS `auditlog` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -252,7 +268,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`num02`NUMERIC" +
             ");";
 
-    private static final String TABLE_BIOM_SCANIMAGE_CREATE =  "CREATE TABLE `scanimage` (" +
+    private static final String TABLE_SCANIMAGE_CREATE =  "CREATE TABLE IF NOT EXISTS `scanimage` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -291,7 +307,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`num02`NUMERIC" +
             ");";
 
-    private static final String TABLE_BIOM_DAILYTIME_CREATE =  "CREATE TABLE `dailytime` (" +
+    private static final String TABLE_DAILYTIME_CREATE =  "CREATE TABLE IF NOT EXISTS `dailytime` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -336,7 +352,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`num02`NUMERIC" +
             ");";
 
-    private static final String TABLE_BIOM_TABLE1_CREATE =  "CREATE TABLE `tabledata` (" +
+    private static final String TABLE_TABLEDATA_CREATE =  "CREATE TABLE IF NOT EXISTS `tabledata` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
@@ -367,33 +383,117 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`num02`NUMERIC" +
             ");";
 
+    private static final String TABLE_PROJECT_PHOTO_CREATE =  "CREATE TABLE IF NOT EXISTS `projectphoto` (" +
+            "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "`tag_table_usage`TEXT," +
+            "`sync_unique`TEXT," +
+            "`uniquenum_pri`TEXT," +
+            "`uniquenum_sec`TEXT," +
+            "`active_yn`TEXT," +
+            "`date_post`TEXT," +
+            "`date_submit`TEXT," +
+            "`date_lastupdate`TEXT," +
+            "`date_sync`TEXT," +
+            "`userid_creator`TEXT," +
+            "`masterfn`TEXT," +
+            "`companyfn`TEXT," +
+            "`project_code`TEXT," +
+            "`project_name`TEXT," +
+            "`project_unique`TEXT," +
+            "`row_item_num`NUMERIC," +
+            "`reference_num`TEXT," +
+            "`remarks`TEXT," +
+            "`photo`BLOB" +
+            ");";
+
+    private static final String TABLE_TEAM_CREATE =  "CREATE TABLE IF NOT EXISTS `team` (" +
+            "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "`tag_table_usage`TEXT," +
+            "`sync_unique`TEXT," +
+            "`uniquenum_pri`TEXT," +
+            "`uniquenum_sec`TEXT," +
+            "`active_yn`TEXT," +
+            "`date_post`TEXT," +
+            "`date_submit`TEXT," +
+            "`date_lastupdate`TEXT," +
+            "`date_sync`TEXT," +
+            "`userid_creator`TEXT," +
+            "`masterfn`TEXT," +
+            "`companyfn`TEXT," +
+            "`team_code`TEXT," +
+            "`team_name`TEXT," +
+            "`team_unique`TEXT" +
+            ");";
+
+    private static final String TABLE_SALES_ORDER_CREATE =  "CREATE TABLE IF NOT EXISTS `salesorder` (" +
+            "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "`tag_table_usage`TEXT," +
+            "`sync_unique`TEXT," +
+            "`uniquenum_pri`TEXT," +
+            "`uniquenum_sec`TEXT," +
+            "`active_yn`TEXT," +
+            "`date_post`TEXT," +
+            "`date_submit`TEXT," +
+            "`date_lastupdate`TEXT," +
+            "`date_sync`TEXT," +
+            "`userid_creator`TEXT," +
+            "`masterfn`TEXT," +
+            "`companyfn`TEXT," +
+            "`team_code`TEXT," +
+            "`team_name`TEXT," +
+            "`team_unique`TEXT," +
+            "`sales_order_code`TEXT," +
+            "`sales_order_name`TEXT," +
+            "`sales_order_unique`TEXT" +
+            ");";
+
     public Globe3Db(Context context) {
         super(context, GLOBE3_DB, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(TABLE_BIOM_USERACCESS_CREATE);
-        database.execSQL(TABLE_BIOM_ENTITY_CREATE);
-        database.execSQL(TABLE_BIOM_PROJECT_CREATE);
-        database.execSQL(TABLE_BIOM_WDATA_CREATE);
-        database.execSQL(TABLE_BIOM_AUDITLOG_CREATE);
-        database.execSQL(TABLE_BIOM_SCANIMAGE_CREATE);
-        database.execSQL(TABLE_BIOM_DAILYTIME_CREATE);
-        database.execSQL(TABLE_BIOM_TABLE1_CREATE);
+        database.execSQL(TABLE_USERACCESS_CREATE);
+        database.execSQL(TABLE_ENTITY_CREATE);
+        database.execSQL(TABLE_PROJECT_CREATE);
+        database.execSQL(TABLE_WDATA_CREATE);
+        database.execSQL(TABLE_AUDITLOG_CREATE);
+        database.execSQL(TABLE_SCANIMAGE_CREATE);
+        database.execSQL(TABLE_DAILYTIME_CREATE);
+        database.execSQL(TABLE_TABLEDATA_CREATE);
+        database.execSQL(TABLE_PROJECT_PHOTO_CREATE);
+        database.execSQL(TABLE_TEAM_CREATE);
+        database.execSQL(TABLE_SALES_ORDER_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(Globe3Db.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_USERACCESS_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_ENTITY_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_PROJECT_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_WDATA_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_AUDITLOG_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_SCANIMAGE_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_DAILYTIME_CREATE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BIOM_TABLE1_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERACCESS_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ENTITY_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECT_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WDATA_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AUDITLOG_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCANIMAGE_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DAILYTIME_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TABLEDATA_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECT_PHOTO_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAM_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SALES_ORDER_CREATE);
         onCreate(db);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase database) {
+        database.execSQL(TABLE_USERACCESS_CREATE);
+        database.execSQL(TABLE_ENTITY_CREATE);
+        database.execSQL(TABLE_PROJECT_CREATE);
+        database.execSQL(TABLE_WDATA_CREATE);
+        database.execSQL(TABLE_AUDITLOG_CREATE);
+        database.execSQL(TABLE_SCANIMAGE_CREATE);
+        database.execSQL(TABLE_DAILYTIME_CREATE);
+        database.execSQL(TABLE_TABLEDATA_CREATE);
+        database.execSQL(TABLE_PROJECT_PHOTO_CREATE);
+        database.execSQL(TABLE_TEAM_CREATE);
+        database.execSQL(TABLE_SALES_ORDER_CREATE);
     }
 }
