@@ -17,8 +17,10 @@ import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.activities.DashboardActivity;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
+import com.globe3.tno.g3_mobile.app_objects.SalesOrder;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.SalesOrderFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
 import com.globe3.tno.g3_mobile.globals.Globals;
@@ -41,6 +43,7 @@ public class SyncDownFragment extends DialogFragment {
     CompanyFactory company_factory;
     ProjectFactory project_factory;
     StaffFactory staff_factory;
+    SalesOrderFactory sales_order_factory;
 
     ImageView iv_icon_sync_down;
     TextView tv_sync_down_progress;
@@ -55,11 +58,13 @@ public class SyncDownFragment extends DialogFragment {
     ArrayList<CompanyWriteDB> write_db_company_list;
     ArrayList<ProjectWriteDB> write_db_project_list;
     ArrayList<StaffWriteDB> write_db_staff_list;
+    ArrayList<SalesOrderWriteDB> write_db_salesorder_list;
 
     int write_db_user_que_num = 0;
     int write_db_company_que_num = 0;
     int write_db_project_que_num = 0;
     int write_db_staff_que_num = 0;
+    int write_db_salesorder_que_num;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -69,7 +74,8 @@ public class SyncDownFragment extends DialogFragment {
         user_factory = new UserFactory(parent_activity);
         company_factory = new CompanyFactory(parent_activity);
         project_factory = new ProjectFactory(parent_activity);
-        staff_factory = new StaffFactory(getActivity());
+        staff_factory = new StaffFactory(parent_activity);
+        sales_order_factory = new SalesOrderFactory(parent_activity);
 
         View syncDownFragment = inflater.inflate(R.layout.fragment_sync_down, viewGroup, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -138,6 +144,7 @@ public class SyncDownFragment extends DialogFragment {
         JSONArray teams;
         JSONArray staffs;
         JSONArray staffProjects;
+        JSONArray saleorders;
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -149,7 +156,7 @@ public class SyncDownFragment extends DialogFragment {
                 JSONObject teamResultJSON = HttpUtility.requestJSON("teamsync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject staffResultJSON = HttpUtility.requestJSON("staffsync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
                 JSONObject staffProjectResultJSON = HttpUtility.requestJSON("project_staff_assign_sync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
-
+                JSONObject salesOrderesultJSON = HttpUtility.requestJSON("salesordersync", "cfsqlfilename="+ Globals.CFSQLFILENAME+"&masterfn="+ Globals.MASTERFN);
 
                 users = userResultJSON.getJSONArray("items");
                 companies = companyResultJSON.getJSONArray("items");
@@ -157,6 +164,8 @@ public class SyncDownFragment extends DialogFragment {
                 teams = teamResultJSON.getJSONArray("items");
                 staffs = staffResultJSON.getJSONArray("items");
                 staffProjects = staffProjectResultJSON.getJSONArray("items");
+                saleorders = salesOrderesultJSON.getJSONArray("items");
+
                 if(userResultJSON!=null&&companyResultJSON!=null&&projectResultJSON!=null&&teamResultJSON!=null&&staffResultJSON!=null&&staffProjectResultJSON!=null){
 
                     user_factory.deleteAll();
@@ -165,8 +174,10 @@ public class SyncDownFragment extends DialogFragment {
                     staff_factory.deleteAllTeam();
                     staff_factory.deleteAll();
                     staff_factory.deleteAllStaffProject();
+                    sales_order_factory.deleteAll();
 
-                    sync_total = users.length()+companies.length()+projects.length()+teams.length()+staffs.length()+staffProjects.length();
+
+                    sync_total = users.length()+companies.length()+projects.length()+teams.length()+staffs.length()+staffProjects.length()+saleorders.length();
 
                     try {
                         for(int i=0;i<users.length();i++)
@@ -234,6 +245,16 @@ public class SyncDownFragment extends DialogFragment {
                                 }
                             }));
                         }
+
+                        for(int i=0;i<saleorders.length();i++){
+                            final JSONObject salesOrderJson = saleorders.getJSONObject(i);
+                            write_db_salesorder_list.add(new SalesOrderWriteDB(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sales_order_factory.downloadSalesOrder(salesOrderJson, logItem);
+                                }
+                            }));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                         showSyncStatus(false);
@@ -295,6 +316,15 @@ public class SyncDownFragment extends DialogFragment {
         if(write_db_staff_list.size() > 0){
             staff_factory.openRepo();
             write_db_staff_list.get(0).execute();
+        }else{
+            syncSalesOrder();
+        }
+    }
+
+    private void syncSalesOrder(){
+        if(write_db_salesorder_list.size() > 0){
+            staff_factory.openRepo();
+            write_db_salesorder_list.get(0).execute();
         }else{
             showSyncStatus(true);
         }
@@ -432,6 +462,41 @@ public class SyncDownFragment extends DialogFragment {
                     write_db_staff_list.get(write_db_staff_que_num).execute();
                 }else if(write_db_staff_que_num==write_db_staff_list.size()){
                     staff_factory.closeRepo();
+                    syncSalesOrder();
+                }
+            }else{
+                showSyncStatus(false);
+            }
+        }
+    }
+
+    private class SalesOrderWriteDB extends AsyncTask<Void, Void, Boolean> {
+        private Runnable task;
+
+        public SalesOrderWriteDB(Runnable task){
+            this.task = task;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                task.run();
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean writeSuccess) {
+            if(writeSuccess){
+                updateProgress();
+                write_db_salesorder_que_num++;
+                if(write_db_salesorder_que_num<write_db_salesorder_list.size()){
+                    write_db_salesorder_list.get(write_db_salesorder_que_num).execute();
+                }else if(write_db_salesorder_que_num==write_db_salesorder_list.size()){
+                    sales_order_factory.closeRepo();
                     showSyncStatus(true);
                 }
             }else{

@@ -38,7 +38,6 @@ import org.json.JSONObject;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
-import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_TEAM;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
@@ -78,12 +77,6 @@ public class StaffFactory {
         dailytime_repo.close();
         tabledata_repo.close();
         team_repo.close();
-    }
-
-    public void createStaff(Staff staff) {
-        staffdata_repo.open();
-        staffdata_repo.create_staffdata(convertToEntity(staff));
-        staffdata_repo.close();
     }
 
     public void downloadStaff(JSONObject staffJson, LogItem logItem) {

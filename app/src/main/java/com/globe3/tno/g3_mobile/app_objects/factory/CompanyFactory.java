@@ -76,29 +76,6 @@ public class CompanyFactory {
         entity_repo.close();
     }
 
-    public void createCompany(JSONObject entityJson, LogItem logItem){
-        entity entity = new entity();
-        try {
-            entity.uniquenum_pri = entityJson.getString("uniquenum_pri");
-            entity.uniquenum_sec = entityJson.getString("uniquenum_sec");
-            entity.tag_table_usage = entityJson.getString("tag_table_usage");
-            entity.co_code = entityJson.getString("co_code");
-            entity.co_name = entityJson.getString("co_name");
-            entity.companyfn = entityJson.getString("companyfn");
-            entity.masterfn = entityJson.getString("masterfn");
-            entity.active_yn = "y";
-            entity.date_post = DateUtility.getStringDate(entityJson.getString("date_post"));
-            entity.sync_unique = logItem.getLogUnique();
-            entity.date_sync = logItem.getLogDate();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        entity_repo.open();
-        entity_repo.create_entity(entity);
-        entity_repo.close();
-    }
-
     public void downloadCompany(JSONObject entityJson, LogItem logItem){
         entity entity = new entity();
         try {

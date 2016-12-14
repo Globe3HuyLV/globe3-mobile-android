@@ -112,12 +112,4 @@ public class AuditFactory {
 
         return activity_list;
     }
-
-    public void deleteEverything(){
-        auditlog_repo.open();
-
-        auditlog_repo.database_truncate();
-
-        auditlog_repo.close();
-    }
 }

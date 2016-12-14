@@ -49,40 +49,6 @@ public class ProjectFactory {
         projectphoto_repo.close();
     }
 
-    public void createProject(Project project) {
-        project_repo.open();
-        project_repo.create_project(convertToEntity(project));
-        project_repo.close();
-    }
-
-    public void createProject(JSONObject projectJson, LogItem logItem) {
-
-        entproject entproject = new entproject();
-        try {
-            entproject.masterfn = projectJson.getString("masterfn");
-            entproject.companyfn = projectJson.getString("companyfn");
-            entproject.uniquenum_pri = projectJson.getString("uniquenum");
-            entproject.tag_table_usage = projectJson.getString("tag_table_usage");
-            entproject.uniquenum_sec = projectJson.getString("uniquenum_sec");
-            entproject.active_yn = projectJson.getString("tag_active_yn");
-            entproject.date_post = DateUtility.getStringDate(projectJson.getString("date_post"));
-            entproject.date_submit = DateUtility.getStringDate(projectJson.getString("date_submit"));
-            entproject.date_lastupdate = DateUtility.getStringDate(projectJson.getString("date_lastupdate"));
-            entproject.sync_unique = logItem.getLogUnique();
-            entproject.date_sync = logItem.getLogDate();
-            entproject.project_code = projectJson.getString("projcode_code");
-            entproject.project_name = projectJson.getString("desc_english");
-            entproject.project_unique = projectJson.getString("projcode_unique");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        project_repo.open();
-        project_repo.create_project(entproject);
-        project_repo.close();
-    }
-
     public void downloadProject(JSONObject projectJson, LogItem logItem) {
 
         entproject entproject = new entproject();
@@ -109,21 +75,9 @@ public class ProjectFactory {
         project_repo.create_project(entproject);
     }
 
-    public void deleteProject(Project project) {
-        project_repo.open();
-        project_repo.delete_project(convertToEntity(project));
-        project_repo.close();
-    }
-
     public void deleteAll() {
         project_repo.open();
         project_repo.delete_project_all();
-        project_repo.close();
-    }
-
-    public void updateProject(Project project) {
-        project_repo.open();
-        project_repo.update_project(convertToEntity(project));
         project_repo.close();
     }
 
@@ -204,16 +158,5 @@ public class ProjectFactory {
         project.setCode(entproject.project_code);
         project.setActive(entproject.active_yn.equals("y"));
         return project;
-    }
-
-    private entproject convertToEntity(Project project){
-        entproject entproject = new entproject();
-        entproject.idcode = project.getIdcode();
-        entproject.uniquenum_pri = project.getUniquenumPri();
-        entproject.project_unique = project.getUniquenumPri();
-        entproject.project_name = project.getDesc();
-        entproject.project_code = project.getCode();
-        entproject.active_yn = project.getActive() ? "y" : "n";
-        return entproject;
     }
 }

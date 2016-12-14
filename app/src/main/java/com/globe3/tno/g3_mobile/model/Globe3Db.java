@@ -24,7 +24,7 @@ public class Globe3Db extends SQLiteOpenHelper {
     public static final String TABLE_TABLEDATA = "tabledata";
     public static final String TABLE_PROJECTPHOTO = "projectphoto";
     public static final String TABLE_TEAM = "team";
-    public static final String TABLE_SALESORDER = "salesorder";
+    public static final String TABLE_SALESORDER = "erpsalesorder";
 
     public static final String COLUMN_IDCODE = "idcode";
     public static final String COLUMN_TAG_TABLE_USAGE = "tag_table_usage";
@@ -425,7 +425,7 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`team_unique`TEXT" +
             ");";
 
-    private static final String TABLE_SALES_ORDER_CREATE =  "CREATE TABLE IF NOT EXISTS `salesorder` (" +
+    private static final String TABLE_SALES_ORDER_CREATE =  "CREATE TABLE IF NOT EXISTS `erpsalesorder` (" +
             "`idcode`INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "`tag_table_usage`TEXT," +
             "`sync_unique`TEXT," +
