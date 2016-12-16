@@ -52,9 +52,6 @@ public class SalesOrderRepo extends BaseRepo{
         values.put(Globe3Db.COLUMN_USERID_CREATOR, erpsalesorder.userid_creator);
         values.put(Globe3Db.COLUMN_MASTERFN, erpsalesorder.masterfn);
         values.put(Globe3Db.COLUMN_COMPANYFN, erpsalesorder.companyfn);
-        values.put(Globe3Db.COLUMN_TEAM_CODE, erpsalesorder.team_code);
-        values.put(Globe3Db.COLUMN_TEAM_NAME, erpsalesorder.team_name);
-        values.put(Globe3Db.COLUMN_TEAM_UNIQUE, erpsalesorder.team_unique);
         values.put(Globe3Db.COLUMN_SALES_ORDER_CODE, erpsalesorder.salesorder_code);
         values.put(Globe3Db.COLUMN_SALES_ORDER_NAME, erpsalesorder.salesorder_name);
         values.put(Globe3Db.COLUMN_SALES_ORDER_UNIQUE, erpsalesorder.salesorder_unique);
@@ -90,9 +87,6 @@ public class SalesOrderRepo extends BaseRepo{
         values.put(Globe3Db.COLUMN_USERID_CREATOR, erpsalesorder.userid_creator);
         values.put(Globe3Db.COLUMN_MASTERFN, erpsalesorder.masterfn);
         values.put(Globe3Db.COLUMN_COMPANYFN, erpsalesorder.companyfn);
-        values.put(Globe3Db.COLUMN_TEAM_CODE, erpsalesorder.team_code);
-        values.put(Globe3Db.COLUMN_TEAM_NAME, erpsalesorder.team_name);
-        values.put(Globe3Db.COLUMN_TEAM_UNIQUE, erpsalesorder.team_unique);
         values.put(Globe3Db.COLUMN_SALES_ORDER_CODE, erpsalesorder.salesorder_code);
         values.put(Globe3Db.COLUMN_SALES_ORDER_NAME, erpsalesorder.salesorder_name);
         values.put(Globe3Db.COLUMN_SALES_ORDER_UNIQUE, erpsalesorder.salesorder_unique);
@@ -179,9 +173,6 @@ public class SalesOrderRepo extends BaseRepo{
         erpsalesorder.userid_creator = cursor.getString(10);
         erpsalesorder.masterfn = cursor.getString(11);
         erpsalesorder.companyfn = cursor.getString(12);
-        erpsalesorder.team_code = cursor.getString(13);
-        erpsalesorder.team_name = cursor.getString(14);
-        erpsalesorder.team_unique = cursor.getString(15);
         erpsalesorder.salesorder_code = cursor.getString(16);
         erpsalesorder.salesorder_name = cursor.getString(17);
         erpsalesorder.salesorder_unique = cursor.getString(18);

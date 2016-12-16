@@ -1,5 +1,7 @@
 package com.globe3.tno.g3_mobile.app_objects;
 
+import java.util.ArrayList;
+
 public class SalesOrder {
     private long idcode;
     private String uniquenumPri;
@@ -7,7 +9,7 @@ public class SalesOrder {
     private String code;
     private boolean active;
 
-    private StaffTeam staff_team;
+    private ArrayList<StaffTeam> staff_team;
 
     public long getIdcode() {
         return idcode;
@@ -49,11 +51,11 @@ public class SalesOrder {
         this.active = active;
     }
 
-    public StaffTeam getStaffTeam() {
+    public ArrayList<StaffTeam> getStaffTeam() {
         return staff_team;
     }
 
-    public void setStaffTeam(StaffTeam staffTeam) {
+    public void setStaffTeam(ArrayList<StaffTeam> staffTeam) {
         this.staff_team = staffTeam;
     }
 }

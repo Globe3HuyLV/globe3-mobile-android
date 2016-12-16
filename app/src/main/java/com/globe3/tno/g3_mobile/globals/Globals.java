@@ -28,4 +28,7 @@ public class Globals {
     public static boolean EXTRACT_LICENSE_OBTAINED = false;
     public static boolean MATCHER_LICENSE_OBTAINED = false;
     public static boolean DEVICES_LICENSE_OBTAINED = false;
+
+    public static boolean ACTIVE_FEATURE_TIMESHEET_PROJECT = false;
+    public static boolean ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = false;
 }

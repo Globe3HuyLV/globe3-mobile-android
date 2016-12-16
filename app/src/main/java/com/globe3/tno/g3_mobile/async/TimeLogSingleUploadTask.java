@@ -21,12 +21,12 @@ import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
 public class TimeLogSingleUploadTask extends AsyncTask<Void, Void, Boolean> {
     StaffFactory staff_factory;
 
-    TimeRecord daily_time;
+    TimeRecord time_record;
     LogItem log_item;
 
     public TimeLogSingleUploadTask(StaffFactory staffFactory, TimeRecord timeRecord, LogItem logItem){
         this.staff_factory = staffFactory;
-        this.daily_time = timeRecord;
+        this.time_record = timeRecord;
         this.log_item = logItem;
     }
 
@@ -37,21 +37,21 @@ public class TimeLogSingleUploadTask extends AsyncTask<Void, Void, Boolean> {
             detail.put("cfsqlfilename", CFSQLFILENAME);
             detail.put("masterfn", MASTERFN);
             detail.put("companyfn", COMPANYFN);
-            detail.put("uniquenum_pri", daily_time.getUniquenumPri());
+            detail.put("uniquenum_pri", time_record.getUniquenumPri());
 
             String param = HttpUtility.hashMapToUrl(detail);
 
             JSONObject timeLogGetJSON = HttpUtility.requestJSON("timelog_get", param);
 
             if(timeLogGetJSON != null && timeLogGetJSON.getBoolean("exist")){
-                if(DateUtility.getDateString(daily_time.getDateTimeIn(), "yyyy-MM-dd HH:mm").equals(timeLogGetJSON.getString("date_in")) && timeLogGetJSON.getString("date_out").trim().equals("")){
-                    return upload(daily_time);
+                if(DateUtility.getDateString(time_record.getDateTimeIn(), "yyyy-MM-dd HH:mm").equals(timeLogGetJSON.getString("date_in")) && timeLogGetJSON.getString("date_out").trim().equals("")){
+                    return upload(time_record);
                 }else{
-                    staff_factory.removeDateOut(daily_time.getUniquenumPri());
-                    return upload(staff_factory.logOut(daily_time.getStaff(), daily_time.getProject(), daily_time.getDateTimeOut()));
+                    staff_factory.removeDateOut(time_record.getUniquenumPri());
+                    return upload(staff_factory.logOut(time_record.getStaff(), time_record.getProject(), time_record.getDateTimeOut()));
                 }
             }else{
-                return upload(daily_time);
+                return upload(time_record);
             }
         } catch (Exception e) {
             e.printStackTrace();

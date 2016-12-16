@@ -178,8 +178,18 @@ public class TabledataRepo extends BaseRepo{
         return tabledatas;
     }
 
+    public tabledata get_tabledata(String param) {
+        Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, param, null, null, null, null);
 
-    public tabledata get_tabledata(String pUniquenum){
+        tabledata tabledata = cursorToObject(cursor);
+
+        cursor.close();
+
+        return tabledata;
+    }
+
+
+    public tabledata get_tabledata_by_unique(String pUniquenum){
 
 
         Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, "uniquenum_pri = '"+pUniquenum+"'", null, null, null, null);

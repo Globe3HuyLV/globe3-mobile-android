@@ -29,7 +29,7 @@ public class Staff implements Serializable{
     private byte[] photo1;
     private boolean active;
 
-    private StaffTeam staff_team;
+    private ArrayList<StaffTeam> staff_team;
 
     public ArrayList<TimeLog> TimeLogs;
 
@@ -214,11 +214,11 @@ public class Staff implements Serializable{
         return active;
     }
 
-    public StaffTeam getStaffTeam() {
+    public ArrayList<StaffTeam> getStaffTeam() {
         return staff_team;
     }
 
-    public void setStaffTeam(StaffTeam staffTeam) {
+    public void setStaffTeam(ArrayList<StaffTeam> staffTeam) {
         this.staff_team = staffTeam;
     }
 }

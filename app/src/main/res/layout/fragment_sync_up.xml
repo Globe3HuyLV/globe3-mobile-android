@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    tools:context="com.globe3.tno.g3_mobile.fragments.SyncDownFragment"
+    tools:context="com.globe3.tno.g3_mobile.fragments.SyncUpFragment"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
@@ -27,7 +27,7 @@
                     android:layout_height="72dp"
                     android:gravity="center">
                     <ImageView
-                        android:id="@+id/iv_icon_sync_down"
+                        android:id="@+id/iv_icon_sync_up"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tint="@color/colorAccent"
@@ -39,7 +39,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
                     <TextView
-                        android:id="@+id/tv_sync_down_progress"
+                        android:id="@+id/tv_sync_up_progress"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:textColor="@color/colorBlackLight"
@@ -47,7 +47,7 @@
                         android:textAllCaps="true"
                         android:text="0%"/>
                     <TextView
-                        android:id="@+id/tv_sync_down_desc"
+                        android:id="@+id/tv_sync_up_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"

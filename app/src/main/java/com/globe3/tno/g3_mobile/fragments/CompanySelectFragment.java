@@ -63,7 +63,7 @@ public class CompanySelectFragment extends DialogFragment {
                         public void onClick(View v) {
                             COMPANYFN = company.getUniquenumPri();
                             COMPANY_NAME = company.getName();
-                            ((DashboardActivity) getActivity()).resetCompanyName();
+                            ((DashboardActivity) getActivity()).updateDashboard();
                             dismiss();
                         }
                     });

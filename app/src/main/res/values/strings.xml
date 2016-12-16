@@ -119,6 +119,9 @@
     <string name="msg_server_connection">Server Connection</string>
     <string name="msg_server">Server</string>
     <string name="msg_gps_services">GPS Services</string>
+    <string name="msg_gps_services_active">GPS Services Active</string>
+    <string name="msg_server_connection_failed">Server connection failed</string>
+    <string name="msg_server_connection_success">Server connection success</string>
     <string name="msg_pending_sync">Pending Sync</string>
     <string name="msg_last_sync">Last Sync</string>
     <string name="msg_online">Online</string>

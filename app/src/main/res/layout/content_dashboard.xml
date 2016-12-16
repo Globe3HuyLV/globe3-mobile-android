@@ -35,7 +35,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dashboard_card_info_height"
                         android:clickable="true"
-                        android:background="?attr/selectableItemBackground">
+                        android:background="?attr/selectableItemBackground"
+                        android:onClick="showConnectionStatus">
                         <LinearLayout
                             android:id="@+id/ll_server_connect"
                             android:layout_width="@dimen/dashboard_card_info_icon_width"
@@ -182,7 +183,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dashboard_card_info_height"
                         android:clickable="true"
-                        android:background="?attr/selectableItemBackground">
+                        android:background="?attr/selectableItemBackground"
+                        android:onClick="pendingSync">
                         <LinearLayout
                             android:id="@+id/ll_pending_sync"
                             android:layout_width="@dimen/dashboard_card_info_icon_width"

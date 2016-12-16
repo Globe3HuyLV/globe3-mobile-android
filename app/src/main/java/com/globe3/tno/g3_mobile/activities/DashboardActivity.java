@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.activities;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -23,12 +25,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,12 +38,12 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.globe3.tno.g3_mobile.BuildConfig;
 import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.adapters.LocationCheckStaffListAdapter;
 import com.globe3.tno.g3_mobile.adapters.RecentActivityListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.Company;
 import com.globe3.tno.g3_mobile.app_objects.GPSLocation;
 import com.globe3.tno.g3_mobile.app_objects.Staff;
 import com.globe3.tno.g3_mobile.app_objects.StaffAction;
+import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
@@ -51,6 +51,7 @@ import com.globe3.tno.g3_mobile.app_objects.factory.UserFactory;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.fragments.CompanySelectFragment;
 import com.globe3.tno.g3_mobile.fragments.SyncDownFragment;
+import com.globe3.tno.g3_mobile.fragments.SyncUpFragment;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 import com.globe3.tno.g3_mobile.util.GPSUtility;
 import com.globe3.tno.g3_mobile.util.HttpUtility;
@@ -60,10 +61,8 @@ import com.neurotec.biometrics.NMatchingSpeed;
 import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
-import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DB;
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_GPS;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
@@ -83,7 +82,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     AuditFactory audit_factory;
     UserFactory user_factory;
     CompanyFactory company_factory;
-    StaffFactory staffFactory;
+    StaffFactory staff_factory;
 
     ActionBar action_bar;
     ActionBarDrawerToggle toggle;
@@ -131,6 +130,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     boolean sync_in_progress = false;
     int logo_touch_counter;
 
+    boolean server_connection = false;
+    boolean gps_allowed = false;
+    boolean gps_on = false;
+
+
+    int pending_sync_count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_dashboard);
@@ -177,13 +183,17 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             fetchRecentActivity();
             showRecentActivity();
         }
+
+        if(staff_factory != null){
+            updatePendingList();
+        }
     }
 
     public void onActivityLoading(){
         audit_factory = new AuditFactory(dashboard_activity);
         user_factory = new UserFactory(dashboard_activity);
         company_factory = new CompanyFactory(dashboard_activity);
-        staffFactory = new StaffFactory(dashboard_activity);
+        staff_factory = new StaffFactory(dashboard_activity);
 
         dashboard_toolbar = (Toolbar) findViewById(R.id.dashboardToolbar);
         dashboard_drawer = (DrawerLayout) findViewById(R.id.drawer_dashboard);
@@ -217,14 +227,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         DEVICE_MODEL = android.os.Build.MODEL;
         DEVICE_NAME = BluetoothAdapter.getDefaultAdapter().getName();
 
+        fetchCompanyList();
+
         recent_activity_list = new ArrayList<>();
         fetchRecentActivity();
-
-        if(user_factory.getActiveUsers().size() > 0){
-            company_list = USERLOGINID.equals("m8") ? company_factory.getActiveCompanys() : company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
-        }else{
-            company_list = new ArrayList<>();
-        }
 
         location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -240,6 +246,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         action_bar = getSupportActionBar();
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void onActivityReady(){
         setSupportActionBar(dashboard_toolbar);
         if(action_bar != null){
@@ -261,8 +268,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
         menu_apps.setClosedOnTouchOutside(true);
         Drawable menuAppsIcons[] = new Drawable[2];
-        menuAppsIcons[0] = getDrawable(R.drawable.ic_apps_white_24dp);
-        menuAppsIcons[1] = getDrawable(R.drawable.ic_add_white_24dp);
+        menuAppsIcons[0] = ContextCompat.getDrawable(dashboard_activity, R.drawable.ic_apps_white_24dp);
+        menuAppsIcons[1] = ContextCompat.getDrawable(dashboard_activity, R.drawable.ic_apps_white_24dp);
 
         final TransitionDrawable menuAppsCrossfader = new TransitionDrawable(menuAppsIcons);
         menuAppsCrossfader.setCrossFadeEnabled(true);
@@ -333,6 +340,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         handler.postDelayed(runnable, 3000);
     }
 
+    private void fetchCompanyList(){
+        if(user_factory.getActiveUsers().size() > 0){
+            company_list = USERLOGINID.equals("m8") ? company_factory.getActiveCompanys() : company_factory.getUserCompanys(user_factory.getUser(USERLOGINUNIQ).getCompanies());
+        }else{
+            company_list = new ArrayList<>();
+        }
+    }
+
     private void showCompany(){
         if(getSupportActionBar() != null){
             ActionBar mActionBar = getSupportActionBar();
@@ -355,17 +370,20 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         for(StaffAction staffAction : audit_factory.getRecentActivity()){
             int action_index = getStaffActionIndex(staffAction.getActionType());
 
-            staffAction.setStaff(staffFactory.getStaff(staffAction.getStaff().getUniquenumPri()));
+            Staff staff = staff_factory.getStaff(staffAction.getStaff().getUniquenumPri());
+            if(staff!=null){
+                staffAction.setStaff(staff);
 
-            RecentActivity recentActivity = new RecentActivity();
-            recentActivity.setIcon(STAFF_ACTION_ICON[action_index]);
-            recentActivity.setIconColor(STAFF_ACTION_ICON_COLOR[action_index]);
-            recentActivity.setType(getString(STAFF_ACTION_TEXT[action_index]));
-            recentActivity.setTime((DateUtility.getDateString(new Date(), "yyyy-MM-dd").equals(DateUtility.getDateString(staffAction.getActionDate(), "yyyy-MM-dd"))? getString(R.string.label_today) :  DateUtility.getDateString(staffAction.getActionDate(), "dd MMM yyyy")) + " " + DateUtility.getDateString(staffAction.getActionDate(), "HH:mm"));
-            recentActivity.setStaffNum(staffAction.getStaff().getStaff_num());
-            recentActivity.setStaffName(staffAction.getStaff().getStaff_desc());
+                RecentActivity recentActivity = new RecentActivity();
+                recentActivity.setIcon(STAFF_ACTION_ICON[action_index]);
+                recentActivity.setIconColor(STAFF_ACTION_ICON_COLOR[action_index]);
+                recentActivity.setType(getString(STAFF_ACTION_TEXT[action_index]));
+                recentActivity.setTime((DateUtility.getDateString(new Date(), "yyyy-MM-dd").equals(DateUtility.getDateString(staffAction.getActionDate(), "yyyy-MM-dd"))? getString(R.string.label_today) :  DateUtility.getDateString(staffAction.getActionDate(), "dd MMM yyyy")) + " " + DateUtility.getDateString(staffAction.getActionDate(), "HH:mm"));
+                recentActivity.setStaffNum(staffAction.getStaff().getStaff_num());
+                recentActivity.setStaffName(staffAction.getStaff().getStaff_desc());
 
-            recent_activity_list.add(recentActivity);
+                recent_activity_list.add(recentActivity);
+            }
         }
     }
 
@@ -389,16 +407,28 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
 
     public void selectCompany(View view){
-        FragmentManager fragmentManager = getFragmentManager();
-        CompanySelectFragment companySelectFragment = new CompanySelectFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("company_list", company_list);
-        companySelectFragment.setArguments(args);
-        companySelectFragment.setCancelable(true);
-        companySelectFragment.show(fragmentManager, getString(R.string.label_select_entity));
+        if(company_list != null){
+            FragmentManager fragmentManager = getFragmentManager();
+            CompanySelectFragment companySelectFragment = new CompanySelectFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("company_list", company_list);
+            companySelectFragment.setArguments(args);
+            companySelectFragment.setCancelable(true);
+            companySelectFragment.show(fragmentManager, getString(R.string.label_select_entity));
+        }
     }
 
-    public void resetCompanyName(){
+    public void updateDashboard(){
+        updatePendingList();
+
+        if(recent_activity_list!=null){
+            fetchRecentActivity();
+            showRecentActivity();
+        }
+
+        fetchCompanyList();
+
+        showLastSync();
         ((TextView) getSupportActionBar().getCustomView().findViewById(R.id.title_text)).setText(COMPANY_NAME);
     }
 
@@ -416,6 +446,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         sync_in_progress = false;
     }
 
+    public void showConnectionStatus(View view){
+        Toast.makeText(dashboard_activity, (server_connection?R.string.msg_server_connection_success:R.string.msg_server_connection_failed), Toast.LENGTH_LONG).show();
+    }
+
     public void syncDown(View view){
         if(!sync_in_progress){
             sync_in_progress = true;
@@ -430,8 +464,28 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         if(PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(dashboard_activity, Manifest.permission.ACCESS_FINE_LOCATION)){
             PermissionUtility.requestLocationServices(dashboard_activity, false);
         }else{
-            GPS_UTILITY = new GPSUtility(dashboard_activity);
-            GPS_LOCATION = GPS_UTILITY.getGPSLocation();
+            if(GPS_UTILITY==null){
+                GPS_UTILITY = new GPSUtility(dashboard_activity);
+                GPS_LOCATION = GPS_UTILITY.getGPSLocation();
+            }else{
+                Toast.makeText(dashboard_activity, R.string.msg_gps_services_active, Toast.LENGTH_LONG).show();
+            }
+
+        }
+    }
+
+    public void pendingSync(View view){
+        if(!sync_in_progress){
+            if(pending_sync_count>0){
+                sync_in_progress = true;
+                FragmentManager fragmentManager = getFragmentManager();
+                SyncUpFragment syncUpFragment = new SyncUpFragment();
+                syncUpFragment.setCancelable(false);
+                syncUpFragment.show(fragmentManager, getString(R.string.label_sync_up));
+            }else{
+                Toast.makeText(dashboard_activity, R.string.msg_nothing_to_sync, Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 
@@ -442,6 +496,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     public void closeMenuApps(View view){
         menu_apps.close(true);
+    }
+
+    public void updatePendingList(){
+        pending_sync_count = staff_factory.getPendingTimelogs().size() + staff_factory.getPendingtaffs().size();
+
+        tv_pending_sync.setText(String.valueOf(pending_sync_count));
+        sync_in_progress = false;
     }
 
     private void showAppVersion(){
@@ -493,16 +554,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     private class DashboardRefresh extends AsyncTask<Void, Void, Boolean>
     {
-        private Boolean serverConnect = false;
-        private boolean gpsAllowed = false;
-        private Boolean gpsOn = false;
-
         @Override
         protected Boolean doInBackground(Void... param) {
             try {
-                serverConnect = HttpUtility.testConnection();
-                gpsAllowed = ActivityCompat.checkSelfPermission(dashboard_activity, android.Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED;
-                gpsOn = location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                server_connection = HttpUtility.testConnection();
+                gps_allowed = ActivityCompat.checkSelfPermission(dashboard_activity, android.Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED;
+                gps_on = location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
                 return true;
             } catch (Exception e) {
@@ -513,9 +570,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
         @Override
         protected void onPostExecute(Boolean success) {
-            tv_server_connect.setText(getString(serverConnect?R.string.msg_online:R.string.msg_offline));
-            if(gpsAllowed){
-                tv_gps.setText(getString(gpsOn?R.string.msg_on:R.string.msg_off));
+            tv_server_connect.setText(getString(server_connection ?R.string.msg_online:R.string.msg_offline));
+            if(gps_allowed){
+                tv_gps.setText(getString(gps_on ?R.string.msg_on:R.string.msg_off));
                 tv_gps.setAllCaps(false);
                 tv_gps.setTextColor(ActivityCompat.getColor(dashboard_activity, R.color.colorBlackLight));
             }else{

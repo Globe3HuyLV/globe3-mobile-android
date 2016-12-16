@@ -37,7 +37,9 @@ import org.json.JSONObject;
 
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_DATA_DIR;
 import static com.globe3.tno.g3_mobile.constants.App.GLOBE3_IMAGE_DIR;
+import static com.globe3.tno.g3_mobile.constants.TagTableUsage.SALES_ORDER_TEAM;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_PROJECT;
+import static com.globe3.tno.g3_mobile.constants.TagTableUsage.STAFF_TEAM;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_ID;
 import static com.globe3.tno.g3_mobile.globals.Globals.DEVICE_MODEL;
@@ -98,7 +100,6 @@ public class StaffFactory {
             staff.gender = staffJson.getString("gender");
             staff.race = staffJson.getString("race");
             staff.active_yn = staffJson.getString("active");
-            staff.staff_group = staffJson.getString("team_unique");
 
             staff.fingerprint_image1 = FileUtility.getImage(staffJson.getString("fingerprint_image1"));
             staff.fingerprint_image2 = FileUtility.getImage(staffJson.getString("fingerprint_image2"));
@@ -128,11 +129,11 @@ public class StaffFactory {
                 staff.photo1 = null;
             }
 
-            BiometricUtility.updateFinger(staff.fingerprint_image1, staff.uniquenum_pri + "_1");
-            BiometricUtility.updateFinger(staff.fingerprint_image2, staff.uniquenum_pri + "_2");
-            BiometricUtility.updateFinger(staff.fingerprint_image3, staff.uniquenum_pri + "_3");
-            BiometricUtility.updateFinger(staff.fingerprint_image4, staff.uniquenum_pri + "_4");
-            BiometricUtility.updateFinger(staff.fingerprint_image5, staff.uniquenum_pri + "_5");
+            //BiometricUtility.updateFinger(staff.fingerprint_image1, staff.uniquenum_pri + "_1");
+            //BiometricUtility.updateFinger(staff.fingerprint_image2, staff.uniquenum_pri + "_2");
+            //BiometricUtility.updateFinger(staff.fingerprint_image3, staff.uniquenum_pri + "_3");
+            //BiometricUtility.updateFinger(staff.fingerprint_image4, staff.uniquenum_pri + "_4");
+            //BiometricUtility.updateFinger(staff.fingerprint_image5, staff.uniquenum_pri + "_5");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -164,6 +165,37 @@ public class StaffFactory {
         }
 
         team_repo.create_team(staff_team);
+    }
+
+    public void downloadStaffTeam(JSONObject staffTeamJson, LogItem logItem) {
+
+        tabledata staff_team = new tabledata();
+        try {
+            staff_team.masterfn = staffTeamJson.getString("masterfn");
+            staff_team.companyfn = staffTeamJson.getString("companyfn");
+            staff_team.uniquenum_pri = staffTeamJson.getString("uniquenum");
+
+            staff_team.tag_table_usage = STAFF_TEAM;
+
+            staff_team.nvar25_01 = staffTeamJson.getString("staff_code");
+            staff_team.nvar25_02 = staffTeamJson.getString("staff_unique");
+            staff_team.nvar100_01 = staffTeamJson.getString("staff_name");
+
+            staff_team.nvar25_03 = staffTeamJson.getString("team_code");
+            staff_team.nvar25_04 = staffTeamJson.getString("team_unique");
+            staff_team.nvar100_03 = staffTeamJson.getString("team_name");
+
+            staff_team.date_post = DateUtility.getStringDate(staffTeamJson.getString("date_post"));
+
+            staff_team.sync_unique = logItem.getLogUnique();
+            staff_team.date_sync = logItem.getLogDate();
+
+            staff_team.tag_deleted_yn = "n";
+
+            tabledata_repo.create_tabledata(staff_team);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void downloadStaffProject(JSONObject staffJson, LogItem logItem) {
@@ -221,6 +253,11 @@ public class StaffFactory {
         tabledata_repo.delete_tabledata_all(STAFF_PROJECT);
         tabledata_repo.close();
     }
+    public void deleteAllStaffTeam(){
+        tabledata_repo.open();
+        tabledata_repo.delete_tabledata_all(STAFF_TEAM);
+        tabledata_repo.close();
+    }
 
     public void updateStaff(Staff staff) {
         staffdata_repo.open();
@@ -241,7 +278,7 @@ public class StaffFactory {
         return staffs;
     }
 
-    public ArrayList<Staff> getUpdatedStaffs() {
+    public ArrayList<Staff> getPendingtaffs() {
         staffdata_repo.open();
 
         ArrayList<Staff> staffs = new ArrayList<Staff>();
@@ -727,54 +764,6 @@ public class StaffFactory {
         return timeLogs;
     }
 
-    public ArrayList<TimeRecord> getNewTimelogs(){
-        ArrayList<TimeRecord> timeLogs = new ArrayList<TimeRecord>();
-
-        dailytime_repo.open();
-        staffdata_repo.open();
-
-        for(dailytime dailytime : dailytime_repo.get_new_dailytimes()){
-            TimeRecord timeRecord = new TimeRecord();
-
-            timeRecord.setIdcode(dailytime.idcode);
-            timeRecord.setUniquenumPri(dailytime.uniquenum_pri);
-            timeRecord.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
-            timeRecord.setDateTimePost(dailytime.date_post);
-
-            timeRecord.setDateTimeIn(dailytime.date_time_in);
-            timeRecord.setDateTimeOut(dailytime.date_time_out);
-
-            timeRecord.setDeviceIdIn(dailytime.device_id_in);
-            timeRecord.setDeviceIdOut(dailytime.device_id_out);
-
-            timeRecord.setDeviceModelIn(dailytime.nvar25_01);
-            timeRecord.setDeviceModelOut(dailytime.nvar25_02);
-
-            timeRecord.setDeviceNameIn(dailytime.nvar100_01);
-            timeRecord.setDeviceNameOut(dailytime.nvar100_02);
-
-            timeRecord.setGPSLocationIn(dailytime.gps_location_in);
-            timeRecord.setGPSLocationOut(dailytime.gps_location_out);
-
-            timeRecord.setAddressIn(dailytime.nvar100_03);
-            timeRecord.setAddressOut(dailytime.nvar100_04);
-
-            timeRecord.setLogType(dailytime.type_in_out);
-
-            timeRecord.setProject(new Project());
-            timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
-            timeRecord.getProject().setCode(dailytime.project_code);
-            timeRecord.getProject().setDesc(dailytime.project_name);
-
-            timeLogs.add(timeRecord);
-        }
-
-        staffdata_repo.close();
-        dailytime_repo.close();
-
-        return timeLogs;
-    }
-
     public void removeDateOut(String pUniquenum){
         dailytime_repo.open();
         dailytime dailytime = dailytime_repo.get_dailytime(pUniquenum);
@@ -808,6 +797,59 @@ public class StaffFactory {
         staffdata.date_lastupdate = lastUpdate;
         staffdata_repo.update_staffdata(staffdata);
         staffdata_repo.close();
+    }
+
+    public ArrayList<TimeRecord> getPendingTimelogs(){
+        ArrayList<TimeRecord> timeLogs = new ArrayList<TimeRecord>();
+
+        dailytime_repo.open();
+        staffdata_repo.open();
+
+        for(dailytime dailytime : dailytime_repo.get_new_dailytimes()){
+            TimeRecord time_record = new TimeRecord();
+
+            time_record.setIdcode(dailytime.idcode);
+            time_record.setUniquenumPri(dailytime.uniquenum_pri);
+            time_record.setStaff(convertEntity(staffdata_repo.get_staffdata(dailytime.staff_unique)));
+            time_record.setDateTimePost(dailytime.date_post);
+
+            time_record.setDateTimeIn(dailytime.date_time_in);
+            time_record.setDateTimeOut(dailytime.date_time_out);
+
+            time_record.setDeviceIdIn(dailytime.device_id_in);
+            time_record.setDeviceIdOut(dailytime.device_id_out);
+
+            time_record.setDeviceModelIn(dailytime.nvar25_01);
+            time_record.setDeviceModelOut(dailytime.nvar25_02);
+
+            time_record.setDeviceNameIn(dailytime.nvar100_01);
+            time_record.setDeviceNameOut(dailytime.nvar100_02);
+
+            time_record.setGPSLocationIn(dailytime.gps_location_in);
+            time_record.setGPSLocationOut(dailytime.gps_location_out);
+
+            time_record.setAddressIn(dailytime.nvar100_03);
+            time_record.setAddressOut(dailytime.nvar100_04);
+
+            time_record.setLogType(dailytime.type_in_out);
+
+            if(!dailytime.project_unique.equals("")){
+                Project project = new Project();
+                project.setUniquenumPri(dailytime.project_unique);
+                project.setCode(dailytime.project_code);
+                project.setDesc(dailytime.project_name);
+
+                time_record.setProject(project);
+            };
+
+
+            timeLogs.add(time_record);
+        }
+
+        staffdata_repo.close();
+        dailytime_repo.close();
+
+        return timeLogs;
     }
 
     public TimeRecord convertToDailyTime(Staff staff, dailytime dailytime){
@@ -849,54 +891,46 @@ public class StaffFactory {
     }
 
     private Staff convertEntity(staffdata staffdata){
-        Staff staff = new Staff();
-        staff.setIdcode(staffdata.idcode);
-        staff.setUniquenumPri(staffdata.uniquenum_pri);
-        staff.setStaff_desc(staffdata.staff_fullname);
-        staff.setStaff_num(staffdata.staff_id);
-        staff.setJob_title(staffdata.job_title);
-        staff.setRegistered((staffdata.fingerprint_image1 != null && staffdata.fingerprint_image1.length > 0) || (staffdata.fingerprint_image2 != null && staffdata.fingerprint_image2.length > 0) || (staffdata.fingerprint_image3 != null && staffdata.fingerprint_image3.length > 0) || (staffdata.fingerprint_image4 != null && staffdata.fingerprint_image4.length > 0) || (staffdata.fingerprint_image5 != null && staffdata.fingerprint_image5.length > 0) ? true : false);
+        if(staffdata!=null){
+            Staff staff = new Staff();
+            staff.setIdcode(staffdata.idcode);
+            staff.setUniquenumPri(staffdata.uniquenum_pri);
+            staff.setStaff_desc(staffdata.staff_fullname);
+            staff.setStaff_num(staffdata.staff_id);
+            staff.setJob_title(staffdata.job_title);
+            staff.setRegistered((staffdata.fingerprint_image1 != null && staffdata.fingerprint_image1.length > 0) || (staffdata.fingerprint_image2 != null && staffdata.fingerprint_image2.length > 0) || (staffdata.fingerprint_image3 != null && staffdata.fingerprint_image3.length > 0) || (staffdata.fingerprint_image4 != null && staffdata.fingerprint_image4.length > 0) || (staffdata.fingerprint_image5 != null && staffdata.fingerprint_image5.length > 0) ? true : false);
 
-        if(staff.getRegistered()){
-            scanimage_repo.open();
-            scanimage scanimage = scanimage_repo.get_scanimage_staff_reg(staff.getUniquenumPri());
-            if(scanimage != null){
-                staff.setRegisteration(scanimage.date_register);
+            if(staff.getRegistered()){
+                scanimage_repo.open();
+                scanimage scanimage = scanimage_repo.get_scanimage_staff_reg(staff.getUniquenumPri());
+                if(scanimage != null){
+                    staff.setRegisteration(scanimage.date_register);
+                }
+                scanimage_repo.close();
             }
-            scanimage_repo.close();
+
+            staff.setDate_posted(staffdata.date_post);
+            staff.setDate_update(staffdata.date_lastupdate);
+            staff.setWorkPermitId(staffdata.workpermit_num);
+            staff.setWorkPermitIssued(staffdata.workpermit_issuedate);
+            staff.setWorkPermitExpiry(staffdata.workpermit_expirydate);
+
+            staff.setDob(staffdata.date_birth);
+            staff.setNationality(staffdata.nationality);
+            staff.setGender(staffdata.gender);
+            staff.setRace(staffdata.race);
+            staff.setActive(staffdata.active_yn.equals("y"));
+            staff.setFingerprint_image1(staffdata.fingerprint_image1);
+            staff.setFingerprint_image2(staffdata.fingerprint_image2);
+            staff.setFingerprint_image3(staffdata.fingerprint_image3);
+            staff.setFingerprint_image4(staffdata.fingerprint_image4);
+            staff.setFingerprint_image5(staffdata.fingerprint_image5);
+            staff.setPhoto1(staffdata.photo1);
+
+            return staff;
+        }else{
+            return null;
         }
-
-        staff.setDate_posted(staffdata.date_post);
-        staff.setDate_update(staffdata.date_lastupdate);
-        staff.setWorkPermitId(staffdata.workpermit_num);
-        staff.setWorkPermitIssued(staffdata.workpermit_issuedate);
-        staff.setWorkPermitExpiry(staffdata.workpermit_expirydate);
-
-        staff.setDob(staffdata.date_birth);
-        staff.setNationality(staffdata.nationality);
-        staff.setGender(staffdata.gender);
-        staff.setRace(staffdata.race);
-        staff.setActive(staffdata.active_yn.equals("y"));
-        staff.setFingerprint_image1(staffdata.fingerprint_image1);
-        staff.setFingerprint_image2(staffdata.fingerprint_image2);
-        staff.setFingerprint_image3(staffdata.fingerprint_image3);
-        staff.setFingerprint_image4(staffdata.fingerprint_image4);
-        staff.setFingerprint_image5(staffdata.fingerprint_image5);
-        staff.setPhoto1(staffdata.photo1);
-
-        StaffTeam staffTeam = new StaffTeam();
-        team team = team_repo.get_team(staffdata.staff_group);
-        if(team!=null){
-            staffTeam.setIdcode(team.idcode);
-            staffTeam.setUniquenumPri(team.uniquenum_pri);
-            staffTeam.setCode(team.team_code);
-            staffTeam.setDesc(team.team_name);
-            staffTeam.setActive(team.active_yn.equals("y"));
-        }
-
-        staff.setStaffTeam(staffTeam);
-
-        return staff;
     }
 
     private staffdata convertToEntity(Staff staff) {
@@ -923,10 +957,6 @@ public class StaffFactory {
         staffdata.gender = staff.getGender();
         staffdata.race = staff.getRace();
         staffdata.active_yn = staff.getActive() ? "y" : "n";
-
-        if(staff.getStaffTeam()!=null){
-            staffdata.staff_group = staff.getStaffTeam().getUniquenumPri();
-        }
 
         return staffdata;
     }

@@ -17,6 +17,7 @@
 package com.globe3.tno.g3_mobile.fragments;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -45,6 +46,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -78,6 +80,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.globe3.tno.g3_mobile.constants.App.REQUEST_CAMERA;
 
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class StaffTakePhotoFragment extends DialogFragment implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
     StaffPhotoPreview staff_photo_preview;
 

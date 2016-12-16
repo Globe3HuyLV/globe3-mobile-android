@@ -17,9 +17,6 @@ public class erpsalesorder implements Serializable{
 	public String userid_creator;
 	public String masterfn;
 	public String companyfn;
-	public String team_code;
-	public String team_name;
-	public String team_unique;
 	public String salesorder_code;
 	public String salesorder_name;
 	public String salesorder_unique;

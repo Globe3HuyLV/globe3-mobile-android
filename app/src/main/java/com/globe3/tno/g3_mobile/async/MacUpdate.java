@@ -12,6 +12,8 @@ import com.globe3.tno.g3_mobile.util.HttpUtility;
 
 import org.json.JSONObject;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
 import static com.globe3.tno.g3_mobile.globals.Globals.CFSQLFILENAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
 import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
@@ -32,11 +34,18 @@ public class MacUpdate extends AsyncTask<Void, Integer, Void>
     protected Void doInBackground(Void... param) {
         User currentUser = user_factory.getUser(USERLOGINUNIQ);
         try {
-            JSONObject json = HttpUtility.requestJSON("user_mac", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
+            JSONObject masterJson = HttpUtility.requestJSON("user_mac", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
+            JSONObject macJson = HttpUtility.requestJSON("user_mac", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
 
+            if(masterJson!=null){
+                ACTIVE_FEATURE_TIMESHEET_PROJECT = masterJson.getBoolean("timesheet_by_project");
+                ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = masterJson.getBoolean("timesheet_by_sales_order");
 
-            if(json!=null){
-                currentUser.setMAC(json.getString("items"));
+                user_factory.updateMasterSettings();
+            }
+
+            if(macJson!=null){
+                currentUser.setMAC(macJson.getString("items"));
                 user_factory.updateUser(currentUser);
             }
         } catch (Exception e) {

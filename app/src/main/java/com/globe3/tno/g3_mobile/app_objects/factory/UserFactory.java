@@ -19,8 +19,13 @@ import com.globe3.tno.g3_mobile.model.TabledataRepo;
 import com.globe3.tno.g3_mobile.util.Encryption;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
 
+import static com.globe3.tno.g3_mobile.constants.TagTableUsage.COMPANY_LIST;
+import static com.globe3.tno.g3_mobile.constants.TagTableUsage.MASTER_SETTING;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.MAC;
+import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.PASSWORD;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINID;
 import static com.globe3.tno.g3_mobile.globals.Globals.USERLOGINUNIQ;
@@ -126,7 +131,7 @@ public class UserFactory {
             useraccess.staff_unique = userJson.getString("staff_unique");
             useraccess.user_specialnum = userJson.getString("mac");
 
-            tabledata.tag_table_usage = "co_list";
+            tabledata.tag_table_usage = COMPANY_LIST;
             tabledata.uniquenum_pri = Uniquenum.Generate();
             tabledata.uniquenum_sec = userJson.getString("uniquenum_pri");
             tabledata.companyfn = userJson.getString("companyfn");
@@ -139,6 +144,28 @@ public class UserFactory {
 
         useraccess_repo.create_useraccess(useraccess);
         tabledata_repo.create_tabledata(tabledata);
+    }
+
+    public void updateMasterSettings(){
+        tabledata_repo.open();
+
+        tabledata mfn = tabledata_repo.get_tabledata("tag_table_usage = " + MASTER_SETTING);
+
+        if(mfn==null){
+            mfn = new tabledata();
+            mfn.tag_table_usage = MASTER_SETTING;
+            mfn.masterfn = MASTERFN;
+            mfn.nvar25_01 = ACTIVE_FEATURE_TIMESHEET_PROJECT?"y":"n";
+            mfn.nvar25_01 += ACTIVE_FEATURE_TIMESHEET_SALES_ORDER?"y":"n";
+            tabledata_repo.create_tabledata(mfn);
+        }else{
+            mfn.nvar25_01 = ACTIVE_FEATURE_TIMESHEET_PROJECT?"y":"n";
+            mfn.nvar25_01 += ACTIVE_FEATURE_TIMESHEET_SALES_ORDER?"y":"n";
+
+            tabledata_repo.update_tabledata(mfn);
+        }
+
+        tabledata_repo.close();
     }
 
     public void deleteUser(User user) {

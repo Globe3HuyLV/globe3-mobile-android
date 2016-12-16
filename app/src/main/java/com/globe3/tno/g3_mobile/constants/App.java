@@ -19,8 +19,8 @@ public class App {
     public static final String GLOBE3_IMAGE_DIR = GLOBE3_DIR + "images/";
     public static final String GLOBE3_DB = GLOBE3_DIR + "db/globe3.db";
 
-    public static int HTTP_READ_TIMEOUT = 10000;
-    public static int HTTP_CONNECT_TIMEOUT = 15000;
+    public static int HTTP_READ_TIMEOUT = 20000;
+    public static int HTTP_CONNECT_TIMEOUT = 30000;
 
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     public static final int REQUEST_GPS = 2;
