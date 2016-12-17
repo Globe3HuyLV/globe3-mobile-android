@@ -10,6 +10,7 @@ public class TimeLog implements Serializable{
     private String type;
     private Staff staff;
     private Project project;
+    private SalesOrder salesOrder;
 
     public long getIdcode() {
         return idcode;
@@ -57,5 +58,13 @@ public class TimeLog implements Serializable{
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public SalesOrder getSalesOrder() {
+        return salesOrder;
+    }
+
+    public void setSalesOrder(SalesOrder salesOrder) {
+        this.salesOrder = salesOrder;
     }
 }

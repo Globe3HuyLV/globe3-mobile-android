@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 import com.globe3.tno.g3_mobile.app_objects.Project;
+import com.globe3.tno.g3_mobile.app_objects.SalesOrder;
 import com.globe3.tno.g3_mobile.app_objects.StaffTeam;
 import com.globe3.tno.g3_mobile.model.TeamRepo;
 import com.globe3.tno.g3_mobile.model.entities.team;
@@ -304,6 +305,30 @@ public class StaffFactory {
         return staffs;
     }
 
+    public ArrayList<StaffTeam> getStaffTeams(String staffUnique){
+        ArrayList<StaffTeam> staffTeams = new ArrayList<>();
+
+        team_repo.open();
+        tabledata_repo.open();
+
+        for(tabledata tabledata : tabledata_repo.get_tabledatas("tag_table_usage='"+TagTableUsage.STAFF_TEAM+"' AND nvar25_02 = '"+staffUnique+"'")){
+            team team = team_repo.get_team(tabledata.nvar25_04);
+            StaffTeam staffTeam = new StaffTeam();
+            staffTeam.setIdcode(team.idcode);
+            staffTeam.setUniquenumPri(team.uniquenum_pri);
+            staffTeam.setCode(team.team_code);
+            staffTeam.setDesc(team.team_name);
+            staffTeam.setActive(team.active_yn.equals("y"));
+
+            staffTeams.add(staffTeam);
+        };
+
+        team_repo.close();
+        tabledata_repo.close();
+
+        return staffTeams;
+    }
+
     public ArrayList<Staff> searchStaffs(String search) {
         staffdata_repo.open();
 
@@ -406,7 +431,7 @@ public class StaffFactory {
         return timeLog;
     }
 
-    public TimeRecord logTime(Staff staff, Project project, String tableUsage){
+    public TimeRecord logTime(Staff staff, Project project, SalesOrder salesOrder, String tableUsage){
         TimeRecord timeRecord = new TimeRecord();
         dailytime_repo.open();
 
@@ -437,9 +462,14 @@ public class StaffFactory {
             dailytime.staff_id = staff.getStaff_num();
             dailytime.staff_fullname = staff.getStaff_desc();
             dailytime.type_in_out = tableUsage;
+
             dailytime.project_unique = project == null ? "" : project.getUniquenumPri();
             dailytime.project_code = project == null ? "" : project.getCode();
             dailytime.project_name = project == null ? "" : project.getDesc();
+
+            dailytime.sale_order_unique = salesOrder == null ? "" : salesOrder.getUniquenumPri();
+            dailytime.sale_order_code = salesOrder == null ? "" : salesOrder.getCode();
+            dailytime.sale_order_name = salesOrder == null ? "" : salesOrder.getDesc();
 
             timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
 
@@ -474,9 +504,14 @@ public class StaffFactory {
                 dailytime.staff_id = staff.getStaff_num();
                 dailytime.staff_fullname = staff.getStaff_desc();
                 dailytime.type_in_out = tableUsage;
+
                 dailytime.project_unique = project == null ? "" : project.getUniquenumPri();
                 dailytime.project_code = project == null ? "" : project.getCode();
                 dailytime.project_name = project == null ? "" : project.getDesc();
+
+                dailytime.sale_order_unique = salesOrder == null ? "" : salesOrder.getUniquenumPri();
+                dailytime.sale_order_code = salesOrder == null ? "" : salesOrder.getCode();
+                dailytime.sale_order_name = salesOrder == null ? "" : salesOrder.getDesc();
 
                 timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
             }else{
@@ -523,9 +558,14 @@ public class StaffFactory {
             dailytime.staff_id = staff.getStaff_num();
             dailytime.staff_fullname = staff.getStaff_desc();
             dailytime.type_in_out = tableUsage;
+
             dailytime.project_unique = project == null ? "" : project.getUniquenumPri();
             dailytime.project_code = project == null ? "" : project.getCode();
             dailytime.project_name = project == null ? "" : project.getDesc();
+
+            dailytime.sale_order_unique = salesOrder == null ? "" : salesOrder.getUniquenumPri();
+            dailytime.sale_order_code = salesOrder == null ? "" : salesOrder.getCode();
+            dailytime.sale_order_name = salesOrder == null ? "" : salesOrder.getDesc();
 
             timeRecord = convertToDailyTime(staff, dailytime_repo.create_dailytime(dailytime));
         }

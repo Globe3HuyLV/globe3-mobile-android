@@ -18,6 +18,9 @@ import com.globe3.tno.g3_mobile.app_objects.TimeLog;
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
 import com.globe3.tno.g3_mobile.util.DateUtility;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
+
 public class LogTimeSummaryFragment extends DialogFragment {
     Context parent_context;
 
@@ -34,7 +37,15 @@ public class LogTimeSummaryFragment extends DialogFragment {
     TextView tv_log_type;
     TextView tv_log_time;
     TextView tv_log_date;
+
+    TextView tv_label_project;
+    TextView tv_colon_project;
     TextView tv_log_project;
+
+    TextView tv_label_sales_order;
+    TextView tv_colon_sales_order;
+    TextView tv_log_sales_order;
+
     TextView tv_next_scan;
     TextView tv_cancel;
 
@@ -49,7 +60,14 @@ public class LogTimeSummaryFragment extends DialogFragment {
         tv_log_type = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_type);
         tv_log_time = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_time);
         tv_log_date = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_date);
+
+        tv_label_project = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_label_project);
+        tv_colon_project = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_colon_project);
         tv_log_project = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_project);
+
+        tv_label_sales_order = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_label_sales_order);
+        tv_colon_sales_order = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_colon_sales_order);
+        tv_log_sales_order = (TextView) logTimeSummaryFragment.findViewById(R.id.tv_log_sales_order);
 
         if(time_log != null){
             if(time_log.getStaff()!=null){
@@ -85,10 +103,36 @@ public class LogTimeSummaryFragment extends DialogFragment {
             tv_log_time.setText(DateUtility.getDateString(time_log.getDate(), "HH:mm"));
             tv_log_date.setText(DateUtility.getDateString(time_log.getDate(), "dd MMM yyyy"));
 
-            if(time_log.getProject()!=null){
-                tv_log_project.setText(time_log.getProject().getCode());
+            if(ACTIVE_FEATURE_TIMESHEET_PROJECT){
+                tv_label_project.setVisibility(View.VISIBLE);
+                tv_colon_project.setVisibility(View.VISIBLE);
+                tv_log_project.setVisibility(View.VISIBLE);
+
+                if(time_log.getProject()!=null){
+                    tv_log_project.setText(time_log.getProject().getCode());
+                }else{
+                    tv_log_project.setText("-");
+                }
             }else{
-                tv_log_project.setText("-");
+                tv_label_project.setVisibility(View.GONE);
+                tv_colon_project.setVisibility(View.GONE);
+                tv_log_project.setVisibility(View.GONE);
+            }
+
+            if(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER){
+                tv_label_sales_order.setVisibility(View.VISIBLE);
+                tv_colon_sales_order.setVisibility(View.VISIBLE);
+                tv_log_sales_order.setVisibility(View.VISIBLE);
+
+                if(time_log.getSalesOrder()!=null){
+                    tv_log_sales_order.setText(time_log.getSalesOrder().getCode());
+                }else{
+                    tv_log_sales_order.setText("-");
+                }
+            }else{
+                tv_label_sales_order.setVisibility(View.GONE);
+                tv_colon_sales_order.setVisibility(View.GONE);
+                tv_log_sales_order.setVisibility(View.GONE);
             }
         }
 

@@ -133,6 +133,16 @@ public class SalesOrderFactory {
         return salesOrders;
     }
 
+    public ArrayList<SalesOrder> getActiveSalesOrder() {
+        ArrayList<SalesOrder> salesOrders = new ArrayList<>();
+        sales_order_repo.open();
+        for(erpsalesorder erpsalesorder : sales_order_repo.get_erpsalesorders("active_yn = 'y'")){
+            salesOrders.add(convertEntity(erpsalesorder));
+        }
+        sales_order_repo.close();
+        return salesOrders;
+    }
+
     public ArrayList<SalesOrder> getTeamSalesOrder(String teamUnique) {
         ArrayList<SalesOrder> salesOrders = new ArrayList<>();
         sales_order_repo.open();

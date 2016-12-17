@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.globe3.tno.g3_mobile.app_objects.SalesOrder;
 import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
@@ -42,15 +43,19 @@ import com.neurotec.util.concurrent.CompletionHandler;
 import java.util.Calendar;
 import java.util.EnumSet;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
 import static com.globe3.tno.g3_mobile.globals.Globals.BIOMETRIC_DATA;
 
 public class LogTimeAutoFragment extends DialogFragment {
     Context parent_context;
 
     Project project;
+    SalesOrder sales_order;
 
     LogTimeStaffFragment log_time_staff_fragment;
     LogTimeProjectFragment log_time_project_fragment;
+    LogTimeSalesOrderFragment log_time_sale_order_fragment;
     LogTimeSummaryFragment log_time_summary_fragment;
 
     NBiometricClient biometric_client;
@@ -257,11 +262,23 @@ public class LogTimeAutoFragment extends DialogFragment {
                                 }
                             }
                             if(single_staff){
-                                if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
-                                    selectProject(new StaffFactory(getActivity()).getStaff(staff_unique));
+                                if(ACTIVE_FEATURE_TIMESHEET_PROJECT){
+                                    if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
+                                        selectProject(new StaffFactory(getActivity()).getStaff(staff_unique));
+                                    }else{
+                                        showSummary(new StaffFactory(getActivity()).getStaff(staff_unique));
+                                    }
+                                }else if(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER){
+                                    if(sales_order==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
+                                        selectSalesOrder(new StaffFactory(getActivity()).getStaff(staff_unique));
+                                    }else{
+                                        showSummary(new StaffFactory(getActivity()).getStaff(staff_unique));
+                                    }
                                 }else{
                                     showSummary(new StaffFactory(getActivity()).getStaff(staff_unique));
                                 }
+
+                                biometric_client.cancel();
                                 biometric_client = null;
                             }else{
                                 setPrompt(PROMPT_MULTIPLE_RESULT);
@@ -381,6 +398,23 @@ public class LogTimeAutoFragment extends DialogFragment {
         log_time_project_fragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
 
+    private void selectSalesOrder(Staff staff){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ll_main_container.setVisibility(View.GONE);
+            }
+        });
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        log_time_sale_order_fragment = new LogTimeSalesOrderFragment();
+        log_time_sale_order_fragment.setCancelable(false);
+        log_time_sale_order_fragment.setStaff(staff);
+        log_time_sale_order_fragment.setLog_type(log_type);
+        log_time_sale_order_fragment.setLogTimeAutoFragment(this);
+        log_time_sale_order_fragment.show(fragmentManager, getString(R.string.label_log_time_sales_order));
+    }
+
     private void showSummary(Staff staff){
         StaffFactory staffFactory = new StaffFactory(getActivity());
 
@@ -390,7 +424,7 @@ public class LogTimeAutoFragment extends DialogFragment {
         timeLog.setType(log_type);
         timeLog.setStaff(staff);
 
-        TimeRecord timeRecord = staffFactory.logTime(staff, project, log_type);
+        TimeRecord timeRecord = staffFactory.logTime(staff, project, sales_order, log_type);
 
         LogItem logItem = new AuditFactory(getActivity()).Log(log_type, staff.getUniquenumPri());
 
@@ -450,6 +484,9 @@ public class LogTimeAutoFragment extends DialogFragment {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+    public void setSalesOrder(SalesOrder salesOrder) {
+        this.sales_order = salesOrder;
     }
     public void setLogTimeStaffFragment(LogTimeStaffFragment logTimeStaffFragment) {
         this.log_time_staff_fragment = logTimeStaffFragment;

@@ -46,4 +46,7 @@ public class dailytime implements Serializable{
 	public Date date02;
 	public float num01;
 	public float num02;
+	public String sale_order_code;
+	public String sale_order_name;
+	public String sale_order_unique;
 }

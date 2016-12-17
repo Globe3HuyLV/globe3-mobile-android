@@ -119,7 +119,7 @@ public class SalesOrderRepo extends BaseRepo{
         ArrayList<erpsalesorder> erpsalesorders = new ArrayList<erpsalesorder>();
 
 
-        Cursor cursor = database.query(Globe3Db.TABLE_SALESORDER, allColumns, "companyfn = '" + Globals.COMPANYFN + "' AND active_yn = 'y' AND salesorder_code LIKE '%" + pSearch.trim() + "%'", null, null, null, "salesorder_code DESC");
+        Cursor cursor = database.query(Globe3Db.TABLE_SALESORDER, allColumns, "companyfn = '" + Globals.COMPANYFN + "' AND active_yn = 'y' AND sales_order_code LIKE '%" + pSearch.trim() + "%'", null, null, null, "sales_order_code DESC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

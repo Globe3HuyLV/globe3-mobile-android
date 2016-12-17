@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.model;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -349,7 +350,10 @@ public class Globe3Db extends SQLiteOpenHelper {
             "`date01`TEXT," +
             "`date02`TEXT," +
             "`num01`NUMERIC," +
-            "`num02`NUMERIC" +
+            "`num02`NUMERIC," +
+            "`sales_order_code`TEXT," +
+            "`sales_order_name`TEXT," +
+            "`sales_order_unique`TEXT" +
             ");";
 
     private static final String TABLE_TABLEDATA_CREATE =  "CREATE TABLE IF NOT EXISTS `tabledata` (" +
@@ -495,5 +499,15 @@ public class Globe3Db extends SQLiteOpenHelper {
         database.execSQL(TABLE_PROJECT_PHOTO_CREATE);
         database.execSQL(TABLE_TEAM_CREATE);
         database.execSQL(TABLE_SALES_ORDER_CREATE);
+
+
+        try {
+            database.execSQL("ALTER TABLE dailytime ADD `sales_order_code`TEXT;");
+            database.execSQL("ALTER TABLE dailytime ADD `sales_order_name`TEXT;");
+            database.execSQL("ALTER TABLE dailytime ADD `sales_order_unique`TEXT;");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

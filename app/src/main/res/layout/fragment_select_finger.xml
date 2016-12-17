@@ -146,13 +146,19 @@
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBorder"/>
+
     <TextView
         android:id="@+id/tv_start_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:clickable="true"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -161,16 +167,13 @@
         android:background="?attr/selectableItemBackground"
         android:text="@string/label_start_registration"
         android:onClick="startRegister"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorBorder"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:clickable="true"
         android:textSize="12sp"
         android:textStyle="bold"

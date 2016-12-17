@@ -117,7 +117,7 @@ public class TimesheetStaffFragment extends Fragment {
                 log_time_fragment = new LogTimeFragment();
                 log_time_fragment.setCancelable(false);
                 log_time_fragment.setStaff(staff);
-                log_time_fragment.setmBiometricClient(biometric_client);
+                log_time_fragment.setBiometricClient(biometric_client);
                 log_time_fragment.show(fragmentManager, getString(R.string.label_log_time));
             }
         });

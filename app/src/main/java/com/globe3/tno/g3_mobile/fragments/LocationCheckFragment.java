@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.app_objects.SalesOrder;
 import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
@@ -44,15 +45,20 @@ import com.neurotec.util.concurrent.CompletionHandler;
 import java.util.Calendar;
 import java.util.EnumSet;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
+
 public class LocationCheckFragment extends DialogFragment {
     Context parent_context;
 
     Staff staff;
 
     Project project;
+    SalesOrder sales_order;
 
     LogTimeStaffFragment log_time_staff_fragment;
     LogTimeProjectFragment log_time_project_fragment;
+    LogTimeSalesOrderFragment log_time_sale_order_fragment;
     LogTimeSummaryFragment log_time_summary_fragment;
 
     NBiometricClient biometric_data;
@@ -265,8 +271,18 @@ public class LocationCheckFragment extends DialogFragment {
                 case IDENTIFY:
                     if (result.getStatus() == NBiometricStatus.OK) {
                         if(result.getSubjects().get(0).getMatchingResults().size() > 0){
-                            if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
-                                selectProject();
+                            if(ACTIVE_FEATURE_TIMESHEET_PROJECT){
+                                if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
+                                    selectProject();
+                                }else{
+                                    showSummary();
+                                }
+                            }else if(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER){
+                                if(sales_order==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
+                                    selectSalesOrder();
+                                }else{
+                                    showSummary();
+                                }
                             }else{
                                 showSummary();
                             }
@@ -387,6 +403,23 @@ public class LocationCheckFragment extends DialogFragment {
         log_time_project_fragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
 
+    private void selectSalesOrder(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ll_main_container.setVisibility(View.GONE);
+            }
+        });
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        log_time_sale_order_fragment = new LogTimeSalesOrderFragment();
+        log_time_sale_order_fragment.setCancelable(false);
+        log_time_sale_order_fragment.setStaff(staff);
+        log_time_sale_order_fragment.setLog_type(log_type);
+        log_time_sale_order_fragment.setLocationCheckFragment(this);
+        log_time_sale_order_fragment.show(fragmentManager, getString(R.string.label_log_time_sales_order));
+    }
+
     private void showSummary(){
         StaffFactory staffFactory = new StaffFactory(getActivity());
 
@@ -396,7 +429,7 @@ public class LocationCheckFragment extends DialogFragment {
         timeLog.setProject(project);
         timeLog.setStaff(staff);
 
-        TimeRecord timeRecord = staffFactory.logTime(staff, project, log_type);
+        TimeRecord timeRecord = staffFactory.logTime(staff, project, sales_order, log_type);
 
         LogItem logItem = new AuditFactory(getActivity()).Log(log_type, staff.getUniquenumPri());
 
@@ -459,6 +492,9 @@ public class LocationCheckFragment extends DialogFragment {
     }
     public void setProject(Project project) {
         this.project = project;
+    }
+    public void setSalesOrder(SalesOrder salesOrder) {
+        this.sales_order = salesOrder;
     }
     public void setLogTimeStaffFragment(LogTimeStaffFragment logTimeStaffFragment) {
         this.log_time_staff_fragment = logTimeStaffFragment;

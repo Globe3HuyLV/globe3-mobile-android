@@ -175,7 +175,7 @@ public class LogTimeStaffFragment extends DialogFragment {
                 log_time_fragment.setStaff(staff);
                 log_time_fragment.setProject(project);
                 log_time_fragment.setLogTimeStaffFragment(LogTimeStaffFragment.this);
-                log_time_fragment.setmBiometricClient(biometric_client);
+                log_time_fragment.setBiometricClient(biometric_client);
                 log_time_fragment.show(fragmentManager, getString(R.string.label_log_time));
             }
         });

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 import com.globe3.tno.g3_mobile.constants.TagTableUsage;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 
 public class DailytimeRepo extends BaseRepo{
@@ -61,7 +63,10 @@ public class DailytimeRepo extends BaseRepo{
             Globe3Db.COLUMN_DATE01,
             Globe3Db.COLUMN_DATE02,
             Globe3Db.COLUMN_NUM01,
-            Globe3Db.COLUMN_NUM02
+            Globe3Db.COLUMN_NUM02,
+            Globe3Db.COLUMN_SALES_ORDER_CODE,
+            Globe3Db.COLUMN_SALES_ORDER_NAME,
+            Globe3Db.COLUMN_SALES_ORDER_UNIQUE
     };
 
     public DailytimeRepo(Context context) {
@@ -116,6 +121,10 @@ public class DailytimeRepo extends BaseRepo{
         values.put(Globe3Db.COLUMN_DATE02, DateUtility.getDateString(dailytime.date02));
         values.put(Globe3Db.COLUMN_NUM01, dailytime.num01);
         values.put(Globe3Db.COLUMN_NUM02, dailytime.num02);
+        values.put(Globe3Db.COLUMN_SALES_ORDER_CODE, dailytime.sale_order_code);
+        values.put(Globe3Db.COLUMN_SALES_ORDER_NAME, dailytime.sale_order_name);
+        values.put(Globe3Db.COLUMN_SALES_ORDER_UNIQUE, dailytime.sale_order_unique);
+
         long insertId = database.insert(Globe3Db.TABLE_DAILYTIME, null, values);
         Cursor cursor = database.query(Globe3Db.TABLE_DAILYTIME, allColumns, Globe3Db.COLUMN_IDCODE + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
@@ -178,6 +187,9 @@ public class DailytimeRepo extends BaseRepo{
         values.put(Globe3Db.COLUMN_DATE02, DateUtility.getDateString(dailytime.date02));
         values.put(Globe3Db.COLUMN_NUM01, dailytime.num01);
         values.put(Globe3Db.COLUMN_NUM02, dailytime.num02);
+        values.put(Globe3Db.COLUMN_SALES_ORDER_CODE, dailytime.sale_order_code);
+        values.put(Globe3Db.COLUMN_SALES_ORDER_NAME, dailytime.sale_order_name);
+        values.put(Globe3Db.COLUMN_SALES_ORDER_UNIQUE, dailytime.sale_order_unique);
 
         database.update(Globe3Db.TABLE_DAILYTIME, values, Globe3Db.COLUMN_UNIQUENUM_PRI + " = '" + dailytime.uniquenum_pri + "'", null);
     }
@@ -413,6 +425,9 @@ public class DailytimeRepo extends BaseRepo{
         dailytime.date02 = DateUtility.getStringDate(cursor.getString(39));
         dailytime.num01 = cursor.getFloat(40);
         dailytime.num02 = cursor.getFloat(41);
+        dailytime.sale_order_code = cursor.getString(42);
+        dailytime.sale_order_name = cursor.getString(43);
+        dailytime.sale_order_unique = cursor.getString(44);
 
 
         return dailytime;

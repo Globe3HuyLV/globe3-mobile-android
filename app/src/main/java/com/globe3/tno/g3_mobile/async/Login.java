@@ -53,8 +53,6 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
 
             JSONObject masterJson = HttpUtility.requestJSON("master_setting", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
 
-            Log.i(APP_NAME, String.valueOf(masterJson==null));
-
             if(masterJson!=null){
                 ACTIVE_FEATURE_TIMESHEET_PROJECT = masterJson.getBoolean("timesheet_by_project");
                 ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = masterJson.getBoolean("timesheet_by_sales_order");

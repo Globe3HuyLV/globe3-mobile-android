@@ -15,28 +15,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.globe3.tno.g3_mobile.adapters.ProjectListAdapter;
-import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
+import com.globe3.tno.g3_mobile.R;
+import com.globe3.tno.g3_mobile.adapters.LogTimeSalesOrderListAdapter;
+import com.globe3.tno.g3_mobile.adapters.SalesOrderListAdapter;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
-import com.globe3.tno.g3_mobile.app_objects.Project;
+import com.globe3.tno.g3_mobile.app_objects.SalesOrder;
+import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.globe3.tno.g3_mobile.app_objects.StaffTeam;
+import com.globe3.tno.g3_mobile.app_objects.TimeLog;
+import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.factory.AuditFactory;
-import com.globe3.tno.g3_mobile.app_objects.factory.ProjectFactory;
+import com.globe3.tno.g3_mobile.app_objects.factory.SalesOrderFactory;
 import com.globe3.tno.g3_mobile.app_objects.factory.StaffFactory;
 import com.globe3.tno.g3_mobile.async.TimeLogSingleUploadTask;
-import com.globe3.tno.g3_mobile.view_objects.RowProject;
-import com.globe3.tno.g3_mobile.R;
-import com.globe3.tno.g3_mobile.adapters.LogTimeProjectListAdapter;
-import com.globe3.tno.g3_mobile.app_objects.TimeLog;
-import com.globe3.tno.g3_mobile.app_objects.Staff;
+import com.globe3.tno.g3_mobile.view_objects.RowSalesOrder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class LogTimeProjectFragment extends DialogFragment {
+public class LogTimeSalesOrderFragment extends DialogFragment {
     Staff staff;
 
     LogTimeFragment log_time_fragment;
@@ -45,11 +48,13 @@ public class LogTimeProjectFragment extends DialogFragment {
     LocationCheckAutoFragment location_check_auto_fragment;
     LogTimeSummaryFragment log_time_summary_fragment;
 
-    RecyclerView recycler_project_list;
+    RecyclerView recycler_sales_order_list;
     RecyclerView.Adapter recyclerViewAdapter;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
 
-    TextView tv_search_project;
+    Spinner spn_sales_order_filter;
+
+    TextView tv_search_sales_order;
     RelativeLayout rl_search_loader;
     ImageView iv_search_loader;
     RelativeLayout rl_no_record;
@@ -60,32 +65,47 @@ public class LogTimeProjectFragment extends DialogFragment {
     TextView tv_action_button;
     TextView tv_cancel;
 
-    ArrayList<RowProject> project_list;
+    ArrayList<StaffTeam> staff_teams;
+    ArrayList<RowSalesOrder> sales_order_list;
 
     String log_type;
 
     TimeLog time_log;
 
-    SearchProject searchProject;
+    SearchSalesOrder searchSalesOrder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        View logTimeProjectFragment = inflater.inflate(R.layout.fragment_log_time_project, viewGroup, false);
+        View logTimeSalesOrderFragment = inflater.inflate(R.layout.fragment_log_time_sales_order, viewGroup, false);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        tv_search_project = (TextView) logTimeProjectFragment.findViewById(R.id.tv_search_project);
-        rl_search_loader = (RelativeLayout) logTimeProjectFragment.findViewById(R.id.rl_search_loader);
-        iv_search_loader = (ImageView) logTimeProjectFragment.findViewById(R.id.iv_search_loader);
-        rl_no_record = (RelativeLayout) logTimeProjectFragment.findViewById(R.id.rl_no_record);
+        spn_sales_order_filter = (Spinner) logTimeSalesOrderFragment.findViewById(R.id.spn_sales_order_filter);
+
+        tv_search_sales_order = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_search_sales_order);
+        rl_search_loader = (RelativeLayout) logTimeSalesOrderFragment.findViewById(R.id.rl_search_loader);
+        iv_search_loader = (ImageView) logTimeSalesOrderFragment.findViewById(R.id.iv_search_loader);
+        rl_no_record = (RelativeLayout) logTimeSalesOrderFragment.findViewById(R.id.rl_no_record);
 
         iv_search_loader.setAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animate_rotate_clockwise));
 
-        iv_staff_photo = (ImageView) logTimeProjectFragment.findViewById(R.id.iv_staff_photo);
-        tv_staff_id = (TextView) logTimeProjectFragment.findViewById(R.id.tv_staff_id);
-        tv_staff_name = (TextView) logTimeProjectFragment.findViewById(R.id.tv_staff_name);
-        tv_action_button = (TextView) logTimeProjectFragment.findViewById(R.id.tv_action_button);
-        tv_cancel = (TextView) logTimeProjectFragment.findViewById(R.id.tv_cancel);
+        iv_staff_photo = (ImageView) logTimeSalesOrderFragment.findViewById(R.id.iv_staff_photo);
+        tv_staff_id = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_staff_id);
+        tv_staff_name = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_staff_name);
+        tv_action_button = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_action_button);
+        tv_cancel = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_cancel);
+
+        staff_teams = new StaffFactory(getActivity()).getStaffTeams(staff.getUniquenumPri());
+        ArrayList<String> spinnerArray =  new ArrayList<>();
+        for(StaffTeam staffTeam : staff_teams){
+            spinnerArray.add(staffTeam.getCode());
+        }
+        spinnerArray.add(getString(R.string.label_all_sales_order));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spn_sales_order_filter.setAdapter(adapter);
 
         time_log = new TimeLog();
         time_log.setDate(Calendar.getInstance().getTime());
@@ -106,22 +126,22 @@ public class LogTimeProjectFragment extends DialogFragment {
             tv_staff_name.setText(staff.getStaff_desc());
         }
 
-        recycler_project_list = (RecyclerView) logTimeProjectFragment.findViewById(R.id.recycler_project_list);
+        recycler_sales_order_list = (RecyclerView) logTimeSalesOrderFragment.findViewById(R.id.recycler_sales_order_list);
 
-        project_list = new ArrayList<>();
-        for(final Project project : new ProjectFactory(getActivity()).getActiveProjects()){
-            project_list.add(createRowProject(project));
+        sales_order_list = new ArrayList<>();
+        for(final SalesOrder sales_order : new SalesOrderFactory(getActivity()).getActiveSalesOrder()){
+            sales_order_list.add(createRowSalesOrder(sales_order));
         }
 
-        recycler_project_list.setHasFixedSize(true);
+        recycler_sales_order_list.setHasFixedSize(true);
 
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-        recycler_project_list.setLayoutManager(recyclerViewLayoutManager);
+        recycler_sales_order_list.setLayoutManager(recyclerViewLayoutManager);
 
-        recyclerViewAdapter = new LogTimeProjectListAdapter(project_list, getActivity());
-        recycler_project_list.setAdapter(recyclerViewAdapter);
+        recyclerViewAdapter = new LogTimeSalesOrderListAdapter(sales_order_list, getActivity());
+        recycler_sales_order_list.setAdapter(recyclerViewAdapter);
 
-        tv_search_project.addTextChangedListener(new TextWatcher() {
+        tv_search_sales_order.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -134,7 +154,7 @@ public class LogTimeProjectFragment extends DialogFragment {
 
             @Override
             public void afterTextChanged(final Editable searchTerm) {
-                searchProject(searchTerm.toString());
+                searchSalesOrder(searchTerm.toString());
             }
         });
 
@@ -163,28 +183,28 @@ public class LogTimeProjectFragment extends DialogFragment {
                 dismiss();
             }
         });
-        return logTimeProjectFragment;
+        return logTimeSalesOrderFragment;
     }
 
-    private RowProject createRowProject(final Project project){
-        RowProject rowProject = new RowProject();
-        rowProject.setProjectCode(project.getCode());
-        rowProject.setProjectName(project.getDesc());
-        rowProject.setOnClickListener(new View.OnClickListener() {
+    private RowSalesOrder createRowSalesOrder(final SalesOrder sales_order){
+        RowSalesOrder rowSalesOrder = new RowSalesOrder();
+        rowSalesOrder.setSalesOrderCode(sales_order.getCode());
+        rowSalesOrder.setSalesOrderDesc(sales_order.getDesc());
+        rowSalesOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                time_log.setProject(project);
+                time_log.setSalesOrder(sales_order);
                 showSummary();
             }
         });
 
-        return rowProject;
+        return rowSalesOrder;
     }
 
     private void showSummary(){
         StaffFactory staffFactory = new StaffFactory(getActivity());
 
-        TimeRecord timeRecord = staffFactory.logTime(staff, time_log.getProject(), null, time_log.getType());
+        TimeRecord timeRecord = staffFactory.logTime(staff, null, time_log.getSalesOrder(), time_log.getType());
 
         LogItem logItem = new AuditFactory(getActivity()).Log(time_log.getType(), staff.getUniquenumPri());
 
@@ -222,52 +242,52 @@ public class LogTimeProjectFragment extends DialogFragment {
         location_check_fragment = locationCheckFragment;
     }
 
-    public void searchProject(String searchTerm) {
-        if(searchProject != null){
-            searchProject.cancel(true);
+    public void searchSalesOrder(String searchTerm) {
+        if(searchSalesOrder != null){
+            searchSalesOrder.cancel(true);
         }
-        searchProject = new SearchProject(searchTerm);
-        searchProject.execute();
+        searchSalesOrder = new SearchSalesOrder(searchTerm);
+        searchSalesOrder.execute();
     }
 
-    public class SearchProject extends AsyncTask<Void, Void, Void>
+    public class SearchSalesOrder extends AsyncTask<Void, Void, Void>
     {
         String searchTerm;
 
-        public SearchProject(String searchTerm){
+        public SearchSalesOrder(String searchTerm){
             this.searchTerm = searchTerm;
-            project_list.clear();
+            sales_order_list.clear();
         }
 
         @Override
         protected  void onPreExecute()
         {
-            recycler_project_list.setVisibility(View.GONE);
+            recycler_sales_order_list.setVisibility(View.GONE);
             rl_search_loader.setVisibility(View.VISIBLE);
             rl_no_record.setVisibility(View.GONE);
         }
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(Project project : (searchTerm.equals("")?new ProjectFactory(getActivity()).getActiveProjects():new ProjectFactory(getActivity()).searchProject(searchTerm))){
-                project_list.add(createRowProject(project));
+            for(SalesOrder sales_order : (searchTerm.equals("")?new SalesOrderFactory(getActivity()).getActiveSalesOrder():new SalesOrderFactory(getActivity()).searchSalesOrder(searchTerm))){
+                sales_order_list.add(createRowSalesOrder(sales_order));
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            recycler_project_list.setHasFixedSize(true);
+            recycler_sales_order_list.setHasFixedSize(true);
 
             recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-            recycler_project_list.setLayoutManager(recyclerViewLayoutManager);
+            recycler_sales_order_list.setLayoutManager(recyclerViewLayoutManager);
 
-            recyclerViewAdapter = new ProjectListAdapter(project_list, getActivity());
-            recycler_project_list.setAdapter(recyclerViewAdapter);
+            recyclerViewAdapter = new SalesOrderListAdapter(sales_order_list, getActivity());
+            recycler_sales_order_list.setAdapter(recyclerViewAdapter);
 
-            recycler_project_list.setVisibility(project_list.size()==0?View.GONE:View.VISIBLE);
+            recycler_sales_order_list.setVisibility(sales_order_list.size()==0?View.GONE:View.VISIBLE);
             rl_search_loader.setVisibility(View.GONE);
-            rl_no_record.setVisibility(project_list.size()==0?View.VISIBLE:View.GONE);
+            rl_no_record.setVisibility(sales_order_list.size()==0?View.VISIBLE:View.GONE);
         }
     }
 }

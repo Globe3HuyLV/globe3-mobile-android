@@ -153,10 +153,7 @@ public class UserFactory {
         tabledata mfn = tabledata_repo.get_tabledata("tag_table_usage = '" + MASTER_SETTING + "'");
 
         ACTIVE_FEATURE_TIMESHEET_PROJECT = mfn.nvar25_01.substring(0,1).equals("y");
-        ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = mfn.nvar25_01.substring(1,2).equals("y");;
-
-        Log.i(APP_NAME, "prj"+String.valueOf(ACTIVE_FEATURE_TIMESHEET_PROJECT));
-        Log.i(APP_NAME, "so"+String.valueOf(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER));
+        ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = mfn.nvar25_01.substring(1,2).equals("y");
 
         tabledata_repo.close();
     }
@@ -165,8 +162,6 @@ public class UserFactory {
         tabledata_repo.open();
 
         tabledata mfn = tabledata_repo.get_tabledata("tag_table_usage = '" + MASTER_SETTING + "'");
-
-        Log.i(APP_NAME, String.valueOf(mfn==null));
 
         if(mfn==null){
             mfn = new tabledata();

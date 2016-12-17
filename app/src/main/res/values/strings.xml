@@ -14,6 +14,7 @@
 
     <string name="label_staff">Staff</string>
     <string name="label_project">Project</string>
+    <string name="label_sales_order">Sales Order</string>
     <string name="label_finger_data">Finger Data</string>
     <string name="label_face_data">Face Data</string>
     <string name="label_fingerprint_loaded">Fingerprint Loaded</string>
@@ -36,6 +37,7 @@
     <string name="label_log_time">Log Time</string>
     <string name="label_log_time_auto">Log Time Auto</string>
     <string name="label_log_time_project">Log Time Project</string>
+    <string name="label_log_time_sales_order">Log Time Sales Order</string>
     <string name="label_log_time_staff">Log Time Staff</string>
     <string name="label_log_time_summary">Log Time Summary</string>
     <string name="label_add_project_photo">Add Project Photo</string>
@@ -51,6 +53,7 @@
     <string name="label_select_photos">Select Photos</string>
     <string name="label_auto_screening">Auto Screening</string>
     <string name="label_skip_project">Skip Project</string>
+    <string name="label_skip_sales_order">Skip Sales Order</string>
     <string name="label_time_in">Time In</string>
     <string name="label_time_out">Time Out</string>
     <string name="label_date">Date</string>
@@ -74,6 +77,7 @@
     <string name="label_no_activity">No Activity</string>
     <string name="label_start_registration">Start registration</string>
     <string name="label_today">Today</string>
+    <string name="label_all_sales_order">All Sales Order</string>
 
     <string name="msg_data_is_latest">Data is latest</string>
     <string name="msg_connected">Connected</string>
@@ -156,7 +160,8 @@
     <string name="hint_password">password</string>
     <string name="hint_reference_number">reference number</string>
     <string name="hint_remarks">remarks</string>
-    <string name="hint_search_project_code">search entproject code</string>
+    <string name="hint_search_project_code">search project code</string>
+    <string name="hint_search_sales_order">search sales order</string>
     <string name="hint_search">search</string>
     <string name="hint_project_code">project code</string>
     <string name="hint_search_staff_num">search staff num</string>

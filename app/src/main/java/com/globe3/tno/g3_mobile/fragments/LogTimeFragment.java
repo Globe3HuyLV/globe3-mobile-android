@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.globe3.tno.g3_mobile.app_objects.SalesOrder;
 import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.Project;
@@ -45,19 +46,24 @@ import com.neurotec.util.concurrent.CompletionHandler;
 import java.util.Calendar;
 import java.util.EnumSet;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
+
 public class LogTimeFragment extends DialogFragment {
     Context parent_context;
 
     Staff staff;
 
     Project project;
+    SalesOrder sales_order;
 
     LogTimeStaffFragment logTimeStaffFragment;
     LogTimeProjectFragment logTimeProjectFragment;
+    LogTimeSalesOrderFragment log_time_sale_order_fragment;
     LogTimeSummaryFragment logTimeSummaryFragment;
 
     NBiometricClient mBiometricData;
-    NBiometricClient mBiometricClient;
+    NBiometricClient biometric_client;
     boolean scanner_found;
 
     String log_type = TagTableUsage.TIMELOG_IN;
@@ -84,11 +90,11 @@ public class LogTimeFragment extends DialogFragment {
             new ScanTask(new Runnable() {
                 @Override
                 public void run() {
-                    if(mBiometricClient != null){
-                        mBiometricClient.cancel();
-                        mBiometricClient = null;
+                    if(biometric_client != null){
+                        biometric_client.cancel();
+                        biometric_client = null;
                     }
-                    mBiometricClient = new NBiometricClient();
+                    biometric_client = new NBiometricClient();
                     setPrompt(PROMPT_CONNECTING);
                 }
             }, new Runnable() {
@@ -113,9 +119,9 @@ public class LogTimeFragment extends DialogFragment {
     private View.OnClickListener cancel = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(mBiometricClient!=null){
-                mBiometricClient.cancel();
-                mBiometricClient = null;
+            if(biometric_client !=null){
+                biometric_client.cancel();
+                biometric_client = null;
             }
             if(logTimeStaffFragment != null){
                 logTimeStaffFragment.resume();
@@ -296,13 +302,23 @@ public class LogTimeFragment extends DialogFragment {
                 case IDENTIFY:
                     if (result.getStatus() == NBiometricStatus.OK) {
                         if(result.getSubjects().get(0).getMatchingResults().size() > 0){
-                            if(project==null && log_type.equals(TagTableUsage.TIMELOG_IN)){
-                                selectProject();
+                            if(ACTIVE_FEATURE_TIMESHEET_PROJECT){
+                                if(project==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
+                                    selectProject();
+                                }else{
+                                    showSummary();
+                                }
+                            }else if(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER){
+                                if(sales_order==null && !log_type.equals(TagTableUsage.TIMELOG_OUT)){
+                                    selectSalesOrder();
+                                }else{
+                                    showSummary();
+                                }
                             }else{
                                 showSummary();
                             }
-                            mBiometricClient.cancel();
-                            mBiometricClient = null;
+                            biometric_client.cancel();
+                            biometric_client = null;
                         }else{
                             setPrompt(PROMPT_FINGER_NOT_FOUND);
                         }
@@ -328,16 +344,16 @@ public class LogTimeFragment extends DialogFragment {
     };
 
     private void capture() {
-        if(mBiometricClient==null){
-            mBiometricClient = new NBiometricClient();
+        if(biometric_client ==null){
+            biometric_client = new NBiometricClient();
         }
         NSubject subject = new NSubject();
         NFinger finger = new NFinger();
 
-        mBiometricClient.setUseDeviceManager(true);
-        NDeviceManager deviceManager = mBiometricClient.getDeviceManager();
+        biometric_client.setUseDeviceManager(true);
+        NDeviceManager deviceManager = biometric_client.getDeviceManager();
         deviceManager.setDeviceTypes(EnumSet.of(NDeviceType.FINGER_SCANNER));
-        mBiometricClient.initialize();
+        biometric_client.initialize();
 
         NDeviceManager.DeviceCollection devices = deviceManager.getDevices();
         scanner_found = devices.size() > 0;
@@ -348,8 +364,8 @@ public class LogTimeFragment extends DialogFragment {
 
         subject.getFingers().add(finger);
 
-        mBiometricClient.setFingersTemplateSize(NTemplateSize.LARGE);
-        mBiometricClient.createTemplate(subject, subject, captureHandler);
+        biometric_client.setFingersTemplateSize(NTemplateSize.LARGE);
+        biometric_client.createTemplate(subject, subject, captureHandler);
     }
 
     private void setPrompt(final int status){
@@ -418,6 +434,23 @@ public class LogTimeFragment extends DialogFragment {
         logTimeProjectFragment.show(fragmentManager, getString(R.string.label_log_time_project));
     }
 
+    private void selectSalesOrder(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ll_main_container.setVisibility(View.GONE);
+            }
+        });
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        log_time_sale_order_fragment = new LogTimeSalesOrderFragment();
+        log_time_sale_order_fragment.setCancelable(false);
+        log_time_sale_order_fragment.setStaff(staff);
+        log_time_sale_order_fragment.setLog_type(log_type);
+        log_time_sale_order_fragment.setLogTimeFragment(this);
+        log_time_sale_order_fragment.show(fragmentManager, getString(R.string.label_log_time_sales_order));
+    }
+
     private void showSummary(){
         StaffFactory staffFactory = new StaffFactory(getActivity());
 
@@ -427,7 +460,7 @@ public class LogTimeFragment extends DialogFragment {
         timeLog.setProject(project);
         timeLog.setStaff(staff);
 
-        TimeRecord timeRecord = staffFactory.logTime(staff, project, log_type);
+        TimeRecord timeRecord = staffFactory.logTime(staff, project, sales_order, log_type);
 
         LogItem logItem = new AuditFactory(getActivity()).Log(log_type, staff.getUniquenumPri());
 
@@ -491,10 +524,13 @@ public class LogTimeFragment extends DialogFragment {
     public void setProject(Project project) {
         this.project = project;
     }
+    public void setSalesOrder(SalesOrder salesOrder) {
+        this.sales_order = salesOrder;
+    }
     public void setLogTimeStaffFragment(LogTimeStaffFragment logTimeStaffFragment) {
         this.logTimeStaffFragment = logTimeStaffFragment;
     }
-    public void setmBiometricClient(NBiometricClient mBiometricClient) {
-        this.mBiometricClient = mBiometricClient;
+    public void setBiometricClient(NBiometricClient biometric_client) {
+        this.biometric_client = biometric_client;
     }
 }
