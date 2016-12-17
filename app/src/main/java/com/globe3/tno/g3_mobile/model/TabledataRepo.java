@@ -181,11 +181,16 @@ public class TabledataRepo extends BaseRepo{
     public tabledata get_tabledata(String param) {
         Cursor cursor = database.query(Globe3Db.TABLE_TABLEDATA, allColumns, param, null, null, null, null);
 
-        tabledata tabledata = cursorToObject(cursor);
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
 
-        cursor.close();
+            tabledata tabledata = cursorToObject(cursor);
 
-        return tabledata;
+            cursor.close();
+            return tabledata;
+        }else{
+            return null;
+        }
     }
 
 

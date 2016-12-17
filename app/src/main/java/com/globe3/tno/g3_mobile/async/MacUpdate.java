@@ -2,6 +2,7 @@ package com.globe3.tno.g3_mobile.async;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 
 import com.globe3.tno.g3_mobile.activities.DashboardActivity;
@@ -12,6 +13,7 @@ import com.globe3.tno.g3_mobile.util.HttpUtility;
 
 import org.json.JSONObject;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
 import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
 import static com.globe3.tno.g3_mobile.globals.Globals.CFSQLFILENAME;
@@ -34,15 +36,7 @@ public class MacUpdate extends AsyncTask<Void, Integer, Void>
     protected Void doInBackground(Void... param) {
         User currentUser = user_factory.getUser(USERLOGINUNIQ);
         try {
-            JSONObject masterJson = HttpUtility.requestJSON("user_mac", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
             JSONObject macJson = HttpUtility.requestJSON("user_mac", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
-
-            if(masterJson!=null){
-                ACTIVE_FEATURE_TIMESHEET_PROJECT = masterJson.getBoolean("timesheet_by_project");
-                ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = masterJson.getBoolean("timesheet_by_sales_order");
-
-                user_factory.updateMasterSettings();
-            }
 
             if(macJson!=null){
                 currentUser.setMAC(macJson.getString("items"));

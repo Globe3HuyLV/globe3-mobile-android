@@ -197,10 +197,6 @@ public class LoginActivity extends BaseActivity{
                 MATCHER_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_MATCHING);
                 DEVICES_LICENSE_OBTAINED = NLicense.obtainComponents("/local", 5000, LicensingManager.LICENSE_FINGER_DEVICES_SCANNERS);
 
-                Log.i(APP_NAME, String.valueOf(EXTRACT_LICENSE_OBTAINED));
-                Log.i(APP_NAME, String.valueOf(MATCHER_LICENSE_OBTAINED));
-                Log.i(APP_NAME, String.valueOf(DEVICES_LICENSE_OBTAINED));
-
                 return EXTRACT_LICENSE_OBTAINED && MATCHER_LICENSE_OBTAINED && DEVICES_LICENSE_OBTAINED;
             } catch (Exception e) {
                 e.printStackTrace();

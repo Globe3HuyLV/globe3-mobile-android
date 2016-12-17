@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.app_objects.factory;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
 import com.globe3.tno.g3_mobile.app_objects.User;
@@ -19,6 +20,7 @@ import com.globe3.tno.g3_mobile.model.TabledataRepo;
 import com.globe3.tno.g3_mobile.util.Encryption;
 import com.globe3.tno.g3_mobile.util.Uniquenum;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.COMPANY_LIST;
 import static com.globe3.tno.g3_mobile.constants.TagTableUsage.MASTER_SETTING;
 import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
@@ -146,10 +148,25 @@ public class UserFactory {
         tabledata_repo.create_tabledata(tabledata);
     }
 
+    public void setMasterSetting(){
+        tabledata_repo.open();
+        tabledata mfn = tabledata_repo.get_tabledata("tag_table_usage = '" + MASTER_SETTING + "'");
+
+        ACTIVE_FEATURE_TIMESHEET_PROJECT = mfn.nvar25_01.substring(0,1).equals("y");
+        ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = mfn.nvar25_01.substring(1,2).equals("y");;
+
+        Log.i(APP_NAME, "prj"+String.valueOf(ACTIVE_FEATURE_TIMESHEET_PROJECT));
+        Log.i(APP_NAME, "so"+String.valueOf(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER));
+
+        tabledata_repo.close();
+    }
+
     public void updateMasterSettings(){
         tabledata_repo.open();
 
-        tabledata mfn = tabledata_repo.get_tabledata("tag_table_usage = " + MASTER_SETTING);
+        tabledata mfn = tabledata_repo.get_tabledata("tag_table_usage = '" + MASTER_SETTING + "'");
+
+        Log.i(APP_NAME, String.valueOf(mfn==null));
 
         if(mfn==null){
             mfn = new tabledata();

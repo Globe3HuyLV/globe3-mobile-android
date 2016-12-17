@@ -145,7 +145,6 @@ public class ProjectFactory {
 
             projectphoto_repo.create_projectphoto(projectphoto);
         }catch (Exception e){
-            Log.i(APP_NAME, "saveProjectPhoto_Error");
             e.printStackTrace();
         }
     }

@@ -2,6 +2,7 @@ package com.globe3.tno.g3_mobile.async;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.activities.DashboardActivity;
 import com.globe3.tno.g3_mobile.activities.LoginActivity;
@@ -14,6 +15,9 @@ import com.globe3.tno.g3_mobile.app_objects.factory.CompanyFactory;
 
 import org.json.JSONObject;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
 import static com.globe3.tno.g3_mobile.globals.Globals.CFSQLFILENAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANY_NAME;
@@ -46,8 +50,22 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
 
         try {
             activeUsers = user_factory.getActiveUsers().size();
+
+            JSONObject masterJson = HttpUtility.requestJSON("master_setting", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&userloginid="+USERLOGINID);
+
+            Log.i(APP_NAME, String.valueOf(masterJson==null));
+
+            if(masterJson!=null){
+                ACTIVE_FEATURE_TIMESHEET_PROJECT = masterJson.getBoolean("timesheet_by_project");
+                ACTIVE_FEATURE_TIMESHEET_SALES_ORDER = masterJson.getBoolean("timesheet_by_sales_order");
+
+                user_factory.updateMasterSettings();
+            }
+
             if(activeUsers == 0){
                 JSONObject loginResultJSON = HttpUtility.requestJSON("login", "cfsqlfilename="+CFSQLFILENAME+"&masterfn="+MASTERFN+"&company="+ login_details.getCompany()+"&userloginid="+ login_details.getUserid()+"&password="+ login_details.getPassword());
+
+
 
                 server_status = ConnectionStatus.SERVER_CONNECTED;
                 if(loginResultJSON.getBoolean("login_valid")){
@@ -62,6 +80,7 @@ public class Login extends AsyncTask<Void, Void, Boolean>  {
                     return false;
                 }
             }else{
+                user_factory.setMasterSetting();
                 User user = new User();
                 user.setCompany(login_details.getCompany());
                 user.setUserid(login_details.getUserid());
