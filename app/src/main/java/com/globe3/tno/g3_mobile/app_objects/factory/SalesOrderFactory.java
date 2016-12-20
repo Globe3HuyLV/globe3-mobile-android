@@ -133,6 +133,19 @@ public class SalesOrderFactory {
         return salesOrders;
     }
 
+    public ArrayList<SalesOrder> searchTeamSalesOrder(String searchTerm, String teamUnique) {
+        ArrayList<SalesOrder> salesOrders = new ArrayList<>();
+        sales_order_repo.open();
+        tabledata_repo.open();
+        for(tabledata tabledata : tabledata_repo.get_tabledatas("tag_table_usage='"+SALES_ORDER_TEAM+"' AND nvar25_04 = '" + teamUnique + "' AND nvar25_01 LIKE '%" + searchTerm.trim() + "%'")){
+            erpsalesorder erpsalesorder = sales_order_repo.get_salesorder(tabledata.nvar25_02);
+            salesOrders.add(convertEntity(erpsalesorder));
+        }
+        tabledata_repo.close();
+        sales_order_repo.close();
+        return salesOrders;
+    }
+
     public ArrayList<SalesOrder> getActiveSalesOrder() {
         ArrayList<SalesOrder> salesOrders = new ArrayList<>();
         sales_order_repo.open();
@@ -146,9 +159,12 @@ public class SalesOrderFactory {
     public ArrayList<SalesOrder> getTeamSalesOrder(String teamUnique) {
         ArrayList<SalesOrder> salesOrders = new ArrayList<>();
         sales_order_repo.open();
-        for(erpsalesorder erpsalesorder : sales_order_repo.get_erpsalesorders("team_unique = '" + teamUnique + "'")){
+        tabledata_repo.open();
+        for(tabledata tabledata : tabledata_repo.get_tabledatas("tag_table_usage='"+SALES_ORDER_TEAM+"' AND nvar25_04 = '" + teamUnique + "'")){
+            erpsalesorder erpsalesorder = sales_order_repo.get_salesorder(tabledata.nvar25_02);
             salesOrders.add(convertEntity(erpsalesorder));
         }
+        tabledata_repo.close();
         sales_order_repo.close();
         return salesOrders;
     }

@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.LogTimeSalesOrderListAdapter;
@@ -38,6 +40,7 @@ import com.globe3.tno.g3_mobile.view_objects.RowSalesOrder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class LogTimeSalesOrderFragment extends DialogFragment {
     Staff staff;
@@ -65,14 +68,23 @@ public class LogTimeSalesOrderFragment extends DialogFragment {
     TextView tv_action_button;
     TextView tv_cancel;
 
+    String selected_team_unique = "";
+    String default_team = "";
+
     ArrayList<StaffTeam> staff_teams;
     ArrayList<RowSalesOrder> sales_order_list;
+
+    ArrayList<RowSalesOrder> all_sales_order_list;
+
+    HashMap<String, ArrayList<RowSalesOrder>> team_sales_order_map;
 
     String log_type;
 
     TimeLog time_log;
 
-    SearchSalesOrder searchSalesOrder;
+    SearchSalesOrder search_sales_order;
+
+    ArrayList<String> spinner_array;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -95,17 +107,61 @@ public class LogTimeSalesOrderFragment extends DialogFragment {
         tv_action_button = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_action_button);
         tv_cancel = (TextView) logTimeSalesOrderFragment.findViewById(R.id.tv_cancel);
 
-        staff_teams = new StaffFactory(getActivity()).getStaffTeams(staff.getUniquenumPri());
-        ArrayList<String> spinnerArray =  new ArrayList<>();
-        for(StaffTeam staffTeam : staff_teams){
-            spinnerArray.add(staffTeam.getCode());
-        }
-        spinnerArray.add(getString(R.string.label_all_sales_order));
+        team_sales_order_map = new HashMap<>();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+        staff_teams = new StaffFactory(getActivity()).getStaffTeams(staff.getUniquenumPri());
+
+        spinner_array =  new ArrayList<>();
+        for(StaffTeam staffTeam : staff_teams){
+            if(default_team.equals("")){
+                default_team = staffTeam.getCode();
+            }
+            spinner_array.add(staffTeam.getCode());
+
+            ArrayList<RowSalesOrder> team_sales_order = new ArrayList<>();
+            for(SalesOrder salesOrder : new SalesOrderFactory(getActivity()).getTeamSalesOrder(staffTeam.getUniquenumPri())){
+                team_sales_order.add(createRowSalesOrder(salesOrder));
+            }
+
+            team_sales_order_map.put(staffTeam.getCode(), team_sales_order);
+        }
+        spinner_array.add(getString(R.string.label_all_sales_order));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinner_array);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spn_sales_order_filter.setAdapter(adapter);
+
+        spn_sales_order_filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, final int position, long id) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(spinner_array.get(position).equals(getString(R.string.label_all_sales_order))){
+                            selected_team_unique = "";
+                            sales_order_list = all_sales_order_list;
+                        }else{
+                            selected_team_unique = staff_teams.get(position).getUniquenumPri();
+                            sales_order_list = team_sales_order_map.get(spinner_array.get(position));
+                        }
+
+                        recycler_sales_order_list.setHasFixedSize(true);
+
+                        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+                        recycler_sales_order_list.setLayoutManager(recyclerViewLayoutManager);
+
+                        recyclerViewAdapter = new SalesOrderListAdapter(sales_order_list, getActivity());
+                        recycler_sales_order_list.setAdapter(recyclerViewAdapter);
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+
+        });
 
         time_log = new TimeLog();
         time_log.setDate(Calendar.getInstance().getTime());
@@ -129,9 +185,13 @@ public class LogTimeSalesOrderFragment extends DialogFragment {
         recycler_sales_order_list = (RecyclerView) logTimeSalesOrderFragment.findViewById(R.id.recycler_sales_order_list);
 
         sales_order_list = new ArrayList<>();
+        all_sales_order_list = new ArrayList<>();
+
         for(final SalesOrder sales_order : new SalesOrderFactory(getActivity()).getActiveSalesOrder()){
-            sales_order_list.add(createRowSalesOrder(sales_order));
+            all_sales_order_list.add(createRowSalesOrder(sales_order));
         }
+
+        sales_order_list = team_sales_order_map.get(default_team);
 
         recycler_sales_order_list.setHasFixedSize(true);
 
@@ -243,11 +303,11 @@ public class LogTimeSalesOrderFragment extends DialogFragment {
     }
 
     public void searchSalesOrder(String searchTerm) {
-        if(searchSalesOrder != null){
-            searchSalesOrder.cancel(true);
+        if(search_sales_order != null){
+            search_sales_order.cancel(true);
         }
-        searchSalesOrder = new SearchSalesOrder(searchTerm);
-        searchSalesOrder.execute();
+        search_sales_order = new SearchSalesOrder(searchTerm);
+        search_sales_order.execute();
     }
 
     public class SearchSalesOrder extends AsyncTask<Void, Void, Void>
@@ -269,7 +329,23 @@ public class LogTimeSalesOrderFragment extends DialogFragment {
 
         @Override
         protected Void doInBackground(Void... param) {
-            for(SalesOrder sales_order : (searchTerm.equals("")?new SalesOrderFactory(getActivity()).getActiveSalesOrder():new SalesOrderFactory(getActivity()).searchSalesOrder(searchTerm))){
+            ArrayList<SalesOrder> search_sales_order = new ArrayList<>();
+            if(selected_team_unique.equals("")){
+                if(searchTerm.equals("")){
+                    search_sales_order = new SalesOrderFactory(getActivity()).getActiveSalesOrder();
+                }else{
+                    search_sales_order = new SalesOrderFactory(getActivity()).searchSalesOrder(searchTerm);
+                }
+            }else{
+                if(searchTerm.equals("")){
+                    search_sales_order = new SalesOrderFactory(getActivity()).getTeamSalesOrder(selected_team_unique);
+                }else{
+                    search_sales_order = new SalesOrderFactory(getActivity()).searchTeamSalesOrder(searchTerm, selected_team_unique);
+                }
+            }
+
+
+            for(SalesOrder sales_order : search_sales_order){
                 sales_order_list.add(createRowSalesOrder(sales_order));
             }
             return null;

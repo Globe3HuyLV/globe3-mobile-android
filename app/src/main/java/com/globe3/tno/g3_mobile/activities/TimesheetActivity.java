@@ -16,12 +16,16 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.globe3.tno.g3_mobile.R;
 import com.globe3.tno.g3_mobile.adapters.TimesheetTabAdapter;
 import com.globe3.tno.g3_mobile.fragments.TimesheetProjectFragment;
 import com.globe3.tno.g3_mobile.fragments.TimesheetStaffFragment;
+
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
 
 public class TimesheetActivity extends BaseActivity {
     TimesheetActivity timsheet_activity;
@@ -98,6 +102,9 @@ public class TimesheetActivity extends BaseActivity {
     }
 
     public void onActivityReady(){
+        if(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER){
+            tab_layout.setVisibility(View.GONE);
+        }
         if(action_bar != null){
             action_bar.setDisplayHomeAsUpEnabled(true);
             up_arrow = ContextCompat.getDrawable(timsheet_activity, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
@@ -107,7 +114,10 @@ public class TimesheetActivity extends BaseActivity {
 
         tab_layout.removeAllTabs();
         tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_staff)));
-        tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_project)));
+        if(ACTIVE_FEATURE_TIMESHEET_PROJECT){
+            tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.label_project)));
+        }
+
         tab_layout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         view_pager.setAdapter(tab_adapter);

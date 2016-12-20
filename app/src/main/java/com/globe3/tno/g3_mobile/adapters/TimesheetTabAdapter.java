@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import com.globe3.tno.g3_mobile.fragments.TimesheetProjectFragment;
 import com.globe3.tno.g3_mobile.fragments.TimesheetStaffFragment;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_PROJECT;
+
 public class TimesheetTabAdapter extends FragmentStatePagerAdapter {
     SparseArray<Fragment> registered_fragments = new SparseArray<Fragment>();
 
@@ -31,7 +33,13 @@ public class TimesheetTabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        int count = 1;
+
+        if(ACTIVE_FEATURE_TIMESHEET_PROJECT){
+            count++;
+        }
+
+        return count;
     }
 
     @Override

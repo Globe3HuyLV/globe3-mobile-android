@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,8 @@ import com.neurotec.biometrics.client.NBiometricClient;
 
 import java.util.ArrayList;
 
+import static com.globe3.tno.g3_mobile.globals.Globals.ACTIVE_FEATURE_TIMESHEET_SALES_ORDER;
+
 public class TimesheetStaffFragment extends Fragment {
     StaffFactory staff_factory;
 
@@ -34,6 +37,7 @@ public class TimesheetStaffFragment extends Fragment {
     LogTimeFragment log_time_fragment;
 
     FloatingActionButton fab_auto_screening;
+    View v_spacer;
     RecyclerView recycler_staff_list;
     RecyclerView.Adapter recyclerViewAdapter;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -57,11 +61,14 @@ public class TimesheetStaffFragment extends Fragment {
         View staffFragment = inflater.inflate(R.layout.fragment_timesheet_staff_list, viewGroup, false);
 
         fab_auto_screening = (FloatingActionButton) staffFragment.findViewById(R.id.fab_auto_screening);
+        v_spacer = staffFragment.findViewById(R.id.v_spacer);
         recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         recycler_staff_list = (RecyclerView) staffFragment.findViewById(R.id.recycler_staff_list);
         rl_search_loader = (RelativeLayout) staffFragment.findViewById(R.id.rl_search_loader);
         iv_search_loader = (ImageView) staffFragment.findViewById(R.id.iv_search_loader);
         rl_no_record = (RelativeLayout) staffFragment.findViewById(R.id.rl_no_record);
+
+        v_spacer.setVisibility(ACTIVE_FEATURE_TIMESHEET_SALES_ORDER?View.GONE:View.VISIBLE);
 
         iv_search_loader.setAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animate_rotate_clockwise));
 

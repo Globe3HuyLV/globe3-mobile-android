@@ -1,6 +1,7 @@
 package com.globe3.tno.g3_mobile.async;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.globe3.tno.g3_mobile.app_objects.TimeRecord;
 import com.globe3.tno.g3_mobile.app_objects.LogItem;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import static com.globe3.tno.g3_mobile.constants.App.APP_NAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.CFSQLFILENAME;
 import static com.globe3.tno.g3_mobile.globals.Globals.COMPANYFN;
 import static com.globe3.tno.g3_mobile.globals.Globals.MASTERFN;
@@ -71,7 +73,8 @@ public class TimeLogSingleUploadTask extends AsyncTask<Void, Void, Boolean> {
             detail.put("userloginuniq", USERLOGINUNIQ);
             detail.put("uniquenum_pri", newTimeRecord.getUniquenumPri());
             detail.put("staff_unique", newTimeRecord.getStaff().getUniquenumPri());
-            detail.put("project_unique", newTimeRecord.getProject().getUniquenumPri());
+            detail.put("project_unique", newTimeRecord.getProject()!=null?newTimeRecord.getProject().getUniquenumPri():"");
+            detail.put("sales_order_unique", newTimeRecord.getSalesOrder()!=null?newTimeRecord.getSalesOrder().getUniquenumPri():"");
             detail.put("sync_unique", log_item.getLogUnique());
             detail.put("date_time_post", DateUtility.getDateString(newTimeRecord.getDateTimePost(), "yyyy-MM-dd HH:mm:ss"));
             detail.put("date_time_sync", DateUtility.getDateString(log_item.getLogDate(), "yyyy-MM-dd HH:mm:ss"));

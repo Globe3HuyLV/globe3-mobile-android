@@ -63,7 +63,7 @@
                 android:background="@color/colorBorder"/>
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
@@ -74,6 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left">
+
                     <TextView
                         android:id="@+id/tv_log_type"
                         android:layout_width="wrap_content"
@@ -85,6 +86,7 @@
                         android:textColor="@color/colorBlackLight"
                         android:textStyle="bold"
                         android:text="@string/label_time_in"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -158,17 +160,18 @@
                         android:textColor="@color/colorBlackLight"
                         android:text=":"/>
                 </LinearLayout>
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
                     android:gravity="center">
                     <TextView
                         android:id="@+id/tv_log_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginBottom="4dp"
                         android:gravity="left"
                         android:textColor="@color/colorBlackLight"/>
@@ -177,16 +180,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginBottom="4dp"
                         android:gravity="left"
-                        android:textColor="@color/colorBlackLight"/>
+                        android:textColor="@color/colorBlackLight"
+                        android:text="19 Dec 2016"/>
                     <TextView
                         android:id="@+id/tv_log_project"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginBottom="4dp"
                         android:gravity="left"
                         android:textColor="@color/colorBlackLight"/>
@@ -195,10 +197,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginBottom="4dp"
                         android:gravity="left"
-                        android:textColor="@color/colorBlackLight"/>
+                        android:textColor="@color/colorBlackLight"
+                        android:text="MANUAL10001"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -207,8 +209,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:clickable="true"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -226,8 +228,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:clickable="true"
                 android:textSize="12sp"
                 android:textStyle="bold"

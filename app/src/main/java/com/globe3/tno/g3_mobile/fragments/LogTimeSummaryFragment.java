@@ -96,6 +96,10 @@ public class LogTimeSummaryFragment extends DialogFragment {
                     tv_log_type.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorOrange, null));
                     tv_log_time.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorOrange, null));
                     break;
+                case TagTableUsage.LOCATION_CHECK:
+                    tv_log_type.setText(getString(R.string.label_time));
+                    tv_log_type.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorBlue, null));
+                    tv_log_time.setTextColor(ResourcesCompat.getColor(getActivity().getResources(), R.color.colorBlue, null));
                 default:
                     break;
             }

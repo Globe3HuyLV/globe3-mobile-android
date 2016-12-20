@@ -920,10 +920,20 @@ public class StaffFactory {
 
         timeRecord.setLogType(dailytime.type_in_out);
 
-        timeRecord.setProject(new Project());
-        timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
-        timeRecord.getProject().setCode(dailytime.project_code);
-        timeRecord.getProject().setDesc(dailytime.project_name);
+        if(!dailytime.project_unique.equals("")){
+            timeRecord.setProject(new Project());
+            timeRecord.getProject().setUniquenumPri(dailytime.project_unique);
+            timeRecord.getProject().setCode(dailytime.project_code);
+            timeRecord.getProject().setDesc(dailytime.project_name);
+        }
+
+        if(!dailytime.sale_order_unique.equals("")){
+            timeRecord.setSalesOrder(new SalesOrder());
+            timeRecord.getSalesOrder().setUniquenumPri(dailytime.sale_order_unique);
+            timeRecord.getSalesOrder().setCode(dailytime.sale_order_code);
+            timeRecord.getSalesOrder().setDesc(dailytime.sale_order_name);
+        }
+
 
         timeRecord.setSynced(((dailytime.sync_unique != null && dailytime.sync_unique != "") && (dailytime.date_lastupdate.compareTo(dailytime.date_sync)!=1)));
 

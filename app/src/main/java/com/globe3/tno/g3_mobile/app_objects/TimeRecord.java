@@ -24,6 +24,7 @@ public class TimeRecord implements Serializable{
     private String AddressOut;
     private String LogType;
     private Project Project;
+    private SalesOrder SalesOrder;
     private boolean Synced;
 
     public long getIdcode() {
@@ -184,6 +185,14 @@ public class TimeRecord implements Serializable{
 
     public void setProject(com.globe3.tno.g3_mobile.app_objects.Project project) {
         Project = project;
+    }
+
+    public com.globe3.tno.g3_mobile.app_objects.SalesOrder getSalesOrder() {
+        return SalesOrder;
+    }
+
+    public void setSalesOrder(com.globe3.tno.g3_mobile.app_objects.SalesOrder salesOrder) {
+        SalesOrder = salesOrder;
     }
 
     public boolean isSynced() {

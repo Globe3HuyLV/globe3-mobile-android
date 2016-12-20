@@ -54,6 +54,7 @@
     <string name="label_auto_screening">Auto Screening</string>
     <string name="label_skip_project">Skip Project</string>
     <string name="label_skip_sales_order">Skip Sales Order</string>
+    <string name="label_time">Time</string>
     <string name="label_time_in">Time In</string>
     <string name="label_time_out">Time Out</string>
     <string name="label_date">Date</string>
